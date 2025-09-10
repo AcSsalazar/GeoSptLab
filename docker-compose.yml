@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15
+    container_name: spt-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: spt_calculator
+      POSTGRES_USER: spt_user
+      POSTGRES_PASSWORD: spt_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - spt-network
+
+  # pgAdmin for database management
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: spt-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@sptcalculator.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - spt-network
+
+  # Backend API (optional - can be run locally for development)
+  # backend:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   container_name: spt-backend
+  #   restart: unless-stopped
+  #   environment:
+  #     - DATABASE_URL=postgresql://spt_user:spt_password@postgres:5432/spt_calculator
+  #     - SECRET_KEY=your-production-secret-key
+  #     - DEBUG=False
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - spt-network
+
+volumes:
+  postgres_data:
+
+networks:
+  spt-network:
+    driver: bridge

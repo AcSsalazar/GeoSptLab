@@ -1,131 +1,275 @@
-# FastAPI Application
+# SPT Parameters Calculator
 
-A modern, fast web API built with FastAPI, including PostgreSQL database support.
+A professional web application for calculating geotechnical soil resistance parameters (φ′, c′, E, Su, τ) from Standard Penetration Test (SPT) results.
+
+![SPT Calculator Demo](https://github.com/user-attachments/assets/c88366e8-3191-433f-8186-21a83fbec1b0)
 
 ## Features
 
-- **FastAPI Framework**: Modern, fast Python web framework
-- **PostgreSQL Support**: Database integration with SQLAlchemy
-- **CORS Enabled**: Cross-origin resource sharing configured
-- **Auto Documentation**: Interactive API docs at `/docs` and `/redoc`
-- **Environment Configuration**: Settings loaded from environment variables
-- **Structured Architecture**: Clean, organized codebase
+- **Complete SPT Analysis Pipeline**: Input SPT data → Apply corrections → Calculate geotechnical parameters
+- **Multi-step Form Workflow**: Intuitive project setup, strata definition, borehole data input, and results visualization
+- **Mathematical Correlations**: Implements Kishida and JRB formulations for friction angle calculations
+- **Professional UI**: React TypeScript frontend with form validation and responsive design
+- **RESTful API**: FastAPI backend with comprehensive CRUD operations
+- **Database Integration**: PostgreSQL support with SQLAlchemy ORM
+- **Data Validation**: Comprehensive input validation and error handling
 
-## Project Structure
+## Technology Stack
 
-```
-├── app/
-│   ├── __init__.py
-│   ├── main.py              # FastAPI app instance and configuration
-│   ├── api/
-│   │   ├── __init__.py
-│   │   └── routes.py        # API endpoints
-│   ├── core/
-│   │   ├── __init__.py
-│   │   └── config.py        # Application settings
-│   └── models/
-│       ├── __init__.py
-│       └── schemas.py       # Pydantic models
-├── .env                     # Environment variables
-├── .gitignore              # Git ignore rules
-├── requirements.txt        # Python dependencies
-└── README.md              # This file
-```
+- **Backend**: FastAPI with Python
+- **Frontend**: React with TypeScript and Vite
+- **Database**: PostgreSQL (with SQLite for development)
+- **Architecture**: Multi-step form workflow with REST API
 
 ## Quick Start
 
-### 1. Activate your virtual environment
-```bash
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
+### Prerequisites
 
-# Windows Command Prompt
-.venv\Scripts\activate.bat
+- Python 3.8+
+- Node.js 16+
+- PostgreSQL (optional, SQLite used by default)
 
-# Linux/Mac
-source .venv/bin/activate
-```
+### Backend Setup
 
-### 2. Install dependencies
-```bash
-pip install -r requirements.txt
-```
+1. **Install Dependencies**
+   ```bash
+   cd backend
+   pip install -r requirements.txt
+   ```
 
-### 3. Configure environment
-Edit the `.env` file with your settings:
-- Update database connection string
-- Change the secret key for production
-- Adjust CORS origins as needed
+2. **Configure Environment**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your settings
+   ```
 
-### 4. Run the application
-```bash
-# Development mode (with auto-reload)
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+3. **Initialize Database**
+   ```bash
+   python init_db.py
+   ```
 
-# Or run directly
-python -m app.main
-```
+4. **Start Backend Server**
+   ```bash
+   python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+   ```
 
-### 5. Access the API
-- **API Documentation**: http://localhost:8000/docs
-- **Alternative Docs**: http://localhost:8000/redoc
-- **Health Check**: http://localhost:8000/api/v1/health
+   API will be available at: http://localhost:8000
+   
+   Interactive API documentation: http://localhost:8000/docs
+
+### Frontend Setup
+
+1. **Install Dependencies**
+   ```bash
+   cd frontend
+   npm install
+   ```
+
+2. **Start Development Server**
+   ```bash
+   npm run dev
+   ```
+
+   Frontend will be available at: http://localhost:5173
+
+### Database Setup (PostgreSQL)
+
+1. **Start PostgreSQL with Docker**
+   ```bash
+   docker-compose up postgres pgadmin -d
+   ```
+
+2. **Update Backend Configuration**
+   ```bash
+   # Edit backend/.env
+   DATABASE_URL=postgresql://spt_user:spt_password@localhost:5432/spt_calculator
+   ```
+
+3. **Access pgAdmin**
+   - URL: http://localhost:5050
+   - Email: admin@sptcalculator.com
+   - Password: admin123
+
+## Application Workflow
+
+### 1. Project Setup
+- Define project parameters (code, formulation type, energy percentage)
+- Configure borehole and stratum counts
+- Set water table depth and equipment specifications
+
+### 2. Soil Strata Definition
+- Create soil layers with geotechnical properties
+- Define unit weights (humid and saturated)
+- Specify behavior type (cohesive/granular) and plasticity index
+
+### 3. Borehole Data Input
+- Add borehole locations and specifications
+- Input SPT test intervals with N values
+- Associate intervals with appropriate soil strata
+
+### 4. Results and Calculations
+- Automatic calculation of correction factors (CB, CS, CR, Cn)
+- Normalized N values (N45, N55, N60, N145)
+- Geotechnical parameters using selected correlations
+- Data visualization and report generation
 
 ## API Endpoints
 
-### Health & Info
-- `GET /api/v1/health` - Health check
-- `GET /api/v1/` - Welcome message
+### Projects
+- `GET /api/v1/projects/` - List all projects
+- `POST /api/v1/projects/` - Create new project
+- `GET /api/v1/projects/{id}` - Get project by ID
+- `GET /api/v1/projects/{id}/details` - Get project with related data
+- `PUT /api/v1/projects/{id}` - Update project
+- `DELETE /api/v1/projects/{id}` - Delete project
 
-### Users
-- `GET /api/v1/users/{user_id}` - Get user by ID
-- `POST /api/v1/users/` - Create new user
-- `PUT /api/v1/users/{user_id}` - Update user
-- `DELETE /api/v1/users/{user_id}` - Delete user
+### Soil Strata
+- `GET /api/v1/strata/project/{project_id}` - Get strata for project
+- `POST /api/v1/strata/` - Create new stratum
+- `PUT /api/v1/strata/{id}` - Update stratum
+- `DELETE /api/v1/strata/{id}` - Delete stratum
 
-### Items
-- `GET /api/v1/items/` - Get all items (with pagination)
-- `GET /api/v1/items/{item_id}` - Get item by ID
-- `POST /api/v1/items/` - Create new item
-- `PUT /api/v1/items/{item_id}` - Update item
-- `DELETE /api/v1/items/{item_id}` - Delete item
+### Boreholes
+- `GET /api/v1/boreholes/project/{project_id}` - Get boreholes for project
+- `POST /api/v1/boreholes/` - Create new borehole
+- `PUT /api/v1/boreholes/{id}` - Update borehole
+- `DELETE /api/v1/boreholes/{id}` - Delete borehole
 
-## Configuration
+### SPT Intervals
+- `GET /api/v1/spt-intervals/project/{project_id}` - Get intervals for project
+- `POST /api/v1/spt-intervals/` - Create new interval
+- `PUT /api/v1/spt-intervals/{id}` - Update interval
+- `DELETE /api/v1/spt-intervals/{id}` - Delete interval
 
-The application uses environment variables for configuration. Key settings include:
+### Calculations
+- `POST /api/v1/calculations/calculate` - Calculate SPT parameters for project
+- `GET /api/v1/calculations/project/{id}/results` - Get calculated results
+- `POST /api/v1/calculations/interval/{id}/calculate` - Calculate single interval
 
-- `APP_NAME`: Application name
-- `DEBUG`: Enable debug mode
-- `DATABASE_URL`: PostgreSQL connection string
-- `SECRET_KEY`: Secret key for security
-- `ALLOWED_ORIGINS`: CORS allowed origins
+## Mathematical Formulations
 
-## Database Setup
+### Stress Calculations
+- Total stress: `σ_tot = γ·z`
+- Effective stress: `σ′ = σ_tot - u`
+- Pore pressure: `u = γw·max(0, z-NF)`
 
-Since you have SQLAlchemy and psycopg2 installed, you can easily add database models:
+### Correction Factors
+- **CB**: Borehole diameter correction
+- **CS**: Sampling method correction  
+- **CR**: Rod length correction
+- **Cn**: Overburden pressure correction (Seed-Idriss/Marcuson method, Cn ≤ 2.0)
 
-1. Create database models in `app/models/database.py`
-2. Set up database connection in `app/core/database.py`
-3. Add database dependency injection for your routes
+### N Value Normalization
+- `N_ref = N_field × CB × CS × CR × CE × Cn`
+- Energy corrections for 45%, 55%, and 60% efficiency
+
+### Friction Angle Correlations
+- **Kishida**: `φ′ (°) = 15 + √(12.5 × N145)`
+- **JRB**: `φ′ (°) = 15 + √(9.375 × N145)`
+
+### Additional Parameters
+- Elastic modulus: `E = 500 × N60` (granular soils)
+- Undrained shear strength: `Su = 6 × N60` (cohesive soils)
+- Shear resistance: `τ = c′ + σ′ × tan(φ′)`
+
+## Data Validation
+
+### Input Ranges
+- **Nspt**: ≥ 0 (integer)
+- **Unit weights**: 10-40 kN/m³
+- **Energy percentage**: 0-200%
+- **Depths**: Consistent ordering (from < to)
+- **Correction factors**: > 0
+
+### Business Rules
+- Project codes must be unique
+- Strata must cover all depths without gaps
+- SPT intervals cannot overlap within same borehole
+- Water table depth validation
+
+## Example Usage
+
+### Create a New Project
+```bash
+curl -X POST "http://localhost:8000/api/v1/projects/" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "project_code": "CP-00630",
+    "number_of_boreholes": 3,
+    "number_of_strata": 3,
+    "formulation": "kishida",
+    "field_energy_percent": 45.0,
+    "water_table_depth": 3.0
+  }'
+```
+
+### Calculate SPT Parameters
+```bash
+curl -X POST "http://localhost:8000/api/v1/calculations/calculate" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "project_id": 1,
+    "recalculate_all": false
+  }'
+```
 
 ## Development
 
-### Adding New Endpoints
-1. Add new routes in `app/api/routes.py`
-2. Create corresponding Pydantic models in `app/models/schemas.py`
-3. Update documentation as needed
-
-### Environment Variables
-Always use environment variables for sensitive data and configuration that changes between environments.
-
-## Production Deployment
-
-1. Set `DEBUG=False` in production
-2. Use a strong, unique `SECRET_KEY`
-3. Configure proper database credentials
-4. Set appropriate CORS origins
-5. Use a production WSGI server like Gunicorn with Uvicorn workers
-
-```bash
-gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker
+### Project Structure
 ```
+├── backend/          # FastAPI backend
+│   ├── app/
+│   │   ├── api/      # API endpoints
+│   │   ├── core/     # Configuration and calculations
+│   │   ├── models/   # Database models
+│   │   ├── schemas/  # Pydantic schemas
+│   │   └── repositories/ # Data access layer
+│   └── init_db.py    # Database initialization
+├── frontend/         # React frontend
+│   ├── src/
+│   │   ├── components/ # React components
+│   │   ├── services/   # API services
+│   │   └── types/      # TypeScript types
+└── docker-compose.yml # PostgreSQL setup
+```
+
+### Running Tests
+```bash
+# Backend tests
+cd backend
+python -m pytest
+
+# Frontend tests
+cd frontend
+npm run test
+```
+
+### Building for Production
+```bash
+# Backend
+cd backend
+pip install -r requirements.txt
+
+# Frontend
+cd frontend
+npm run build
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For questions or issues:
+- Check the API documentation at `/docs`
+- Review the example data in the repository
+- Open an issue on GitHub
