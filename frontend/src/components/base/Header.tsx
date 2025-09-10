@@ -1,6 +1,5 @@
 
 import './Header.css'
-import logoImg from '../../public/logoconsul.png'
 import { Link } from 'react-router-dom'
 import { SignedIn, SignedOut, UserButton, SignInButton, SignOutButton, useUser } from '@clerk/clerk-react'
 const Header = () => {
@@ -12,7 +11,7 @@ const {user} = useUser();
         {/* Logo a la izquierda */}
         <Link to="/" className="header__brand" >
 
-          <img className="header-logo" src={logoImg} alt="logo" />
+          <img className="header-logo" src="/logoconsul.png" alt="logo" />
 
         </Link>
 
