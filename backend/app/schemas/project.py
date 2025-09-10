@@ -68,8 +68,4 @@ class ProjectWithDetails(ProjectResponse):
         from_attributes = True
 
 
-# Forward references for relationships
-from .stratum import StratumResponse
-from .borehole import BoreholeResponse
-
-ProjectWithDetails.model_rebuild()
+# Forward references will be resolved at runtime
