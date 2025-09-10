@@ -19,14 +19,3 @@ class BaseModel(Base):
         server_default=func.now(),
         onupdate=func.now()
     )
-
-# Base models to create the main database tables, this is the equivalent of "hoja base" from the excel file
-
-class Project(Base):
-    __tablename__= "projects"
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, nullname=False)
-    perforation_qty= Column(Integer, nullable=False)
-    units = Column(String, default={})
-
-
