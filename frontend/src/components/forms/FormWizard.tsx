@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
-import Button from '../ui/Button';
+import { useState } from 'react';
+import { ChevronRight, Check } from 'lucide-react';
+//import Button from '../ui/Button';
 
 interface WizardStep {
   id: string;
@@ -28,6 +28,7 @@ const FormWizard: React.FC<FormWizardProps> = ({
       const nextStep = currentStep + 1;
       setCurrentStep(nextStep);
       onStepChange?.(nextStep);
+      console.log("Boton Pulsado")
     } else {
       onComplete();
     }
@@ -118,7 +119,7 @@ const FormWizard: React.FC<FormWizardProps> = ({
           {currentStepData.component}
         </div>
 
-        {/* Navigation buttons */}
+        {/* Navigation buttons 
         <div className="flex justify-between">
           <Button
             variant="secondary"
@@ -132,15 +133,18 @@ const FormWizard: React.FC<FormWizardProps> = ({
           <div className="text-sm text-gray-500 self-center">
             Step {currentStep + 1} of {steps.length}
           </div>
+          */ }
 
-          <Button
+          <button
             onClick={handleNext}
             disabled={currentStepData.isValid === false}
           >
+
+          
             {isLastStep ? 'Complete' : 'Next'}
             {!isLastStep && <ChevronRight size={16} className="ml-1" />}
-          </Button>
-        </div>
+          </button>
+        
       </div>
     </div>
   );

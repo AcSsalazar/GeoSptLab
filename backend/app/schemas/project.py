@@ -5,6 +5,8 @@ from pydantic import BaseModel, Field, validator
 from typing import Optional, List
 from datetime import datetime
 from enum import Enum
+from app.schemas.stratum import StratumResponse
+from app.schemas.borehole import BoreholeResponse
 
 
 class FormulationType(str, Enum):
@@ -61,11 +63,12 @@ class ProjectResponse(ProjectBase):
 
 class ProjectWithDetails(ProjectResponse):
     """Schema for Project response with related data."""
-    strata: List["StratumResponse"] = []
-    boreholes: List["BoreholeResponse"] = []
+    strata: List[StratumResponse] = []
+    boreholes: List[BoreholeResponse] = []
 
     class Config:
         from_attributes = True
 
 
-# Forward references will be resolved at runtime
+# Resolve forward references
+ProjectWithDetails.update_forward_refs()

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import FormWizard from './forms/FormWizard';
 import ProjectSetupForm from './forms/ProjectSetupForm';
-import { ProjectCreate } from '../types/project';
+import type { ProjectCreate } from '../types/project';
 import { projectAPI } from '../services/api';
 
 const SPTCalculator: React.FC = () => {

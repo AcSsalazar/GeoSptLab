@@ -2,7 +2,6 @@
 Main API router that includes all SPT endpoint routers.
 """
 from fastapi import APIRouter
-
 from app.core.config import settings
 from app.schemas.common import HealthResponse
 from .endpoints import projects, strata, boreholes, spt_intervals, calculations

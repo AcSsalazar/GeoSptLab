@@ -4,7 +4,6 @@ SPT Calculations API endpoints.
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-
 from app.core.database import get_db
 from app.core.spt_calculations import calculate_spt_parameters
 from app.repositories.project import ProjectRepository

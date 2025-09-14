@@ -2,7 +2,7 @@
  * API service for SPT Parameters Calculator
  */
 import axios from 'axios';
-import {
+import type{
   Project,
   ProjectCreate,
   ProjectWithDetails,
