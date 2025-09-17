@@ -2,10 +2,12 @@
  * TypeScript types for SPT Project entities
  */
 
-export enum FormulationType {
-  KISHIDA = 'kishida',
-  JRB = 'jrb'
-}
+export const FormulationType = {
+  KISHIDA: 'kishida',
+  JRB: 'jrb'
+} as const;
+
+export type FormulationType = typeof FormulationType[keyof typeof FormulationType];
 
 export interface Project {
   id: number;
@@ -37,10 +39,12 @@ export interface ProjectWithDetails extends Project {
   boreholes: Borehole[];
 }
 
-export enum BehaviorType {
-  COHESIVE = 'cohesive',
-  GRANULAR = 'granular'
-}
+export const BehaviorType = {
+  COHESIVE: 'cohesive',
+  GRANULAR: 'granular'
+} as const;
+
+export type BehaviorType = typeof BehaviorType[keyof typeof BehaviorType];
 
 export interface Stratum {
   id: number;

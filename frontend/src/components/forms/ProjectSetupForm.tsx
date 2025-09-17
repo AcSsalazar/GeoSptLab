@@ -4,8 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Input from '../ui/Input';
 import Select from '../ui/Select';
-import { ProjectCreate, FormulationType } from '../../types/project';
-
+import type { ProjectCreate } from '../../types/project';
+import {FormulationType } from '../../types/project';
 const projectSchema = z.object({
   project_code: z.string().min(1, 'Project code is required').max(50, 'Project code too long'),
   number_of_boreholes: z.number().min(1, 'At least 1 borehole required').max(100, 'Too many boreholes'),

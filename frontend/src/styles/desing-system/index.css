@@ -1,0 +1,13 @@
+/**
+ * Design System Entry Point
+ * Import order matters!
+ */
+
+/* 1. Tokens first (variables) */
+@import './tokens.css';
+
+/* 2. Foundation (reset + typography) */
+@import './fundations.css';
+
+/* 3. Utilities last */
+@import './utilities.css';

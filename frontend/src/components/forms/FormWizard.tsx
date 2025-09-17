@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ChevronRight, Check } from 'lucide-react';
-//import Button from '../ui/Button';
+//import { Button } from '@/components/ui';
 
 interface WizardStep {
   id: string;
@@ -34,13 +34,13 @@ const FormWizard: React.FC<FormWizardProps> = ({
     }
   };
 
-  const handlePrevious = () => {
-    if (currentStep > 0) {
-      const prevStep = currentStep - 1;
-      setCurrentStep(prevStep);
-      onStepChange?.(prevStep);
-    }
-  };
+  // const handlePrevious = () => {
+  //   if (currentStep > 0) {
+  //     const prevStep = currentStep - 1;
+  //     setCurrentStep(prevStep);
+  //     onStepChange?.(prevStep);
+  //   }
+  // };
 
   const goToStep = (stepIndex: number) => {
     setCurrentStep(stepIndex);

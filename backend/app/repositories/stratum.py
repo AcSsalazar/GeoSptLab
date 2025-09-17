@@ -36,7 +36,7 @@ class StratumRepository:
             .all()
         )
 
-    def get_by_code_and_project(self, project_id: int, stratum_code: str) -> Optional[SoilStratum]:
+    def get_by_code_and_project(self, project_id: int, stratum_code: int) -> Optional[SoilStratum]:
         """Get stratum by code within a project."""
         return (
             self.db.query(SoilStratum)

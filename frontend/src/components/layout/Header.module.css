@@ -1,0 +1,186 @@
+/**
+ * Header Component - Using Design Tokens + 8pt Grid
+ */
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--color-background-primary);
+  border-bottom: 1px solid var(--color-border-primary);
+  backdrop-filter: blur(10px);
+  z-index: var(--z-sticky);
+  height: calc(var(--space-7) + var(--space-2)); /* 72px = 64px + 8px */
+  box-shadow: var(--shadow-sm);
+}
+
+.container {
+  max-width: 75rem; /* 1200px */
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 var(--spacing-component); /* 24px horizontal padding */
+}
+
+/* ===== LOGO SECTION ===== */
+.brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  border-radius: var(--radius-lg); /* 16px */
+  background-color: #fffdf9f5;
+  padding: var(--space-1); /* 8px padding */
+  transition: transform 0.2s ease;
+}
+
+.brand:hover {
+  transform: translateY(-1px);
+}
+
+.logoImage {
+  width: calc(var(--space-8) + var(--space-4)); /* 48px = 32px + 16px */
+  height: calc(var(--space-4) + var(--space-2)); /* 48px */
+  object-fit: contain;
+}
+
+
+/* ===== NAVIGATION ===== */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-component); /* 24px between nav items */
+}
+
+.navLink {
+  color: var(--color-text-primary);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+  font-size: var(--text-sm);
+  padding: var(--spacing-element) var(--space-2); /* 8px 16px */
+  border-radius: var(--radius-base); /* 8px */
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.navLink:hover {
+  color: var(--brand-primary);
+  background-color: rgba(239, 139, 23, 0.1);
+}
+
+.navLink:active {
+  transform: translateY(1px);
+}
+
+/* ===== AUTH SECTION ===== */
+.authSection {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-element); /* 8px between auth elements */
+}
+
+.userGreeting {
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  margin-right: var(--spacing-element); /* 8px */
+}
+
+.loginButton {
+  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%);
+  color: var(--color-text-inverse);
+  border: none;
+  padding: var(--space-2) var(--spacing-component); /* 16px 24px */
+  border-radius: var(--radius-full); /* Pill shape */
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-family-primary);
+}
+
+.loginButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, var(--brand-primary-dark) 0%, var(--brand-primary) 100%);
+}
+
+.loginButton:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.logoutButton {
+  background: none;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-secondary);
+  padding: var(--spacing-element) var(--space-2); /* 8px 16px */
+  border-radius: var(--radius-base);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logoutButton:hover {
+  background-color: var(--color-background-tertiary);
+  border-color: var(--color-border-primary);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--space-2); /* Reduce padding on mobile */
+  }
+  
+  .nav {
+    display: none; /* Hide nav on mobile for now */
+  }
+  
+  .logoText {
+    font-size: var(--text-lg);
+  }
+  
+  .loginButton {
+    padding: var(--spacing-element) var(--space-2); /* Smaller padding */
+    font-size: var(--text-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 var(--space-1); /* Even smaller padding */
+  }
+  
+  .brand {
+    padding: var(--spacing-element); /* Reduce logo padding */
+  }
+  
+  .logoImage {
+    width: var(--space-4); /* 32px */
+    height: var(--space-4);
+  }
+  
+  .logoText {
+    font-size: var(--text-base);
+  }
+}
+
+/* ===== DARK MODE SUPPORT (Future) ===== */
+@media (prefers-color-scheme: dark) {
+  .header {
+    background-color: var(--brand-accent);
+    border-bottom-color: var(--color-text-secondary);
+  }
+  
+  .navLink {
+    color: var(--color-text-inverse);
+  }
+  
+  .navLink:hover {
+    background-color: rgba(239, 139, 23, 0.15);
+  }
+}

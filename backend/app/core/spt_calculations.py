@@ -201,7 +201,10 @@ def calculate_friction_angle(
         phi_prime = 15.0 + math.sqrt(12.5 * max(n145, 0))
     else:
         print(f"Tipo de formulación no soportada: {formulation}")
-    
+
+    else: formulation == FormulationType.JRB: 
+
+        phi_prime =   # Valor por defecto si no se reconoce la formulación    
     return phi_prime
 
 # -----------------------------

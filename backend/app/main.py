@@ -7,9 +7,11 @@ from app.core.database import create_tables
 from app.core.config import settings
 from app.api.v1.router import api_router
 from contextlib import asynccontextmanager
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_tables()
+    #create_tables()
     yield
 
 def create_application():

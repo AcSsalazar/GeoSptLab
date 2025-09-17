@@ -14,7 +14,7 @@ class BehaviorType(str, Enum):
 
 class StratumBase(BaseModel):
     """Base schema for Soil Stratum."""
-    stratum_code: str = Field(..., min_length=1, max_length=10, description="Stratum identifier")
+    stratum_code: int = Field(..., ge=1, le=10, description="Stratum identifier")
     description: str = Field(..., min_length=1, max_length=500, description="Soil description")
     initial_depth: float = Field(..., ge=0, le=500, description="Top depth of stratum in meters")
     final_depth: float = Field(..., ge=0, le=500, description="Bottom depth of stratum in meters")
@@ -52,7 +52,7 @@ class StratumCreate(StratumBase):
 
 class StratumUpdate(BaseModel):
     """Schema for updating a Soil Stratum."""
-    stratum_code: Optional[str] = Field(None, min_length=1, max_length=10)
+    stratum_code: Optional[int] = Field(None, ge=1, le=10)
     description: Optional[str] = Field(None, min_length=1, max_length=500)
     initial_depth: Optional[float] = Field(None, ge=0, le=500)
     final_depth: Optional[float] = Field(None, ge=0, le=500)

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import FormWizard from './forms/FormWizard';
-import ProjectSetupForm from './forms/ProjectSetupForm';
-import type { ProjectCreate } from '../types/project';
-import { projectAPI } from '../services/api';
+import { FormWizard } from '@/components/forms';
+import { ProjectSetupForm } from '@/components/forms';
+import type { ProjectCreate } from '@/types/project';
+import { projectAPI } from '@/services/api';
 
 const SPTCalculator: React.FC = () => {
   const [projectData, setProjectData] = useState<Partial<ProjectCreate>>({});
@@ -28,9 +28,10 @@ const SPTCalculator: React.FC = () => {
       // Reset form or navigate to next step
       setProjectData({});
       setIsProjectValid(false);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error creating project:', error);
-      alert(`Error creating project: ${error.response?.data?.detail || error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      alert(`Error creating project: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -111,7 +112,7 @@ const SPTCalculator: React.FC = () => {
         <FormWizard
           steps={steps}
           onComplete={handleComplete}
-          onStepChange={(step) => console.log('Step changed to:', step)}
+          onStepChange={(stepIndex: number) => console.log('Step changed to:', stepIndex)}
         />
       </div>
     </div>

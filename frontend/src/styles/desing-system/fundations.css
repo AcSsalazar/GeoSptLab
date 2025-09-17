@@ -1,0 +1,66 @@
+/**
+ * Foundation Styles
+ * Reset + Base Typography + Global Styles
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap');
+
+/* ===== RESET ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  line-height: var(--line-height-normal);
+  -webkit-text-size-adjust: 100%;
+  font-size: 16px; /* Base font size for rem calculations */
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family-primary);
+  background-color: var(--color-background-secondary);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-normal);
+}
+
+/* ===== TYPOGRAPHY RESET ===== */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+
+p {
+  margin: 0;
+}
+
+/* ===== FORM ELEMENTS ===== */
+button {
+  font-family: inherit;
+  font-size: 100%;
+  margin: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+input, select, textarea {
+  font-family: inherit;
+  font-size: 100%;
+  margin: 0;
+}
+
+/* ===== FOCUS STYLES ===== */
+:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+/* ===== SELECTION ===== */
+::selection {
+  background-color: rgba(239, 139, 23, 0.2);
+  color: var(--color-text-primary);
+}
