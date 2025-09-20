@@ -33,7 +33,8 @@ class StratumBase(BaseModel):
     @validator("gamma_saturated")
     def validate_gamma_saturated(cls, v, values):
         """Ensure saturated unit weight is greater than or equal to humid unit weight."""
-        if "gamma_humid" in values and v < values["gamma_humid"]:
+        gamma_humid = values.get("gamma_humid")
+        if v is not None and gamma_humid is not None and v < gamma_humid:
             raise ValueError("Saturated unit weight must be >= humid unit weight")
         return v
 
@@ -48,6 +49,39 @@ class StratumBase(BaseModel):
 class StratumCreate(StratumBase):
     """Schema for creating a new Soil Stratum."""
     project_id: int = Field(..., gt=0, description="Project ID")
+
+
+class StratumBulkCreate(BaseModel):
+    """Schema for bulk creating strata from Excel base sheet."""
+    project_id: int = Field(..., gt=0, description="Project ID")
+    strata: List[dict] = Field(..., description="List of complete stratum definitions with gamma values")
+    
+    class Config:
+        schema_extra = {
+            "example": {
+                "project_id": 1,
+                "strata": [
+                    {
+                        "stratum_code": 1,
+                        "description": "Ceniza Volcánica",
+                        "initial_depth": 1.0,
+                        "final_depth": 2.0,
+                        "gamma_humid": 18.5,
+                        "gamma_saturated": 19.0,
+                        "behavior_type": "granular"
+                    },
+                    {
+                        "stratum_code": 2,
+                        "description": "H-VI Migmatita Puente P",
+                        "initial_depth": 2.0,
+                        "final_depth": 4.45,
+                        "gamma_humid": 19.5,
+                        "gamma_saturated": 20.0,
+                        "behavior_type": "granular"
+                    }
+                ]
+            }
+        }
 
 
 class StratumUpdate(BaseModel):

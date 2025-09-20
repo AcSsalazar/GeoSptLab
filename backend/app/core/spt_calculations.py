@@ -88,7 +88,7 @@ def calculate_cn_factor(sigma_prime: float) -> float:
         k = 1.41
         cn = 1 - (k * math.log10(rs)) 
     else:
-        k  >= 0.92
+        k = 0.92
         cn = 1 - (k * math.log10(rs)) 
     
     return min(cn, 2.0)
@@ -99,7 +99,7 @@ def calculate_cn_factor(sigma_prime: float) -> float:
 def calculate_correction_factors(
     borehole_diameter_mm: float = 150.0,
     sampling_method: str = "standard",
-    rod_length_m: float = 15.0
+    midpoint_depth: float = 15.0
 ) -> Dict[str, float]:
     """
     Cálculo de los factores de corrección CB, CS y CR.
@@ -107,7 +107,7 @@ def calculate_correction_factors(
     Args:
         borehole_diameter_mm: Diámetro de la perforación (mm)
         sampling_method: Método de muestreo
-        rod_length_m: Longitud de varillas (m)
+        midpoint_depth: Profundidad del punto medio (m) - usado para CR
     
     Returns:
         Diccionario con los factores CB, CS, CR
@@ -123,12 +123,12 @@ def calculate_correction_factors(
     # CS: corrección por método de muestreo
     cs_factor = 1.0  # Cucharón estándar (split-spoon)
     
-    # CR: corrección por longitud de varillas
-    if rod_length_m <= 4:
+    # CR: corrección por profundidad de perforación (basado en punto medio)
+    if midpoint_depth <= 4:
         cr_factor = 0.75
-    elif rod_length_m <= 6:
+    elif midpoint_depth <= 6:
         cr_factor = 0.85
-    elif rod_length_m <= 10:
+    elif midpoint_depth <= 10:
         cr_factor = 0.95
     else:
         cr_factor = 1.0
@@ -201,10 +201,7 @@ def calculate_friction_angle(
         phi_prime = 15.0 + math.sqrt(12.5 * max(n145, 0))
     else:
         print(f"Tipo de formulación no soportada: {formulation}")
-
-    else: formulation == FormulationType.JRB: 
-
-        phi_prime =   # Valor por defecto si no se reconoce la formulación    
+       
     return phi_prime
 
 # -----------------------------
@@ -266,16 +263,15 @@ def calculate_spt_parameters(
     field_energy = project_data["field_energy_percent"]
     formulation = project_data["formulation"]
     borehole_diameter = borehole_data["diameter_mm"]
-    rod_length = borehole_data["rod_length"]
     
     # Calcular tensiones
     stress_results = calculate_stress(
         depth, gamma_humid, gamma_saturated, water_table_depth
     )
     
-    # Factores de corrección
+    # Factores de corrección (CR se basa en la profundidad del punto medio)
     correction_factors = calculate_correction_factors(
-        borehole_diameter, "standard", rod_length
+        borehole_diameter, "standard", depth
     )
     cn_factor = calculate_cn_factor(stress_results["sigma_prime"])
     

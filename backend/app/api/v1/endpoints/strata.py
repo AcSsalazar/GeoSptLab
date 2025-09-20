@@ -9,7 +9,7 @@ from app.core.database import get_db
 from app.repositories.stratum import StratumRepository
 from app.repositories.project import ProjectRepository
 from app.schemas.stratum import (
-    StratumCreate, StratumUpdate, StratumResponse
+    StratumCreate, StratumUpdate, StratumResponse, StratumBulkCreate
 )
 
 router = APIRouter()
@@ -40,6 +40,51 @@ def create_stratum(
         )
     
     return stratum_repo.create(stratum_data)
+
+
+@router.post("/bulk", response_model=List[StratumResponse], status_code=status.HTTP_201_CREATED)
+def create_strata_from_project(
+    bulk_data: StratumBulkCreate,
+    db: Session = Depends(get_db)
+):
+    """Create multiple strata from Excel base sheet data."""
+    project_repo = ProjectRepository(db)
+    stratum_repo = StratumRepository(db)
+    
+    # Verify project exists
+    project = project_repo.get_by_id(bulk_data.project_id)
+    if not project:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Project with ID {bulk_data.project_id} not found"
+        )
+    
+    created_strata = []
+    
+    for stratum_data in bulk_data.strata:
+        # Validate required gamma values are provided
+        if "gamma_humid" not in stratum_data or "gamma_saturated" not in stratum_data:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Gamma values must be provided for each stratum in Excel workflow"
+            )
+            
+        # Add project_id
+        stratum_data["project_id"] = bulk_data.project_id
+        
+        # Check if stratum code already exists
+        if stratum_repo.get_by_code_and_project(bulk_data.project_id, stratum_data["stratum_code"]):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Stratum with code '{stratum_data['stratum_code']}' already exists in this project"
+            )
+        
+        # Create stratum
+        create_data = StratumCreate(**stratum_data)
+        created_stratum = stratum_repo.create(create_data)
+        created_strata.append(created_stratum)
+    
+    return created_strata
 
 
 @router.get("/project/{project_id}", response_model=List[StratumResponse])

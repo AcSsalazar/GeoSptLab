@@ -51,10 +51,16 @@ def calculate_spt_parameters_for_project(
     for interval in intervals:
         try:
             # Prepare data for calculation
+            # Use borehole's water_table_depth if available, otherwise use project default
+            water_table_depth = interval.borehole.water_table_depth or project.water_table_depth
+            
+            # Use borehole's formulation if available, otherwise use project default  
+            formulation = interval.borehole.formulation or project.formulation
+            
             project_data = {
-                "water_table_depth": project.water_table_depth,
-                "field_energy_percent": project.field_energy_percent,
-                "formulation": project.formulation.value
+                "water_table_depth": water_table_depth,
+                "field_energy_percent": interval.borehole.field_energy_percent,  # Now from borehole
+                "formulation": formulation.value
             }
             
             stratum_data = {
@@ -63,8 +69,7 @@ def calculate_spt_parameters_for_project(
             }
             
             borehole_data = {
-                "diameter_mm": interval.borehole.diameter_mm,
-                "rod_length": interval.borehole.rod_length
+                "diameter_mm": interval.borehole.diameter_mm
             }
             
             spt_data = {
@@ -168,10 +173,16 @@ def calculate_single_interval(
     
     try:
         # Prepare data for calculation
+        # Use borehole's water_table_depth if available, otherwise use project default
+        water_table_depth = interval.borehole.water_table_depth or interval.borehole.project.water_table_depth
+        
+        # Use borehole's formulation if available, otherwise use project default
+        formulation = interval.borehole.formulation or interval.borehole.project.formulation
+        
         project_data = {
-            "water_table_depth": interval.borehole.project.water_table_depth,
-            "field_energy_percent": interval.borehole.project.field_energy_percent,
-            "formulation": interval.borehole.project.formulation.value
+            "water_table_depth": water_table_depth,
+            "field_energy_percent": interval.borehole.field_energy_percent,  # Now from borehole
+            "formulation": formulation.value
         }
         
         stratum_data = {
@@ -180,8 +191,7 @@ def calculate_single_interval(
         }
         
         borehole_data = {
-            "diameter_mm": interval.borehole.diameter_mm,
-            "rod_length": interval.borehole.rod_length
+            "diameter_mm": interval.borehole.diameter_mm
         }
         
         spt_data = {

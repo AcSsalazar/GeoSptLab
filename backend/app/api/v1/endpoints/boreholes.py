@@ -9,7 +9,7 @@ from app.core.database import get_db
 from app.repositories.borehole import BoreholeRepository
 from app.repositories.project import ProjectRepository
 from app.schemas.borehole import (
-    BoreholeCreate, BoreholeUpdate, BoreholeResponse
+    BoreholeCreate, BoreholeUpdate, BoreholeResponse, generate_borehole_name
 )
 
 router = APIRouter()
@@ -31,6 +31,13 @@ def create_borehole(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Project with ID {borehole_data.project_id} not found"
         )
+    
+    # Auto-generate borehole name if not provided
+    if not borehole_data.borehole_name:
+        # Get current borehole count for this project
+        existing_boreholes = borehole_repo.get_by_project_id(borehole_data.project_id)
+        next_sequence = len(existing_boreholes) + 1
+        borehole_data.borehole_name = generate_borehole_name(borehole_data.project_id, next_sequence)
     
     # Check if borehole name already exists in project
     if borehole_repo.exists_by_name(borehole_data.project_id, borehole_data.borehole_name):
