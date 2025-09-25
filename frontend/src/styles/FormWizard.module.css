@@ -1,0 +1,270 @@
+/* Refactored to use design system tokens instead of hardcoded values */
+
+.wizard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-component);
+}
+
+.progress {
+  margin-bottom: var(--spacing-component);
+  background: #f9fbff;
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-element);
+  /* border: 1px solid var(--color-border-primary); */
+  position: relative;
+  overflow: hidden;
+}
+
+
+.progressSteps {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.stepWrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.stepContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: var(--z-dropdown);
+}
+
+.stepButton {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.stepButton.completed {
+  background: linear-gradient(135deg, var(--color-success) 0%, #059669 100%);
+  color: var(--color-text-inverse);
+  transform: scale(1);
+  box-shadow: var(--shadow-md);
+}
+
+.stepButton.active {
+  background: radial-gradient(circle, rgb(159 199 23 / 72%) 5%, rgb(250 255 236) 69%);
+  border: 1px solid var(--color-text-tertiary);
+  color: #594f4f;;
+  box-shadow: var(--shadow-lg);
+  transform: scale(1.1);
+}
+
+.stepButton.inactive {
+  background: linear-gradient(135deg, var(--color-background-secondary) 0%, var(--color-background-tertiary) 100%);
+  color: var(--color-text-tertiary);
+  cursor: not-allowed;
+  box-shadow: var(--shadow-xs);
+}
+
+.stepButton.clickable:hover:not(.active):not(.completed) {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, var(--color-background-primary) 0%, var(--color-background-secondary) 100%);
+}
+
+.stepTitle {
+  margin-top: var(--spacing-element);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+  max-width: 300px;
+  line-height: var(--line-height-normal);
+  transition: all 0.3s ease;
+}
+
+.stepTitle.active {
+  color: #2d2e42;
+  font-weight: var(--font-weight-medium);
+  transform: translateY(-2px);
+}
+
+.stepTitle.completed {
+  color: var(--color-success);
+  font-weight: var(--font-weight-semibold);
+}
+
+.stepTitle.inactive {
+  color: var(--color-text-tertiary);
+}
+
+.progressLine {
+  position: absolute;
+  top: 28px;
+  left: 56px;
+  right: -56px;
+  height: 4px;
+  z-index: 1;
+  border-radius: var(--radius-sm);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.progressLine.completed {
+  background: linear-gradient(90deg, var(--color-success) 0%, #059669 100%);
+  box-shadow: var(--shadow-sm);
+}
+
+.progressLine.incomplete {
+  background: linear-gradient(90deg, var(--color-border-primary) 0%, var(--color-border-secondary) 100%);
+}
+
+.content {
+  background: var(--color-background-primary);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-component);
+  position: relative;
+  overflow: hidden;
+}
+
+
+
+
+
+.contentHeader {
+  margin-bottom: var(--spacing-section);
+  text-align: center;
+}
+
+.contentTitle {
+  color: var(--color-text-primary);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-element);
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--brand-primary) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: var(--line-height-tight);
+}
+
+.contentDescription {
+  color: var(--color-text-secondary);
+  font-size: var(--text-lg);
+  line-height: var(--line-height-relaxed);
+  max-width: 600px;
+  margin: 0 auto;
+  font-weight: var(--font-weight-regular);
+}
+
+.contentBody {
+  margin-bottom: var(--spacing-section);
+}
+
+.navigation {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--spacing-component);
+  padding-top: var(--spacing-component);
+  border-top: 1px solid var(--color-border-primary);
+}
+
+.nextButton {
+  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--color-warning) 50%, var(--brand-primary-dark) 100%);
+  color: var(--color-text-inverse);
+  border: none;
+  padding: var(--spacing-element) var(--spacing-5);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-md);
+  letter-spacing: 0.01em;
+  position: relative;
+  overflow: hidden;
+}
+
+.nextButton:hover:not(:disabled) {
+  background: #059668d7;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.nextButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.nextButton:disabled {
+  background: var(--color-text-tertiary);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: var(--shadow-xs);
+  opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+  .wizard {
+    padding: var(--spacing-element);
+  }
+
+  .content {
+    padding: var(--spacing-component);
+    border-radius: var(--radius-lg);
+  }
+
+  .stepTitle {
+    font-size: var(--text-xs);
+    max-width: 70px;
+  }
+
+  .stepButton {
+    width: 48px;
+    height: 48px;
+    font-size: var(--text-sm);
+  }
+
+  .progressLine {
+    top: 24px;
+    left: 48px;
+    right: -48px;
+  }
+
+  .contentTitle {
+    font-size: var(--text-xl);
+  }
+
+  .contentDescription {
+    font-size: var(--text-base);
+  }
+
+  .navigation {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nextButton {
+    width: 100%;
+    justify-content: center;
+  }
+}
+

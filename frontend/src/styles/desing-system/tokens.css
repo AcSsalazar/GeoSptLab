@@ -1,35 +1,34 @@
 :root {
   --space-0: 0;
-  --space-1: 0.5rem;  /* 8px */
-  --space-2: 1rem;    /* 16px */
-  --space-3: 1.5rem;  /* 24px */
-  --space-4: 2rem;    /* 32px */
-  --space-5: 2.5rem;  /* 40px */
-  --space-6: 3.052rem; 
-  --space-7: 4rem; 
-  --space-8: 5rem; 
-  --space-10:6rem; 
-
+  --space-1: 0.5rem; /* 8px */
+  --space-2: 1rem; /* 16px */
+  --space-3: 1.5rem; /* 24px */
+  --space-4: 2rem; /* 32px */
+  --space-5: 2.5rem; /* 40px */
+  --space-6: 3.052rem;
+  --space-7: 4rem;
+  --space-8: 5rem;
+  --space-10: 6rem;
 
   /* ===== SEMANTIC SPACING ===== */
-  --spacing-element: var(--space-1);      /* Entre elementos pequeños */
-  --spacing-component: var(--space-3);    /* Entre componentes */
-  --spacing-section: var(--space-6);      /* Entre secciones */
-  --spacing-page: var(--space-8);         /* Márgenes de página */
+  --spacing-element: var(--space-1); /* Entre elementos pequeños */
+  --spacing-component: var(--space-3); /* Entre componentes */
+  --spacing-section: var(--space-5); /* Entre secciones */
+  --spacing-page: var(--space-8); /* Márgenes de página */
 
   /* ===== BRAND COLORS (Tus colores actuales) ===== */
-  --brand-primary: #EF8B17;
-  --brand-primary-dark: #B33800;
+  --brand-primary: #ef8b17;
+  --brand-primary-dark: #b33800;
   --brand-secondary: #464646;
-  --brand-accent: #13131A;
+  --brand-accent: #13131a;
 
   /* ===== SEMANTIC COLORS ===== */
-  --color-text-primary: #0F0C0C;
+  --color-text-primary: #0f0c0c;
   --color-text-secondary: #464646;
-  --color-text-tertiary: #8D8D8D;
-  --color-text-inverse: #FFFFFF;
+  --color-text-tertiary: #8d8d8d;
+  --color-text-inverse: #ffffff;
 
-  --color-background-primary: #FFFFFF;
+  --color-background-primary: #ffffff;
   --color-background-secondary: #f8f9fa;
   --color-background-tertiary: #f1f3f4;
 
@@ -44,15 +43,15 @@
   --color-info: #3b82f6;
 
   /* ===== TYPOGRAPHY ===== */
-  --font-family-primary: 'Lexend Deca', system-ui, sans-serif;
-  
+  --font-family-primary: "Lexend Deca", system-ui, sans-serif;
+
   /* Type Scale - Perfect Fourth (1.333) */
-  --text-xs: 0.75rem;      /* 12px */
-  --text-sm: 0.875rem;     /* 14px */
-  --text-base: 1rem;       /* 16px */
-  --text-lg: 1.333rem;     /* ~21px */
-  --text-xl: 1.777rem;     /* ~28px */
-  --text-2xl: 2.369rem;    /* ~38px */
+  --text-xs: 0.75rem; /* 12px */
+  --text-sm: 0.875rem; /* 14px */
+  --text-base: 1rem; /* 16px */
+  --text-lg: 1.333rem; /* ~21px */
+  --text-xl: 1.777rem; /* ~28px */
+  --text-2xl: 2.369rem; /* ~38px */
 
   /* Font Weights */
   --font-weight-regular: 400;
@@ -73,11 +72,11 @@
   --shadow-lg: 0 15px 25px rgba(0, 0, 0, 0.1);
 
   /* ===== BORDER RADIUS - 8pt aligned ===== */
-  --radius-sm: 0.25rem;     /* 4px */
-  --radius-base: 0.5rem;    /* 8px */
-  --radius-md: 0.75rem;     /* 12px */
-  --radius-lg: 1rem;        /* 16px */
-  --radius-xl: 1.5rem;      /* 24px */
+  --radius-sm: 0.25rem; /* 4px */
+  --radius-base: 0.5rem; /* 8px */
+  --radius-md: 0.75rem; /* 12px */
+  --radius-lg: 1rem; /* 16px */
+  --radius-xl: 1.5rem; /* 24px */
   --radius-full: 9999px;
 
   /* ===== Z-INDEX SCALE ===== */

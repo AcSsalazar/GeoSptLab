@@ -51,8 +51,8 @@ def calculate_spt_parameters_for_project(
     for interval in intervals:
         try:
             # Prepare data for calculation
-            # Use borehole's water_table_depth if available, otherwise use project default
-            water_table_depth = interval.borehole.water_table_depth or project.water_table_depth
+            # Use borehole's water_table_depth exclusively
+            water_table_depth = interval.borehole.water_table_depth
             
             # Use borehole's formulation if available, otherwise use project default  
             formulation = interval.borehole.formulation or project.formulation
@@ -173,8 +173,8 @@ def calculate_single_interval(
     
     try:
         # Prepare data for calculation
-        # Use borehole's water_table_depth if available, otherwise use project default
-        water_table_depth = interval.borehole.water_table_depth or interval.borehole.project.water_table_depth
+        # Use borehole's water_table_depth exclusively
+        water_table_depth = interval.borehole.water_table_depth
         
         # Use borehole's formulation if available, otherwise use project default
         formulation = interval.borehole.formulation or interval.borehole.project.formulation

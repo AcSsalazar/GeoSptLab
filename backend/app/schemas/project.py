@@ -30,6 +30,7 @@ class FormulationType(str, Enum):
 class ProjectBase(BaseModel):
     """Base schema for Project."""
 
+    project_name: str = Field(..., min_length=1, max_length=100, description="Name of the project") # Nombre del proyecto
     project_code: str = Field(
         default_factory=generate_id,
         min_length=1,
@@ -47,12 +48,6 @@ class ProjectBase(BaseModel):
         ge=1,
         le=50,
         description="Number of soil strata",)           # Número de estratos del suelo
-    
-    water_table_depth: Optional[float] = Field(
-        None,
-        ge=0,
-        le=500,
-        description="Default water table depth in meters (can be overridden per borehole)",) # Nivel freático por defecto
     
     formulation: FormulationType = Field(
         FormulationType.KISHIDA,
@@ -73,10 +68,10 @@ class ProjectCreate(ProjectBase):
 
 class ProjectUpdate(BaseModel):
     """Schema for updating a Project."""
+    project_name: Optional[str] = Field(None, min_length=1, max_length=100)
     project_code: Optional[str] = Field(None, min_length=1, max_length=10)
     number_of_boreholes: Optional[int] = Field(None, ge=1, le=100)
     number_of_strata: Optional[int] = Field(None, ge=1, le=50)
-    water_table_depth: Optional[float] = Field(None, ge=0, le=500)
     formulation: Optional[FormulationType] = Field(None)
 
 class ProjectResponse(ProjectBase):

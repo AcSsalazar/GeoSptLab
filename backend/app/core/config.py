@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     email_port: int = 25
     
     # CORS settings
-    allowed_origins: List[str] = ["http://localhost:3000", "http://localhost:5173"]
+    allowed_origins: List[str] = ["*"]
     allowed_methods: List[str] = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     allowed_headers: List[str] = ["*"]
     

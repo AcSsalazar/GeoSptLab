@@ -11,6 +11,7 @@ export type FormulationType = typeof FormulationType[keyof typeof FormulationTyp
 
 export interface Project {
   id: number;
+  project_name: string,
   project_code: string;
   number_of_boreholes: number;
   number_of_strata: number;
@@ -24,14 +25,12 @@ export interface Project {
 }
 
 export interface ProjectCreate {
-  project_code: string;
+  project_name: string;
+  //project_code: string;
   number_of_boreholes: number;
   number_of_strata: number;
   formulation: FormulationType;
-  field_energy_percent: number;
-  borehole_diameter?: number;
-  rod_length?: number;
-  water_table_depth?: number;
+
 }
 
 export interface ProjectWithDetails extends Project {

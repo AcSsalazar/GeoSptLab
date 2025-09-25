@@ -22,7 +22,8 @@ class SoilStratum(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     project_id = Column(Integer, ForeignKey("projects.id"), nullable=False)
-    stratum_code = Column(Integer, nullable=False)  # e.g., "A", "B", "C"
+    stratum_code = Column(Integer, nullable=False)  # e.g., 1, 2, 3
+    name = Column(String, nullable=False)  # Name of the stratum (e.g., "Ceniza Volcánica")
     description = Column(String, nullable=False)  # Soil description
     initial_depth = Column(Float, nullable=False)  # m, top depth of stratum
     final_depth = Column(Float, nullable=False)  # m, bottom depth of stratum

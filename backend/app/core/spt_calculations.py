@@ -168,7 +168,7 @@ def normalize_n_values(
     ce_55 = 55.0 / field_energy_percent
     ce_60 = 60.0 / field_energy_percent
     
-    n45 = n_field * cb_factor * cs_factor * cr_factor * ce_45
+    n45 = ( n_field * ce_45 ) / (cb_factor * cs_factor * cr_factor * 60) 
     n55 = n_field * cb_factor * cs_factor * cr_factor * ce_55
     n60 = n_field * cb_factor * cs_factor * cr_factor * ce_60
     n145 = n_field * cb_factor * cs_factor * cr_factor * ce_45 * cn_factor
@@ -259,7 +259,7 @@ def calculate_spt_parameters(
     n_field = spt_data["nspt_field"]
     gamma_humid = stratum_data["gamma_humid"]
     gamma_saturated = stratum_data["gamma_saturated"]
-    water_table_depth = project_data.get("water_table_depth")
+    water_table_depth = borehole_data.get("water_table_depth")
     field_energy = project_data["field_energy_percent"]
     formulation = project_data["formulation"]
     borehole_diameter = borehole_data["diameter_mm"]

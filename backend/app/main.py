@@ -1,7 +1,7 @@
 """
 FastAPI application factory and configuration.
 """
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.database import create_tables
 from app.core.config import settings
@@ -28,11 +28,24 @@ def create_application():
     # Set up CORS middleware
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.allowed_origins,
+        allow_origins=["http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5173", "http://127.0.0.1:5174"],
         allow_credentials=True,
-        allow_methods=settings.allowed_methods,
-        allow_headers=settings.allowed_headers,
+        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allow_headers=["*"],
     )
+
+    # Add explicit OPTIONS handler for preflight requests
+    @app.options("/{path:path}")
+    async def options_handler(request: Request, path: str):
+        return Response(
+            status_code=200,
+            headers={
+                "Access-Control-Allow-Origin": request.headers.get("origin", "*"),
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": "*",
+                "Access-Control-Allow-Credentials": "true",
+            }
+        )
 
     # Include API routes
     app.include_router(api_router, prefix=settings.api_v1_str)

@@ -53,16 +53,28 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description="Initialize SPT Parameters Calculator database")
     parser.add_argument("--reset", action="store_true", help="Reset database by dropping and recreating all tables")
+    parser.add_argument("--create-only", action="store_true", help="Create tables only (don't drop existing)")
+    parser.add_argument("--drop-only", action="store_true", help="Drop tables only (don't recreate)")
     
     args = parser.parse_args()
     
     if args.reset:
         success = reset_database()
+    elif args.create_only:
+        success = init_database()
+    elif args.drop_only:
+        try:
+            drop_tables()
+            print("✓ All tables dropped successfully!")
+            success = True
+        except Exception as e:
+            print(f"✗ Error dropping tables: {e}")
+            success = False
     else:
         success = init_database()
     
     if success:
-        print("Database initialization completed successfully!")
+        print("Database operation completed successfully!")
     else:
-        print("Database initialization failed!")
+        print("Database operation failed!")
         sys.exit(1)

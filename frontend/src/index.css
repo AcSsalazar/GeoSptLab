@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap');
 
 :root {
   --color-strong: #EF8B17;
@@ -22,8 +22,8 @@ body {
   color: var(--main-text-color);
   line-height: 1.5;
 }
-
-/* Utility classes similar to Tailwind */
+ */
+/* Utility classes similar to Tailwind 
 .text-center { text-align: center; }
 .text-sm { font-size: 0.875rem; }
 .text-lg { font-size: 1.125rem; }
@@ -119,7 +119,7 @@ body {
 .cursor-pointer { cursor: pointer; }
 .cursor-not-allowed { cursor: not-allowed; }
 
-/* Custom components */
+/* Custom components 
 .btn {
   display: inline-flex;
   align-items: center;
@@ -196,7 +196,7 @@ body {
   .md\\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
-/* Animations */
+/* Animations 
 .animate-spin {
   animation: spin 1s linear infinite;
 }
@@ -206,7 +206,7 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* Custom styles for form wizard */
+/* Custom styles for form wizard 
 .wizard-step {
   transition: all 0.3s ease;
 }
@@ -220,3 +220,5 @@ body {
   background-color: #10b981;
   color: white;
 }
+  
+*/

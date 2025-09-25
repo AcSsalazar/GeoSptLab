@@ -33,7 +33,9 @@ def create_project(
             detail=f"Project with code '{project_data.project_code}' already exists"
         )
     
-    return repo.create(project_data)
+    project = repo.create(project_data)
+    
+    return project
 
 
 @router.get("/", response_model=List[ProjectResponse])
@@ -61,6 +63,7 @@ def get_project(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Project with ID {project_id} not found"
         )
+    
     
     return project
 
@@ -177,11 +180,10 @@ def get_project_summary(
     summary = {
         "project": {
             "id": project.project_code,
-            "name": f"Project {project.project_code}",  # Basic name, can be enhanced
+            "project_name": project.project_name,  # Use actual name field from model
             "date": project.created_at.strftime("%Y-%m-%d") if project.created_at else None,
             "number_of_boreholes": project.number_of_boreholes,
             "number_of_strata": project.number_of_strata,
-            "water_table_depth": project.water_table_depth,
             "formulation": project.formulation
         },
         "boreholes": []

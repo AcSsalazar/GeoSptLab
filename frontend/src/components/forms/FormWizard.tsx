@@ -1,38 +1,67 @@
-import { useState } from 'react';
-import { ChevronRight, Check } from 'lucide-react';
-//import { Button } from '@/components/ui';
+"use client"
+
+import type React from "react"
+
+import { useState } from "react"
+import { ChevronRight, Check } from "lucide-react"
+import styles from "@/styles/FormWizard.module.css"
 
 interface WizardStep {
-  id: string;
-  title: string;
-  description: string;
-  component: React.ReactNode;
-  isValid?: boolean;
+  id: string
+  title: string
+  component: React.ReactNode
+  isValid?: boolean
 }
 
 interface FormWizardProps {
-  steps: WizardStep[];
-  onComplete: () => void;
-  onStepChange?: (stepIndex: number) => void;
+  steps: WizardStep[]
+  onComplete: () => void
+  onStepChange?: (stepIndex: number) => void
+  onStepNext?: (stepIndex: number) => Promise<void> | void
 }
 
-const FormWizard: React.FC<FormWizardProps> = ({
-  steps,
-  onComplete,
-  onStepChange
-}) => {
-  const [currentStep, setCurrentStep] = useState(0);
+const FormWizard: React.FC<FormWizardProps> = ({ steps = [], onComplete, onStepChange, onStepNext }) => {
+  const [currentStep, setCurrentStep] = useState(0)
 
-  const handleNext = () => {
+  if (!steps || steps.length === 0) {
+    return (
+      <div className={styles.wizard}>
+        <div className={styles.content}>
+          <div className={styles.contentHeader}>
+            <h2 className={styles.contentTitle}>No Steps Available</h2>
+            <p className={styles.contentDescription}>Please provide steps to display the wizard.</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const handleNext = async () => {
     if (currentStep < steps.length - 1) {
-      const nextStep = currentStep + 1;
-      setCurrentStep(nextStep);
-      onStepChange?.(nextStep);
-      console.log("Boton Pulsado")
+      // Call onStepNext if provided (for API calls)
+      if (onStepNext) {
+        try {
+          await onStepNext(currentStep);
+          // After successful API call, proceed with navigation
+          const nextStep = currentStep + 1
+          setCurrentStep(nextStep)
+          onStepChange?.(nextStep)
+        } catch (error) {
+          console.error('Step submission failed:', error);
+          // Don't proceed if submission fails
+          return;
+        }
+      } else {
+        // Fallback to default navigation
+        const nextStep = currentStep + 1
+        setCurrentStep(nextStep)
+        onStepChange?.(nextStep)
+      }
+      console.log("Next button clicked")
     } else {
-      onComplete();
+      onComplete()
     }
-  };
+  }
 
   // const handlePrevious = () => {
   //   if (currentStep > 0) {
@@ -43,111 +72,71 @@ const FormWizard: React.FC<FormWizardProps> = ({
   // };
 
   const goToStep = (stepIndex: number) => {
-    setCurrentStep(stepIndex);
-    onStepChange?.(stepIndex);
-  };
+    setCurrentStep(stepIndex)
+    onStepChange?.(stepIndex)
+  }
 
-  const currentStepData = steps[currentStep];
-  const isLastStep = currentStep === steps.length - 1;
+  const safeCurrentStep = Math.min(Math.max(0, currentStep), steps.length - 1)
+  const currentStepData = steps[safeCurrentStep]
+  const isLastStep = safeCurrentStep === steps.length - 1
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className={styles.wizard}>
       {/* Progress indicator */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
+      <div className={styles.progress}>
+        <div className={styles.progressSteps}>
           {steps.map((step, index) => {
-            const isActive = index === currentStep;
-            const isCompleted = index < currentStep;
-            const isClickable = index <= currentStep;
+            const isActive = index === safeCurrentStep
+            const isCompleted = index < safeCurrentStep
+            const isClickable = index <= safeCurrentStep
 
             return (
-              <div key={step.id} className="flex items-center flex-1">
-                <div className="flex flex-col items-center">
+              <div key={step.id} className={styles.stepWrapper}>
+                <div className={styles.stepContent}>
                   <button
                     onClick={() => isClickable && goToStep(index)}
                     disabled={!isClickable}
-                    className={`
-                      w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium
-                      transition-colors duration-200
-                      ${isCompleted 
-                        ? 'bg-green-500 text-white' 
-                        : isActive 
-                          ? 'bg-blue-500 text-white' 
-                          : 'bg-gray-200 text-gray-500'
-                      }
-                      ${isClickable ? 'cursor-pointer hover:opacity-80' : 'cursor-not-allowed'}
-                    `}
+                    className={`${styles.stepButton} ${
+                      isCompleted ? styles.completed : isActive ? styles.active : styles.inactive
+                    } ${isClickable ? styles.clickable : ""}`}
                   >
-                    {isCompleted ? (
-                      <Check size={16} />
-                    ) : (
-                      index + 1
-                    )}
+                    {isCompleted ? <Check size={16} /> : index + 1}
                   </button>
-                  <span className={`
-                    mt-2 text-xs text-center max-w-20
-                    ${isActive ? 'text-blue-600 font-medium' : 'text-gray-500'}
-                  `}>
+                  <span className={`${styles.stepTitle} ${isActive ? styles.active : styles.inactive}`}>
                     {step.title}
                   </span>
                 </div>
-                
+
                 {index < steps.length - 1 && (
-                  <div className={`
-                    flex-1 h-0.5 mx-4 mt-5
-                    ${index < currentStep ? 'bg-green-500' : 'bg-gray-200'}
-                  `} />
+                  <div
+                    className={`${styles.progressLine} ${index < safeCurrentStep ? styles.completed : styles.incomplete}`}
+                  />
                 )}
               </div>
-            );
+            )
           })}
         </div>
       </div>
 
       {/* Current step content */}
-      <div className="bg-white rounded-lg shadow-sm border p-6">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            {currentStepData.title}
-          </h2>
-          <p className="text-gray-600">
-            {currentStepData.description}
-          </p>
+      <div className={styles.content}>
+        <div className={styles.contentHeader}>
+          <h2 className={styles.contentTitle}></h2>
+         {/* <p className={styles.contentDescription}>{currentStepData.description}</p> */}
         </div>
 
-        <div className="mb-8">
-          {currentStepData.component}
-        </div>
+        <div className={styles.contentBody}>{currentStepData.component}</div>
 
-        {/* Navigation buttons 
-        <div className="flex justify-between">
-          <Button
-            variant="secondary"
-            onClick={handlePrevious}
-            disabled={currentStep === 0}
-          >
-            <ChevronLeft size={16} className="mr-1" />
-            Previous
-          </Button>
-
-          <div className="text-sm text-gray-500 self-center">
-            Step {currentStep + 1} of {steps.length}
-          </div>
-          */ }
-
-          <button
-            onClick={handleNext}
-            disabled={currentStepData.isValid === false}
-          >
-
-          
-            {isLastStep ? 'Complete' : 'Next'}
-            {!isLastStep && <ChevronRight size={16} className="ml-1" />}
+        {/* Navigation buttons */}
+        <div className={styles.navigation}>
+          <button onClick={handleNext} disabled={currentStepData.isValid === false} className={styles.nextButton}>
+            {isLastStep ? "Complete" : "Next"}
+            {!isLastStep && <ChevronRight size={16} />}
           </button>
-        
+        </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default FormWizard;
+export default FormWizard

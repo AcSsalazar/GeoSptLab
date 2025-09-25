@@ -28,10 +28,20 @@
 }
 
 /* ===== TEXT ALIGNMENT ===== */
-.text-left { text-align: left; }
-.text-center { text-align: center; }
-.text-right { text-align: right; }
+.text-left {
+  text-align: left;
+}
+.text-center {
+  text-align: center;
+}
+.text-right {
+  text-align: right;
+}
 
 /* ===== DEVELOPMENT HELPERS ===== */
-.debug-outline { outline: 2px solid red !important; }
-.debug-spacing { background: rgba(255, 0, 0, 0.1) !important; }
+.debug-outline {
+  outline: 2px solid red !important;
+}
+.debug-spacing {
+  background: rgba(255, 0, 0, 0.1) !important;
+}

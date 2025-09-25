@@ -1,169 +1,139 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import Input from '../ui/Input';
-import Select from '../ui/Select';
-import type { ProjectCreate } from '../../types/project';
-import {FormulationType } from '../../types/project';
-const projectSchema = z.object({
-  project_code: z.string().min(1, 'Project code is required').max(50, 'Project code too long'),
-  number_of_boreholes: z.number().min(1, 'At least 1 borehole required').max(100, 'Too many boreholes'),
-  number_of_strata: z.number().min(1, 'At least 1 stratum required').max(50, 'Too many strata'),
-  formulation: z.nativeEnum(FormulationType),
-  field_energy_percent: z.number().min(1, 'Energy % must be positive').max(200, 'Energy % too high'),
-  borehole_diameter: z.number().min(50, 'Diameter too small').max(1000, 'Diameter too large').optional(),
-  rod_length: z.number().min(1, 'Rod length must be positive').max(100, 'Rod length too long').optional(),
-  water_table_depth: z.number().min(0, 'Depth cannot be negative').max(500, 'Depth too large').optional(),
-});
+"use client"
 
-type ProjectFormData = z.infer<typeof projectSchema>;
+import React from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import type { ProjectCreate } from "../../types/project"
+import { FormulationType } from "../../types/project"
+import styles from "@/styles/ProjectSetupForm.module.css"
+
+// Esquema de validacion usando Zod para los campor del formulario base.
+const projectSchema = z.object({
+  project_name: z.string().min(1, "Nombre del proyecto es necesario").max(100, "Nombre del proyecto es muy largo"),
+  number_of_boreholes: z.number().min(1, "Es necesario minimo una perforación").max(30, "Máximo 30 perforaciones"),
+  number_of_strata: z.number().min(1, "Es necesario minimo un estrato").max(7, "Máximo 7 estratos"),
+  formulation: z.nativeEnum(FormulationType),
+})
+
+type ProjectFormData = z.infer<typeof projectSchema>
 
 interface ProjectSetupFormProps {
-  initialData?: Partial<ProjectCreate>;
-  onValidData: (data: ProjectFormData, isValid: boolean) => void;
+  initialData?: Partial<ProjectCreate>
+  onValidData: (data: ProjectFormData, isValid: boolean) => void
 }
 
-const ProjectSetupForm: React.FC<ProjectSetupFormProps> = ({
-  initialData,
-  onValidData
-}) => {
+const ProjectSetupForm: React.FC<ProjectSetupFormProps> = ({ initialData, onValidData }) => {
   const {
     register,
     watch,
     formState: { errors, isValid },
-    getValues
+    getValues,
   } = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
-      project_code: initialData?.project_code || '',
+      project_name: initialData?.project_name || "",
       number_of_boreholes: initialData?.number_of_boreholes || 3,
       number_of_strata: initialData?.number_of_strata || 3,
       formulation: initialData?.formulation || FormulationType.KISHIDA,
-      field_energy_percent: initialData?.field_energy_percent || 45,
-      borehole_diameter: initialData?.borehole_diameter || 150,
-      rod_length: initialData?.rod_length || 15,
-      water_table_depth: initialData?.water_table_depth || undefined,
     },
-    mode: 'onChange'
-  });
+    mode: "onChange",
+  })
 
   // Watch all form values and notify parent of changes
   React.useEffect(() => {
     const subscription = watch(() => {
-      const formData = getValues();
-      onValidData(formData, isValid);
-    });
-    return () => subscription.unsubscribe();
-  }, [watch, getValues, onValidData, isValid]);
-
-  const formulationOptions = [
-    { value: FormulationType.KISHIDA, label: 'Kishida' },
-    { value: FormulationType.JRB, label: 'JRB' }
-  ];
+      const formData = getValues()
+      onValidData(formData, isValid)
+      console.log("Form Data Changed:", formData)
+    })
+    return () => subscription.unsubscribe()
+  }, [watch, getValues, onValidData, isValid])
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Input
-          label="Project Code"
-          {...register('project_code')}
-          error={errors.project_code?.message}
-          placeholder="e.g., CP-00630"
-          required
-        />
+    <div className={styles.formContainer}>
+      <h2 className={styles.formTitle}>Configuración del Proyecto</h2>
 
-        <Select
-          label="Calculation Formulation"
-          {...register('formulation')}
-          error={errors.formulation?.message}
-          options={formulationOptions}
-          required
-        />
+      <div className={`${styles.gridContainer} ${styles.gridTwoColumns}`}>
+        <div className={styles.inputGroup}>
+          <label className={styles.inputLabel}>
+            Nombre del Proyecto <span className={styles.required}>*</span>
+          </label>
+          <input
+            className={`${styles.inputField} ${errors.project_name ? styles.inputError : ""}`}
+            {...register("project_name")}
+            placeholder="e.g., Edificio Residencial Aurora"
+          />
+          {errors.project_name && <div className={styles.errorMessage}>{errors.project_name.message}</div>}
+        </div>
+
+        <div className={styles.inputGroup}>
+          <label className={styles.inputLabel}>
+            Formulación de Cálculo <span className={styles.required}>*</span>
+          </label>
+          <select
+            className={`${styles.selectField} ${errors.formulation ? styles.inputError : ""}`}
+            {...register("formulation")}
+          >
+            <option value={FormulationType.KISHIDA}>Kishida</option>
+            <option value={FormulationType.JRB}>JRB</option>
+          </select>
+          {errors.formulation && <div className={styles.errorMessage}>{errors.formulation.message}</div>}
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Input
-          label="Number of Boreholes"
-          type="number"
-          {...register('number_of_boreholes', { valueAsNumber: true })}
-          error={errors.number_of_boreholes?.message}
-          min="1"
-          max="100"
-          required
-        />
-
-        <Input
-          label="Number of Strata"
-          type="number"
-          {...register('number_of_strata', { valueAsNumber: true })}
-          error={errors.number_of_strata?.message}
-          min="1"
-          max="50"
-          required
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Input
-          label="Field Energy Percentage"
-          type="number"
-          {...register('field_energy_percent', { valueAsNumber: true })}
-          error={errors.field_energy_percent?.message}
-          min="1"
-          max="200"
-          step="0.1"
-          hint="Typical value is 45%"
-          required
-        />
-
-        <Input
-          label="Borehole Diameter (mm)"
-          type="number"
-          {...register('borehole_diameter', { valueAsNumber: true })}
-          error={errors.borehole_diameter?.message}
-          min="50"
-          max="1000"
-          hint="Standard is 150mm"
-        />
-
-        <Input
-          label="Rod Length (m)"
-          type="number"
-          {...register('rod_length', { valueAsNumber: true })}
-          error={errors.rod_length?.message}
-          min="1"
-          max="100"
-          step="0.1"
-          hint="Standard is 15m"
-        />
-      </div>
-
-      <Input
-        label="Water Table Depth (m)"
-        type="number"
-        {...register('water_table_depth', { valueAsNumber: true })}
-        error={errors.water_table_depth?.message}
-        min="0"
-        max="500"
-        step="0.1"
-        hint="Leave empty if no water table or unknown"
-      />
-
-      {/* Form validation summary */}
-      <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-        <h4 className="text-sm font-medium text-blue-800 mb-2">Project Summary</h4>
-        <div className="text-sm text-blue-700 space-y-1">
-          <p>• <strong>{watch('project_code') || 'Project Code'}</strong> with <strong>{watch('formulation')}</strong> formulation</p>
-          <p>• <strong>{watch('number_of_boreholes')}</strong> boreholes and <strong>{watch('number_of_strata')}</strong> soil strata</p>
-          <p>• <strong>{watch('field_energy_percent')}%</strong> field energy</p>
-          {watch('water_table_depth') && (
-            <p>• Water table at <strong>{watch('water_table_depth')}m</strong> depth</p>
+      <div className={`${styles.gridContainer} ${styles.gridTwoColumns}`}>
+        <div className={styles.inputGroup}>
+          <label className={styles.inputLabel}>
+            Número de Perforaciones <span className={styles.required}>*</span>
+          </label>
+          <input
+            type="number"
+            className={`${styles.inputField} ${errors.number_of_boreholes ? styles.inputError : ""}`}
+            {...register("number_of_boreholes", { valueAsNumber: true })}
+            min="1"
+            max="30"
+            placeholder="3"
+          />
+          {errors.number_of_boreholes && (
+            <div className={styles.errorMessage}>{errors.number_of_boreholes.message}</div>
           )}
+        </div>
+
+        <div className={styles.inputGroup}>
+          <label className={styles.inputLabel}>
+            Número de Estratos <span className={styles.required}>*</span>
+          </label>
+          <input
+            type="number"
+            className={`${styles.inputField} ${errors.number_of_strata ? styles.inputError : ""}`}
+            {...register("number_of_strata", { valueAsNumber: true })}
+            min="1"
+            max="7"
+            placeholder="3"
+          />
+          {errors.number_of_strata && <div className={styles.errorMessage}>{errors.number_of_strata.message}</div>}
+        </div>
+      </div>
+
+
+
+      {/* Project Summary Card */}
+      <div className={styles.projectSummary}>
+        <h3 className={styles.summaryTitle}>Resumen del Proyecto</h3>
+        <div className={styles.summaryContent}>
+          <div className={styles.summaryItem}>
+            <span className={styles.summaryValue}>{watch("project_name") || "Sin nombre"}</span>
+            mediante formulación <span className={styles.summaryValue}>{watch("formulation")}</span>
+          </div>
+          <div className={styles.summaryItem}>
+            <span className={styles.summaryValue}>{watch("number_of_boreholes")}</span> perforaciones con
+            <span className={styles.summaryValue}> {watch("number_of_strata")}</span> estratos totales
+          </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ProjectSetupForm;
+export default ProjectSetupForm

@@ -95,7 +95,8 @@ A professional web application for calculating geotechnical soil resistance para
 ### 1. Project Setup
 - Define project parameters (code, formulation type, energy percentage)
 - Configure borehole and stratum counts
-- Set water table depth and equipment specifications
+- **Specify strata names** (comma-separated list matching the number of strata)
+- Set equipment specifications
 
 ### 2. Soil Strata Definition
 - Create soil layers with geotechnical properties
@@ -198,8 +199,7 @@ curl -X POST "http://localhost:8000/api/v1/projects/" \
     "number_of_boreholes": 3,
     "number_of_strata": 3,
     "formulation": "kishida",
-    "field_energy_percent": 45.0,
-    "water_table_depth": 3.0
+    "field_energy_percent": 45.0
   }'
 ```
 
