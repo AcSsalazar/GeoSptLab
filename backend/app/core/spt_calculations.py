@@ -164,9 +164,9 @@ def normalize_n_values(
     Returns:
         Diccionario con valores normalizados N45, N55, N60, N145
     """
-    ce_45 = 45.0 / field_energy_percent
-    ce_55 = 55.0 / field_energy_percent
-    ce_60 = 60.0 / field_energy_percent
+    ce_45 = 45.0 
+    ce_55 = 55.0
+    ce_60 = 60.0 
     
     n45 = ( n_field * ce_45 ) / (cb_factor * cs_factor * cr_factor * 60) 
     n55 = n_field * cb_factor * cs_factor * cr_factor * ce_55

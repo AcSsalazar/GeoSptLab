@@ -32,7 +32,7 @@ class SPTIntervalBase(BaseModel):
 class SPTIntervalCreate(SPTIntervalBase):
     """Schema for creating a new SPT Interval."""
     borehole_id: int = Field(..., gt=0, description="Borehole ID")
-    stratum_id: int = Field(..., gt=0, description="Stratum ID")
+    borehole_stratum_id: int = Field(..., gt=0, description="Borehole stratum ID")
 
     def calculate_midpoint_depth(self) -> float:
         """Calculate midpoint depth of the interval."""
@@ -45,14 +45,14 @@ class SPTIntervalUpdate(BaseModel):
     depth_to: Optional[float] = Field(None, ge=0, le=500)
     nspt_field: Optional[int] = Field(None, ge=0, le=200)
     description: Optional[str] = Field(None, max_length=500)
-    stratum_id: Optional[int] = Field(None, gt=0)
+    borehole_stratum_id: Optional[int] = Field(None, gt=0)
 
 
 class SPTIntervalResponse(SPTIntervalBase):
     """Schema for SPT Interval response."""
     id: int
     borehole_id: int
-    stratum_id: int
+    borehole_stratum_id: int
     midpoint_depth: float
 
     class Config:

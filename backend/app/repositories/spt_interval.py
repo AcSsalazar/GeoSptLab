@@ -35,7 +35,7 @@ class SPTIntervalRepository:
             self.db.query(SPTInterval)
             .options(
                 selectinload(SPTInterval.borehole),
-                selectinload(SPTInterval.stratum),
+                selectinload(SPTInterval.borehole_stratum).selectinload(SPTInterval.borehole_stratum.stratum_definition),
                 selectinload(SPTInterval.calculated_result)
             )
             .filter(SPTInterval.id == interval_id)
@@ -47,6 +47,15 @@ class SPTIntervalRepository:
         return (
             self.db.query(SPTInterval)
             .filter(SPTInterval.borehole_id == borehole_id)
+            .order_by(SPTInterval.depth_from)
+            .all()
+        )
+
+    def get_by_borehole_stratum(self, borehole_stratum_id: int) -> List[SPTInterval]:
+        """Get all SPT intervals for a borehole stratum."""
+        return (
+            self.db.query(SPTInterval)
+            .filter(SPTInterval.borehole_stratum_id == borehole_stratum_id)
             .order_by(SPTInterval.depth_from)
             .all()
         )
@@ -76,7 +85,7 @@ class SPTIntervalRepository:
             self.db.query(SPTInterval)
             .options(
                 selectinload(SPTInterval.borehole),
-                selectinload(SPTInterval.stratum),
+                selectinload(SPTInterval.borehole_stratum).selectinload(SPTInterval.borehole_stratum.stratum_definition),
                 selectinload(SPTInterval.calculated_result)
             )
             .join(SPTInterval.borehole)

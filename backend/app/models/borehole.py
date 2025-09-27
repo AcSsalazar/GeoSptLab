@@ -31,4 +31,5 @@ class Borehole(Base):
     
     # Relationships
     project = relationship("Project", back_populates="boreholes")
+    borehole_strata = relationship("BoreholeStratum", back_populates="borehole", cascade="all, delete-orphan")
     spt_intervals = relationship("SPTInterval", back_populates="borehole", cascade="all, delete-orphan")

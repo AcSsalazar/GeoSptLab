@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.repositories.spt_interval import SPTIntervalRepository
 from app.repositories.borehole import BoreholeRepository
-from app.repositories.stratum import StratumRepository
+from app.repositories.borehole_stratum import BoreholeStratumRepository
 from app.schemas.spt_interval import (
     SPTIntervalCreate, SPTIntervalUpdate, SPTIntervalResponse
 )
@@ -23,7 +23,7 @@ def create_spt_interval(
 ):
     """Create a new SPT interval."""
     borehole_repo = BoreholeRepository(db)
-    stratum_repo = StratumRepository(db)
+    borehole_stratum_repo = BoreholeStratumRepository(db)
     interval_repo = SPTIntervalRepository(db)
     
     # Verify borehole exists
@@ -34,12 +34,19 @@ def create_spt_interval(
             detail=f"Borehole with ID {interval_data.borehole_id} not found"
         )
     
-    # Verify stratum exists
-    stratum = stratum_repo.get_by_id(interval_data.stratum_id)
-    if not stratum:
+    # Verify borehole stratum exists
+    borehole_stratum = borehole_stratum_repo.get_by_id(interval_data.borehole_stratum_id)
+    if not borehole_stratum:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Stratum with ID {interval_data.stratum_id} not found"
+            detail=f"Borehole stratum with ID {interval_data.borehole_stratum_id} not found"
+        )
+    
+    # Verify borehole stratum belongs to the correct borehole
+    if borehole_stratum.borehole_id != interval_data.borehole_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Borehole stratum {interval_data.borehole_stratum_id} does not belong to borehole {interval_data.borehole_id}"
         )
     
     # Check for depth overlaps within the same borehole
@@ -60,12 +67,12 @@ def create_spt_interval(
             detail=f"Interval end depth ({interval_data.depth_to}m) exceeds borehole depth ({borehole.final_depth}m)"
         )
     
-    # Verify depths are within stratum range
+    # Verify depths are within borehole stratum range
     midpoint_depth = (interval_data.depth_from + interval_data.depth_to) / 2.0
-    if not (stratum.initial_depth <= midpoint_depth <= stratum.final_depth):
+    if not (borehole_stratum.initial_depth <= midpoint_depth <= borehole_stratum.final_depth):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Interval midpoint ({midpoint_depth}m) is not within stratum range ({stratum.initial_depth}m - {stratum.final_depth}m)"
+            detail=f"Interval midpoint ({midpoint_depth}m) is not within borehole stratum range ({borehole_stratum.initial_depth}m - {borehole_stratum.final_depth}m)"
         )
     
     return interval_repo.create(interval_data)
@@ -101,24 +108,24 @@ def get_project_intervals(
     return interval_repo.get_by_project(project_id)
 
 
-@router.get("/stratum/{stratum_id}", response_model=List[SPTIntervalResponse])
-def get_stratum_intervals(
-    stratum_id: int,
+@router.get("/borehole-stratum/{borehole_stratum_id}", response_model=List[SPTIntervalResponse])
+def get_borehole_stratum_intervals(
+    borehole_stratum_id: int,
     db: Session = Depends(get_db)
 ):
-    """Get all SPT intervals for a stratum."""
-    stratum_repo = StratumRepository(db)
+    """Get all SPT intervals for a borehole stratum."""
+    borehole_stratum_repo = BoreholeStratumRepository(db)
     interval_repo = SPTIntervalRepository(db)
     
-    # Verify stratum exists
-    stratum = stratum_repo.get_by_id(stratum_id)
-    if not stratum:
+    # Verify borehole stratum exists
+    borehole_stratum = borehole_stratum_repo.get_by_id(borehole_stratum_id)
+    if not borehole_stratum:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Stratum with ID {stratum_id} not found"
+            detail=f"Borehole stratum with ID {borehole_stratum_id} not found"
         )
     
-    return interval_repo.get_by_stratum(stratum_id)
+    return interval_repo.get_by_borehole_stratum(borehole_stratum_id)
 
 
 @router.get("/{interval_id}", response_model=SPTIntervalResponse)

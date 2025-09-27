@@ -95,3 +95,65 @@ class BoreholeResponse(BoreholeBase):
 
     class Config:
         from_attributes = True
+
+
+class StratumAssignment(BaseModel):
+    """Schema for stratum assignment within a borehole."""
+    stratum_code: int = Field(..., ge=1, le=20, description="Stratum code reference")
+    depth_from: float = Field(..., ge=0, le=500, description="Depth where stratum starts in this borehole")
+    depth_to: float = Field(..., ge=0, le=500, description="Depth where stratum ends in this borehole")
+    
+    @model_validator(mode='after')
+    def validate_depth_range(self):
+        if self.depth_to <= self.depth_from:
+            raise ValueError('depth_to must be greater than depth_from')
+        return self
+
+
+class BoreholeWithStrata(BoreholeCreate):
+    """Schema for creating a borehole with strata assignments."""
+    strata_assignments: list[StratumAssignment] = Field(
+        ..., 
+        min_length=1,
+        description="List of strata present in this borehole"
+    )
+
+
+class BoreholeBulkCreate(BaseModel):
+    """Schema for bulk creating boreholes with strata assignments."""
+    project_id: int = Field(..., gt=0, description="Project ID")
+    boreholes: list[BoreholeWithStrata] = Field(
+        ..., 
+        min_length=1,
+        description="List of boreholes with their strata assignments"
+    )
+    
+    class Config:
+        schema_extra = {
+            "example": {
+                "project_id": 1,
+                "boreholes": [
+                    {
+                        "borehole_name": "P1",
+                        "final_depth": 10.0,
+                        "diameter_mm": 150.0,
+                        "field_energy_percent": 45.0,
+                        "rod_length": 15.0,
+                        "water_table_depth": 3.0,
+                        "formulation": "kishida",
+                        "strata_assignments": [
+                            {
+                                "stratum_code": 1,
+                                "depth_from": 0.0,
+                                "depth_to": 3.0
+                            },
+                            {
+                                "stratum_code": 2,
+                                "depth_from": 3.0,
+                                "depth_to": 10.0
+                            }
+                        ]
+                    }
+                ]
+            }
+        }

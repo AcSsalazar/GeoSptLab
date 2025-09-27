@@ -2,6 +2,18 @@
  * TypeScript types for SPT Project entities
  */
 
+export const StrataType = {
+  CEVOL: 'Ceniza volcánica',
+  DEPO: 'Depósito antrópico',
+  HV: 'Horizonte V',
+  HVI: 'Horizonte VI', 
+  
+
+} as const;
+
+export type StrataType = typeof StrataType[keyof typeof StrataType]
+
+
 export const FormulationType = {
   KISHIDA: 'kishida',
   JRB: 'jrb'
@@ -48,7 +60,8 @@ export type BehaviorType = typeof BehaviorType[keyof typeof BehaviorType];
 export interface Stratum {
   id: number;
   project_id: number;
-  stratum_code: string;
+  stratum_code: number; // Should be number, not string
+  name: string; // Added name field to match backend
   description: string;
   initial_depth: number;
   final_depth: number;
@@ -59,8 +72,9 @@ export interface Stratum {
 }
 
 export interface StratumCreate {
-  project_id: number;
-  stratum_code: string;
+  project_id?: number; // Optional since it can be set in bulk operations
+  stratum_code: number; // Should be number, not string
+  name: string; // Added name field to match backend
   description: string;
   initial_depth: number;
   final_depth: number;
@@ -81,12 +95,14 @@ export interface Borehole {
 }
 
 export interface BoreholeCreate {
-  project_id: number;
-  borehole_name: string;
+  project_id?: number; // Optional since it can be set in bulk operations
+  borehole_name?: string; // Optional since it can be auto-generated
   final_depth: number;
-  diameter_mm: number;
-  field_energy_percent: number;
-  rod_length: number;
+  diameter_mm?: number;
+  field_energy_percent?: number;
+  rod_length?: number;
+  water_table_depth?: number;
+  formulation?: FormulationType;
 }
 
 export interface SPTInterval {

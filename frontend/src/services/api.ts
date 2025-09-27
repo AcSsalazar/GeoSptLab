@@ -92,6 +92,25 @@ export const strataAPI = {
     return response.data;
   },
 
+  // Bulk create strata (NEW - More efficient!)
+  createBulk: async (projectId: number, strata: StratumCreate[]): Promise<Stratum[]> => {
+    const response = await api.post('/strata/bulk', {
+      project_id: projectId,
+      strata: strata.map(stratum => ({
+        stratum_code: stratum.stratum_code,
+        name: stratum.name,
+        description: stratum.description,
+        initial_depth: stratum.initial_depth,
+        final_depth: stratum.final_depth,
+        gamma_humid: stratum.gamma_humid,
+        gamma_saturated: stratum.gamma_saturated,
+        behavior_type: stratum.behavior_type,
+        plasticity_index: stratum.plasticity_index
+      }))
+    });
+    return response.data;
+  },
+
   // Update stratum
   update: async (id: number, stratumData: Partial<StratumCreate>): Promise<Stratum> => {
     const response = await api.put(`/strata/${id}`, stratumData);
@@ -139,6 +158,28 @@ export const boreholesAPI = {
   // Delete borehole
   delete: async (id: number): Promise<void> => {
     await api.delete(`/boreholes/${id}`);
+  },
+
+  // Bulk create boreholes with strata assignments (NEW!)
+  createBulkWithStrata: async (payload: {
+    project_id: number;
+    boreholes: {
+      borehole_name?: string;
+      final_depth: number;
+      diameter_mm?: number;
+      field_energy_percent?: number;
+      rod_length?: number;
+      water_table_depth?: number;
+      formulation?: string;
+      strata_assignments: {
+        stratum_code: number;
+        depth_from: number;
+        depth_to: number;
+      }[];
+    }[];
+  }): Promise<Borehole[]> => {
+    const response = await api.post('/boreholes/bulk', payload);
+    return response.data;
   },
 };
 

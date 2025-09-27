@@ -2,9 +2,12 @@ import type React from "react"
 import { useState } from "react"
 import { FormWizard } from "@/components/forms"
 import { ProjectSetupForm } from "@/components/forms"
+import StrataSetupForm from "@/components/forms/StrataSetupForm"
 import { useProjectWorkflow } from "@/hooks/useProjectWorkflow"
-import type { ProjectCreate, FormulationType } from "@/types/project"
+import type { ProjectCreate, FormulationType, StratumCreate } from "@/types/project"
 import styles from "@/styles/SPTCalculator.module.css"
+
+
 
 interface ProjectFormData {
   project_name: string;
@@ -21,18 +24,29 @@ const SPTCalculator: React.FC = () => {
     boreholesData,
     loading,
     submitProjectData,
+    submitStrataData,
   } = useProjectWorkflow();
 
   // Store form data for validation, but don't submit yet.
-
   const [currentFormData, setCurrentFormData] = useState<ProjectFormData | null>(null);
   const [isFormValid, setIsFormValid] = useState(false);
+
+  // Store strata form data
+  const [currentStrataData, setCurrentStrataData] = useState<StratumCreate[]>([]);
+  const [isStrataFormValid, setIsStrataFormValid] = useState(false);
 
   const handleProjectDataChange = (data: ProjectFormData, isValid: boolean) => {
     // Store the form data and validation state, but don't submit to API yet
     setCurrentFormData(data);
     setIsFormValid(isValid);
     console.log('Form data updated:', data, 'Valid:', isValid);
+  };
+
+  const handleStrataDataChange = (data: StratumCreate[], isValid: boolean) => {
+    // Store the strata form data and validation state, but don't submit to API yet
+    setCurrentStrataData(data);
+    setIsStrataFormValid(isValid);
+    console.log('Strata data updated:', data, 'Valid:', isValid);
   };
 
   // This function will be called when the "Next" button is clicked
@@ -62,6 +76,23 @@ const SPTCalculator: React.FC = () => {
     }
   };
 
+  // This function will be called when the "Next" button is clicked on strata step
+  const handleStrataSubmit = async () => {
+    if (!isStrataFormValid || currentStrataData.length === 0) {
+      console.error('Strata form data not valid or missing');
+      return;
+    }
+
+    try {
+      const result = await submitStrataData(currentStrataData);
+      console.log('Strata submitted successfully!', result);
+      return result;
+    } catch (error) {
+      console.error('Failed to create strata:', error);
+      throw error;
+    }
+  };
+
   // Handle step navigation with API calls
   const handleStepNext = async (stepIndex: number) => {
     try {
@@ -71,11 +102,16 @@ const SPTCalculator: React.FC = () => {
         if (result) {
           console.log('Project created successfully, proceeding to next step');
         }
+      } else if (stepIndex === 1) {
+        // Step 2: Submit strata data when leaving this step
+        const result = await handleStrataSubmit();
+        if (result) {
+          console.log('Strata created successfully, proceeding to next step');
+        }
       }
-      // Add more step handlers here for steps 2-4
-      // if (stepIndex === 1) await handleStrataSubmit();
+      // Add more step handlers here for steps 3-4
       // if (stepIndex === 2) await handleBoreholesSubmit();
-      // etc.
+      // if (stepIndex === 3) await handleSPTIntervalsSubmit();
       
       console.log(`Step ${stepIndex} completed successfully`);
       // Navigation will be handled by FormWizard after this function returns successfully
@@ -108,26 +144,20 @@ const SPTCalculator: React.FC = () => {
       id: "strata-definition",
       title: "Definir estratos",
       description: "Define soil layers and their geotechnical properties",
-      component: (
+      component: projectData ? (
+        <StrataSetupForm
+          projectData={projectData}
+          onValidData={handleStrataDataChange}
+        />
+      ) : (
         <div className={styles.placeholderStep}>
-          <p className={styles.placeholderTitle}>Strata Definition Form</p>
+          <p className={styles.placeholderTitle}>Esperando creación del proyecto...</p>
           <p className={styles.placeholderDescription}>
-            Create {projectData?.number_of_strata || 0} soil strata with gamma values
+            El proyecto debe crearse primero antes de definir los estratos.
           </p>
-          {projectData && (
-            <div style={{ marginTop: '20px', padding: '15px', background: '#f0f9ff', borderRadius: '8px', border: '1px solid #0ea5e9' }}>
-              <h4 style={{ margin: '0 0 10px 0', color: '#0369a1' }}>✅ Project Created Successfully!</h4>
-              <p><strong>Project Code:</strong> {projectData.project_code}</p>
-              <p><strong>Required Strata:</strong> {projectData.number_of_strata}</p>
-              <p><strong>Formulation:</strong> {projectData.formulation}</p>
-              <p style={{ marginTop: '10px', fontSize: '14px', color: '#0369a1' }}>
-                <strong>Next:</strong> Create {projectData.number_of_strata} soil strata definitions
-              </p>
-            </div>
-          )}
         </div>
       ),
-      isValid: steps[1].completed
+      isValid: projectData ? isStrataFormValid : false
     },
     {
       id: "borehole-creation",
@@ -145,6 +175,16 @@ const SPTCalculator: React.FC = () => {
               <p><strong>Project:</strong> {projectData.project_code}</p>
               <p><strong>Required Boreholes:</strong> {projectData.number_of_boreholes}</p>
               <p><strong>Strata Created:</strong> {strataData.length}</p>
+              <div style={{ marginTop: '10px' }}>
+                <strong>Strata Summary:</strong>
+                <ul style={{ marginTop: '5px', paddingLeft: '20px' }}>
+                  {strataData.map((stratum) => (
+                    <li key={stratum.id} style={{ color: '#15803d', fontSize: '14px' }}>
+                      <strong>{stratum.name}</strong> ({stratum.initial_depth}m - {stratum.final_depth}m) - {stratum.behavior_type}
+                    </li>
+                  ))}
+                </ul>
+              </div>
               <p style={{ marginTop: '10px', fontSize: '14px', color: '#15803d' }}>
                 <strong>Next:</strong> Create {projectData.number_of_boreholes} borehole locations
               </p>
@@ -205,7 +245,7 @@ const SPTCalculator: React.FC = () => {
     <div className={styles.page}>
       <div className={styles.container}>
         <div className={styles.header}>
-          <p className={styles.subtitle}>Generador de parametros &#964; y &#966;</p>
+          <p className={styles.subtitle}>Generador de parametros <b>&#964;</b> y <b>&#966;</b>   </p>
         </div>
 
 

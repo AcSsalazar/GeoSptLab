@@ -1,8 +1,8 @@
 """
-Pydantic schemas for Soil Stratum models.
+Stratum Definition schemas for API requests and responses.
 """
+from typing import List, Optional
 from pydantic import BaseModel, Field, validator
-from typing import Optional, List
 from enum import Enum
 
 
@@ -12,24 +12,15 @@ class BehaviorType(str, Enum):
     GRANULAR = "granular"
 
 
-class StratumBase(BaseModel):
-    """Base schema for Soil Stratum."""
+class StratumDefinitionBase(BaseModel):
+    """Base schema for stratum definition."""
     stratum_code: int = Field(..., ge=1, le=10, description="Stratum identifier")
     name: str = Field(..., min_length=1, max_length=100, description="Name of the stratum")
     description: str = Field(..., min_length=1, max_length=500, description="Soil description")
-    initial_depth: float = Field(..., ge=0, le=500, description="Top depth of stratum in meters")
-    final_depth: float = Field(..., ge=0, le=500, description="Bottom depth of stratum in meters")
     gamma_humid: float = Field(..., ge=10, le=40, description="Humid unit weight in kN/m³")
     gamma_saturated: float = Field(..., ge=10, le=40, description="Saturated unit weight in kN/m³")
     behavior_type: BehaviorType = Field(..., description="Soil behavior type")
     plasticity_index: Optional[float] = Field(None, ge=0, le=100, description="Plasticity index percentage")
-
-    @validator("final_depth")
-    def validate_depth_order(cls, v, values):
-        """Ensure final depth is greater than initial depth."""
-        if "initial_depth" in values and v <= values["initial_depth"]:
-            raise ValueError("Final depth must be greater than initial depth")
-        return v
 
     @validator("gamma_saturated")
     def validate_gamma_saturated(cls, v, values):
@@ -47,15 +38,32 @@ class StratumBase(BaseModel):
         return v
 
 
-class StratumCreate(StratumBase):
-    """Schema for creating a new Soil Stratum."""
-    project_id: int = Field(..., gt=0, description="Project ID")
+class StratumDefinitionCreate(StratumDefinitionBase):
+    """Schema for creating a stratum definition."""
+    project_id: int = Field(..., description="Project ID")
+class StratumDefinitionUpdate(BaseModel):
+    """Schema for updating a stratum definition."""
+    name: Optional[str] = Field(None, min_length=1, max_length=100)
+    description: Optional[str] = Field(None, min_length=1, max_length=500)
+    gamma_humid: Optional[float] = Field(None, ge=10, le=40)
+    gamma_saturated: Optional[float] = Field(None, ge=10, le=40)
+    behavior_type: Optional[BehaviorType] = None
+    plasticity_index: Optional[float] = Field(None, ge=0, le=100)
 
 
-class StratumBulkCreate(BaseModel):
-    """Schema for bulk creating strata from Excel base sheet."""
+class StratumDefinitionResponse(StratumDefinitionBase):
+    """Schema for stratum definition response."""
+    id: int
+    project_id: int
+
+    class Config:
+        from_attributes = True
+
+
+class StratumDefinitionBulkCreate(BaseModel):
+    """Schema for bulk creating stratum definitions from Excel base sheet."""
     project_id: int = Field(..., gt=0, description="Project ID")
-    strata: List[dict] = Field(..., description="List of complete stratum definitions with gamma values")
+    strata: List[StratumDefinitionBase] = Field(..., description="List of stratum definitions")
     
     class Config:
         schema_extra = {
@@ -64,18 +72,16 @@ class StratumBulkCreate(BaseModel):
                 "strata": [
                     {
                         "stratum_code": 1,
-                        "description": "Ceniza Volcánica",
-                        "initial_depth": 1.0,
-                        "final_depth": 2.0,
+                        "name": "Ceniza Volcánica",
+                        "description": "Limos, suelos finogranulares",
                         "gamma_humid": 18.5,
                         "gamma_saturated": 19.0,
                         "behavior_type": "granular"
                     },
                     {
                         "stratum_code": 2,
-                        "description": "H-VI Migmatita Puente P",
-                        "initial_depth": 2.0,
-                        "final_depth": 4.45,
+                        "name": "H-VI Migmatita Puente P",
+                        "description": "Limos, suelos finogranulares",
                         "gamma_humid": 19.5,
                         "gamma_saturated": 20.0,
                         "behavior_type": "granular"
@@ -83,25 +89,3 @@ class StratumBulkCreate(BaseModel):
                 ]
             }
         }
-
-
-class StratumUpdate(BaseModel):
-    """Schema for updating a Soil Stratum."""
-    stratum_code: Optional[int] = Field(None, ge=1, le=10)
-    name: Optional[str] = Field(None, min_length=1, max_length=100)
-    description: Optional[str] = Field(None, min_length=1, max_length=500)
-    initial_depth: Optional[float] = Field(None, ge=0, le=500)
-    final_depth: Optional[float] = Field(None, ge=0, le=500)
-    gamma_humid: Optional[float] = Field(None, ge=10, le=40)
-    gamma_saturated: Optional[float] = Field(None, ge=10, le=40)
-    behavior_type: Optional[BehaviorType] = None
-    plasticity_index: Optional[float] = Field(None, ge=0, le=100)
-
-
-class StratumResponse(StratumBase):
-    """Schema for Soil Stratum response."""
-    id: int
-    project_id: int
-
-    class Config:
-        from_attributes = True

@@ -1,28 +1,29 @@
 """
-Soil Strata API endpoints.
+Stratum Definition API endpoints.
 """
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.repositories.stratum import StratumRepository
+from app.repositories.stratum import StratumDefinitionRepository
 from app.repositories.project import ProjectRepository
 from app.schemas.stratum import (
-    StratumCreate, StratumUpdate, StratumResponse, StratumBulkCreate
+    StratumDefinitionCreate, StratumDefinitionUpdate, StratumDefinitionResponse, 
+    StratumDefinitionBulkCreate
 )
 
 router = APIRouter()
 
 
-@router.post("/", response_model=StratumResponse, status_code=status.HTTP_201_CREATED)
-def create_stratum(
-    stratum_data: StratumCreate,
+@router.post("/", response_model=StratumDefinitionResponse, status_code=status.HTTP_201_CREATED)
+def create_stratum_definition(
+    stratum_data: StratumDefinitionCreate,
     db: Session = Depends(get_db)
 ):
-    """Create a new soil stratum."""
+    """Create a new stratum definition."""
     project_repo = ProjectRepository(db)
-    stratum_repo = StratumRepository(db)
+    stratum_repo = StratumDefinitionRepository(db)
     
     # Verify project exists
     project = project_repo.get_by_id(stratum_data.project_id)
@@ -42,14 +43,14 @@ def create_stratum(
     return stratum_repo.create(stratum_data)
 
 
-@router.post("/bulk", response_model=List[StratumResponse], status_code=status.HTTP_201_CREATED)
-def create_strata_from_project(
-    bulk_data: StratumBulkCreate,
+@router.post("/bulk", response_model=List[StratumDefinitionResponse], status_code=status.HTTP_201_CREATED)
+def create_stratum_definitions_bulk(
+    bulk_data: StratumDefinitionBulkCreate,
     db: Session = Depends(get_db)
 ):
-    """Create multiple strata from Excel base sheet data."""
+    """Create multiple stratum definitions from Excel base sheet data."""
     project_repo = ProjectRepository(db)
-    stratum_repo = StratumRepository(db)
+    stratum_repo = StratumDefinitionRepository(db)
     
     # Verify project exists
     project = project_repo.get_by_id(bulk_data.project_id)

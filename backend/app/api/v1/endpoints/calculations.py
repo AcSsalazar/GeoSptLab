@@ -8,6 +8,7 @@ from app.core.database import get_db
 from app.core.spt_calculations import calculate_spt_parameters
 from app.repositories.project import ProjectRepository
 from app.repositories.spt_interval import SPTIntervalRepository
+from app.repositories.borehole_stratum import BoreholeStratumRepository
 from app.repositories.calculated_result import CalculatedResultRepository
 from app.schemas.calculated_result import (
     CalculatedResultResponse, SPTCalculationRequest, SPTCalculationResponse,
@@ -64,8 +65,8 @@ def calculate_spt_parameters_for_project(
             }
             
             stratum_data = {
-                "gamma_humid": interval.stratum.gamma_humid,
-                "gamma_saturated": interval.stratum.gamma_saturated
+                "gamma_humid": interval.borehole_stratum.stratum_definition.gamma_humid,
+                "gamma_saturated": interval.borehole_stratum.stratum_definition.gamma_saturated
             }
             
             borehole_data = {

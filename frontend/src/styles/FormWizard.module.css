@@ -111,7 +111,7 @@
 
 .progressLine {
   position: absolute;
-  top: 28px;
+  top: 20px;
   left: 56px;
   right: -56px;
   height: 4px;

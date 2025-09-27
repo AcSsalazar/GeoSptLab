@@ -1,13 +1,12 @@
 /**
  * Hook for managing multi-step SPT project creation workflow
- * Follows the backend API flow: Project → Strata → Boreholes → SPT Intervals → Results
+ * Follows the backend API flow: Project → (Strata + Boreholes) → SPT Intervals → Results
  */
 import { useState, useCallback } from 'react';
 import { projectAPI, strataAPI, boreholesAPI, sptIntervalsAPI } from '@/services/api';
 import type { 
   ProjectCreate, 
   Project, 
-  StratumCreate, 
   Stratum,
   BoreholeCreate,
   Borehole,
@@ -15,6 +14,7 @@ import type {
   SPTInterval,
   ProjectWithDetails
 } from '@/types/project';
+import type { BoreholeStrataSubmissionPayload } from '@/types/borehole-strata';
 
 export interface WorkflowStep {
   id: string;
@@ -136,8 +136,8 @@ export const useProjectWorkflow = () => {
     }
   }, [markStepCompleted, setLoading, setError]);
 
-  // Step 2: Create Strata
-  const submitStrataData = useCallback(async (strataList: StratumCreate[]): Promise<Stratum[]> => {
+  // Step 2: Create Strata and Boreholes together (NEW COMBINED APPROACH!)
+  const submitBoreholeStrataData = useCallback(async (payload: BoreholeStrataSubmissionPayload): Promise<{ strata: Stratum[], boreholes: Borehole[] }> => {
     if (!state.projectData) {
       throw new Error('Project must be created first');
     }
@@ -146,26 +146,41 @@ export const useProjectWorkflow = () => {
       setLoading(true);
       setError(null);
       
-      const createdStrata: Stratum[] = [];
+      // Step 1: Create all project-level strata using bulk endpoint
+      const createdStrata = await strataAPI.createBulk(state.projectData.id, payload.projectStrata);
       
-      // Create each stratum sequentially
-      for (const stratumData of strataList) {
-        const stratum = await strataAPI.create({
-          ...stratumData,
-          project_id: state.projectData.id
-        });
-        createdStrata.push(stratum);
-      }
+      // Step 2: Create all boreholes with strata assignments using new bulk endpoint
+      const createdBoreholes = await boreholesAPI.createBulkWithStrata({
+        project_id: state.projectData.id,
+        boreholes: payload.boreholes.map(borehole => ({
+          borehole_name: borehole.borehole_name,
+          final_depth: borehole.final_depth,
+          diameter_mm: borehole.diameter_mm || 150,
+          field_energy_percent: borehole.field_energy_percent || 45,
+          rod_length: borehole.rod_length || 15,
+          water_table_depth: borehole.water_table_depth,
+          formulation: state.projectData?.formulation, // Use project formulation
+          strata_assignments: borehole.strataAssignments.map(assignment => ({
+            stratum_code: assignment.stratumCode,
+            depth_from: assignment.depthFrom,
+            depth_to: assignment.depthTo
+          }))
+        }))
+      });
       
       setState(prev => ({
         ...prev,
-        strataData: createdStrata
+        strataData: createdStrata,
+        boreholesData: createdBoreholes
       }));
       
+      // Mark both steps as completed since we did them together
       markStepCompleted(1, createdStrata);
-      return createdStrata;
+      markStepCompleted(2, createdBoreholes);
+      
+      return { strata: createdStrata, boreholes: createdBoreholes };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create strata';
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create boreholes and strata';
       setError(errorMessage);
       throw error;
     } finally {
@@ -284,8 +299,7 @@ export const useProjectWorkflow = () => {
     ...state,
     // Actions
     submitProjectData,
-    submitStrataData,
-    submitBoreholesData,
+    submitBoreholeStrataData,
     submitSPTIntervalsData,
     getProjectSummary,
     nextStep,

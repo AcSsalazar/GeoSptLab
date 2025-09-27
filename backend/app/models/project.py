@@ -35,5 +35,5 @@ class Project(Base):
     )
     
     # Relationships
-    strata = relationship("SoilStratum", back_populates="project", cascade="all, delete-orphan")
+    stratum_definitions = relationship("StratumDefinition", back_populates="project", cascade="all, delete-orphan")
     boreholes = relationship("Borehole", back_populates="project", cascade="all, delete-orphan")

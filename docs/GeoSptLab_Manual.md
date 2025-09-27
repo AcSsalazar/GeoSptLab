@@ -187,7 +187,11 @@ Con el fin de ofrecer una UX accesible y consistente con la hoja de Excel que se
 
 ### 5.1 Inputs (generales del proyecto)
 
-Tabla de configuración del proyecto — Entradas del usuario:
+**Estructura de datos actualizada (v0.2.0):**
+
+La aplicación ahora utiliza una estructura de datos que separa las definiciones de materiales de las profundidades específicas por perforación, permitiendo mayor flexibilidad para modelar proyectos reales donde los mismos estratos aparecen a diferentes profundidades en cada perforación.
+
+**Tabla de configuración del proyecto:**
 
 | Campo | Tipo, etiqueta en frontend |
 |-------|-----------------------------|
@@ -196,58 +200,149 @@ Tabla de configuración del proyecto — Entradas del usuario:
 | Nº de estratos | Int, `<input>` |
 | Formulación | String, `<selector>` |
 
-Por cada Perforación (Step):
+**Definiciones de Estratos (StratumDefinition):**
+
+Los estratos ahora se definen únicamente por sus propiedades de material, sin profundidades específicas:
+
+| Campo | Tipo, etiqueta en frontend | Descripción |
+|-------|-----------------------------|-------------|
+| Código Estrato | Int, `<input>` | Identificador único del estrato |
+| Nombre | String, `<input>` | Nombre descriptivo del estrato |
+| Descripción | String, `<input>` | Descripción del material |
+| γh (kN/m³) | Float, `<input>` | Peso unitario húmedo |
+| γsat (kN/m³) | Float, `<input>` | Peso unitario saturado |
+| Comportamiento | String, `<selector>` | Drenado/No drenado |
+
+**Por cada Perforación:**
 
 | Campo | Tipo, etiqueta en frontend |
 |-------|-----------------------------|
+| Nombre Perforación | String, `<input>` |
+| Profundidad Final (m) | Float, `<input>` |
 | Energía en campo (%) | Int, `<input>` |
 | Ø sondeo (mm) | Int, `<selector>` |
-| Diámetro del sondeo (mm) | Int, `<input>` |
-| NF (m) | Int, `<input>` |
+| NF (m) | Float, `<input>` |
 | Formulación | String, `<selector>` |
-| Prof. Inicial (m) | Float, `<input>` |
-| Prof. Final (m) | Float, `<input>` |
-| Descripción | String, `<selector>` |
-| Profundidad estrato (Desde) (m) | Float, `<input>` |
-| Nspt (campo) | Int, `<input>` |
 
-Tabla de estratos (Ejemplo):
+**Estratos por Perforación (BoreholeStratum):**
 
-| Código Estrato | Estrato | γh (kN/m³) | γsat (kN/m³) | Comportamiento | IP (%) |
-|----------------|---------|------------|--------------|----------------|--------|
-| 1 | Ceniza Volcánica | 18.50 | 19.00 | Drenado | |
-| 2 | H-VI Migmatita Puente P | 19.50 | 20.00 | Drenado | |
-| 3 | H-V Migmatita de Puente P | 16.00 | 16.50 | Drenado | |
+Cada perforación puede tener los mismos estratos a profundidades diferentes:
+
+| Campo | Tipo, etiqueta en frontend | Descripción |
+|-------|-----------------------------|-------------|
+| Código Estrato | Int, `<selector>` | Referencia a StratumDefinition |
+| Profundidad Inicial (m) | Float, `<input>` | Inicio del estrato en esta perforación |
+| Profundidad Final (m) | Float, `<input>` | Final del estrato en esta perforación |
+
+**Ejemplo de Definiciones de Estratos:**
+
+| Código | Estrato | γh (kN/m³) | γsat (kN/m³) | Comportamiento |
+|---------|---------|------------|--------------|----------------|
+| 1 | Ceniza Volcánica | 18.50 | 19.00 | Drenado |
+| 2 | H-VI Migmatita Puente P | 19.50 | 20.00 | Drenado |
+| 3 | H-V Migmatita de Puente P | 16.00 | 16.50 | Drenado |
 
 Notas de validación:
 
 - γh, γsat: input numérico, rango recomendado 0–40 kN/m³ (en el Excel se usaba 0–4000 por escala).  
 - Comportamiento: selector (Drenado / No drenado). En la versión beta no tiene implicación en los cálculos.
 
-### 5.2 Steps por perforación
+### 5.2 Ejemplo de proyecto con nueva estructura
 
-Para cada perforación (con ejemplos numéricos), el usuario completa:
+**Proyecto CP-00633 Casa Las Palmas 02:**
 
-- Ø sondeo (mm): selector (60, 90, 120, 150, 200)  
-- Energía de campo (%): numérico (usualmente 45)  
-- Número de estratos: numérico  
-- Formulación: selector (Kishida; JRB podrá habilitarse en versiones futuras)  
-- Profundidad inicial (m) y final (m) por tramo  
-- Nspt (campo): entero por tramo
+**Estratos por Perforación (diferente profundidades):**
 
-Tabla de tramos (entradas por perforación):
+*Perforación P1:*
+| Código | Estrato | Desde (m) | Hasta (m) |
+|--------|---------|-----------|-----------|
+| 1 | Ceniza Volcánica | 1.00 | 2.00 |
+| 2 | H-VI Migmatita Puente P | 2.00 | 4.45 |
+| 3 | H-V Migmatita de Puente P | 4.45 | 6.45 |
 
-| Estrato | Descripción | Desde (m) | Hasta (m) | Punto medio (m) | Nspt (campo) |
-|---------|-------------|-----------|-----------|------------------|--------------|
-| 1 | Limos, finogranulares | 1.00 | 1.45 | 1.23 | 9 |
-| 2 | Limos, finogranulares | 3.00 | 3.45 | 3.23 | 4 |
-| 2 | Limos, finogranulares | 4.00 | 4.45 | 4.23 | 6 |
-| 3 | Limos, finogranulares | 5.00 | 5.45 | 5.23 | 33 |
-| 3 | Limos, finogranulares | 6.00 | 6.45 | 6.23 | 77 |
+*Perforación P2:*
+| Código | Estrato | Desde (m) | Hasta (m) |
+|--------|---------|-----------|-----------|
+| 1 | Ceniza Volcánica | 1.00 | 1.45 |
+| 2 | H-VI Migmatita Puente P | 1.45 | 2.45 |
+| 3 | H-V Migmatita de Puente P | 2.45 | 6.45 |
 
-Nota: ¡El punto medio se calcula como el promedio entre la profundidad inicial y final!
+*Perforación P3:*
+| Código | Estrato | Desde (m) | Hasta (m) |
+|--------|---------|-----------|-----------|
+| 2 | H-VI Migmatita Puente P | 1.00 | 4.45 |
+| 3 | H-V Migmatita de Puente P | 4.45 | 6.45 |
 
-### 5.3 Ejemplo de proyecto completo
+**Intervalos SPT por perforación:**
+
+*P1:*
+| Estrato | Desde (m) | Hasta (m) | Punto medio (m) | Nspt |
+|---------|-----------|-----------|------------------|-------|
+| 1 | 1.00 | 1.45 | 1.23 | 9 |
+| 2 | 3.00 | 3.45 | 3.23 | 4 |
+| 2 | 4.00 | 4.45 | 4.23 | 6 |
+| 3 | 5.00 | 5.45 | 5.23 | 33 |
+| 3 | 6.00 | 6.45 | 6.23 | 77 |
+
+*P2:*
+| Estrato | Desde (m) | Hasta (m) | Punto medio (m) | Nspt |
+|---------|-----------|-----------|------------------|-------|
+| 1 | 1.00 | 1.45 | 1.23 | 11 |
+| 2 | 2.00 | 2.45 | 2.23 | 12 |
+| 3 | 4.00 | 4.45 | 4.23 | 30 |
+| 3 | 6.00 | 6.45 | 6.23 | 41 |
+
+*P3:*
+| Estrato | Desde (m) | Hasta (m) | Punto medio (m) | Nspt |
+|---------|-----------|-----------|------------------|-------|
+| 2 | 3.00 | 3.45 | 3.23 | 10 |
+| 2 | 4.00 | 4.45 | 4.23 | 16 |
+| 3 | 6.00 | 6.45 | 6.23 | 53 |
+
+### 5.3 API Endpoints (v0.2.0)
+
+La nueva arquitectura incluye los siguientes endpoints principales:
+
+**Proyectos:**
+- `POST /api/v1/projects/` - Crear proyecto
+- `GET /api/v1/projects/{id}` - Obtener proyecto
+- `GET /api/v1/projects/` - Listar proyectos
+
+**Definiciones de Estratos:**
+- `POST /api/v1/stratum-definitions/` - Crear definición de estrato
+- `GET /api/v1/stratum-definitions/` - Listar definiciones
+- `POST /api/v1/stratum-definitions/bulk` - Crear múltiples estratos
+
+**Perforaciones:**
+- `POST /api/v1/boreholes/` - Crear perforación
+- `GET /api/v1/boreholes/` - Listar perforaciones
+- `GET /api/v1/boreholes/{id}` - Obtener perforación específica
+
+**Estratos por Perforación:**
+- `POST /api/v1/borehole-strata/` - Asignar estrato a perforación con profundidades
+- `GET /api/v1/borehole-strata/` - Listar asignaciones
+- `GET /api/v1/borehole-strata/borehole/{borehole_id}` - Estratos de una perforación
+
+**Intervalos SPT:**
+- `POST /api/v1/spt-intervals/` - Crear intervalo SPT
+- `GET /api/v1/spt-intervals/` - Listar intervalos
+- `GET /api/v1/spt-intervals/borehole/{borehole_id}` - Intervalos de una perforación
+
+**Flujo de Trabajo Completo:**
+- `POST /api/v1/project-workflow/complete` - Crear proyecto completo
+- `POST /api/v1/project-workflow/example-cp00633` - Crear proyecto de ejemplo
+
+### 5.4 Ventajas de la nueva estructura
+
+1. **Flexibilidad Real:** Los mismos materiales pueden aparecer a diferentes profundidades en cada perforación, como ocurre en la realidad.
+
+2. **Reutilización de Materiales:** Las propiedades del material (γh, γsat) se definen una sola vez y se reutilizan.
+
+3. **Escalabilidad:** Fácil agregar nuevas perforaciones con estratos existentes.
+
+4. **Consistencia:** Evita duplicación de datos y errores de inconsistencia en propiedades de materiales.
+
+5. **Compatibilidad con Excel:** Replica exactamente la estructura de datos de los proyectos Excel reales.
 
 Cabecera:
 
