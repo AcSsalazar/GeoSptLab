@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import and_
 
 from app.models.spt_interval import SPTInterval
+from app.models.borehole_stratum import BoreholeStratum
 from app.schemas.spt_interval import SPTIntervalCreate, SPTIntervalUpdate
 
 
@@ -85,7 +86,7 @@ class SPTIntervalRepository:
             self.db.query(SPTInterval)
             .options(
                 selectinload(SPTInterval.borehole),
-                selectinload(SPTInterval.borehole_stratum).selectinload(SPTInterval.borehole_stratum.stratum_definition),
+                selectinload(SPTInterval.borehole_stratum).selectinload(BoreholeStratum.stratum_definition),
                 selectinload(SPTInterval.calculated_result)
             )
             .join(SPTInterval.borehole)

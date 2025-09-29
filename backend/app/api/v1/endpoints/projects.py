@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.repositories.project import ProjectRepository
 from app.repositories.borehole import BoreholeRepository
-from app.repositories.stratum import StratumRepository
+from app.repositories.stratum import StratumDefinitionRepository
 from app.repositories.spt_interval import SPTIntervalRepository
 from app.repositories.calculated_result import CalculatedResultRepository
 from app.schemas.project import (
@@ -160,7 +160,7 @@ def get_project_summary(
     # Initialize repositories
     project_repo = ProjectRepository(db)
     borehole_repo = BoreholeRepository(db)
-    stratum_repo = StratumRepository(db)
+    stratum_repo = StratumDefinitionRepository(db)
     interval_repo = SPTIntervalRepository(db)
     result_repo = CalculatedResultRepository(db)
     

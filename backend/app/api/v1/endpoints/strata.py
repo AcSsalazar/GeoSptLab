@@ -81,21 +81,21 @@ def create_stratum_definitions_bulk(
             )
         
         # Create stratum
-        create_data = StratumCreate(**stratum_data)
+        create_data = StratumDefinitionCreate(**stratum_data)
         created_stratum = stratum_repo.create(create_data)
         created_strata.append(created_stratum)
     
     return created_strata
 
 
-@router.get("/project/{project_id}", response_model=List[StratumResponse])
+@router.get("/project/{project_id}", response_model=List[StratumDefinitionResponse])
 def get_project_strata(
     project_id: int,
     db: Session = Depends(get_db)
 ):
     """Get all strata for a project."""
     project_repo = ProjectRepository(db)
-    stratum_repo = StratumRepository(db)
+    stratum_repo = StratumDefinitionRepository(db)
     
     # Verify project exists
     project = project_repo.get_by_id(project_id)
@@ -108,13 +108,13 @@ def get_project_strata(
     return stratum_repo.get_by_project(project_id)
 
 
-@router.get("/{stratum_id}", response_model=StratumResponse)
+@router.get("/{stratum_id}", response_model=StratumDefinitionResponse)
 def get_stratum(
     stratum_id: int,
     db: Session = Depends(get_db)
 ):
     """Get stratum by ID."""
-    stratum_repo = StratumRepository(db)
+    stratum_repo = StratumDefinitionRepository(db)
     stratum = stratum_repo.get_by_id(stratum_id)
     
     if not stratum:
@@ -126,14 +126,14 @@ def get_stratum(
     return stratum
 
 
-@router.put("/{stratum_id}", response_model=StratumResponse)
+@router.put("/{stratum_id}", response_model=StratumDefinitionResponse)
 def update_stratum(
     stratum_id: int,
-    stratum_data: StratumUpdate,
+    stratum_data: StratumDefinitionUpdate,
     db: Session = Depends(get_db)
 ):
     """Update stratum."""
-    stratum_repo = StratumRepository(db)
+    stratum_repo = StratumDefinitionRepository(db)
     
     stratum = stratum_repo.update(stratum_id, stratum_data)
     
@@ -152,7 +152,7 @@ def delete_stratum(
     db: Session = Depends(get_db)
 ):
     """Delete stratum."""
-    stratum_repo = StratumRepository(db)
+    stratum_repo = StratumDefinitionRepository(db)
     
     if not stratum_repo.delete(stratum_id):
         raise HTTPException(
@@ -161,7 +161,7 @@ def delete_stratum(
         )
 
 
-@router.get("/project/{project_id}/depth/{depth}", response_model=StratumResponse)
+@router.get("/project/{project_id}/depth/{depth}", response_model=StratumDefinitionResponse)
 def get_stratum_at_depth(
     project_id: int,
     depth: float,
@@ -169,7 +169,7 @@ def get_stratum_at_depth(
 ):
     """Get the stratum that contains a specific depth."""
     project_repo = ProjectRepository(db)
-    stratum_repo = StratumRepository(db)
+    stratum_repo = StratumDefinitionRepository(db)
     
     # Verify project exists
     project = project_repo.get_by_id(project_id)
@@ -197,7 +197,7 @@ def validate_strata_coverage(
 ):
     """Validate that strata cover all depths without gaps or overlaps."""
     project_repo = ProjectRepository(db)
-    stratum_repo = StratumRepository(db)
+    stratum_repo = StratumDefinitionRepository(db)
     
     # Verify project exists
     project = project_repo.get_by_id(project_id)

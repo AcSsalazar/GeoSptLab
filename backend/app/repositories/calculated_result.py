@@ -41,11 +41,14 @@ class CalculatedResultRepository:
 
     def get_by_project(self, project_id: int) -> List[CalculatedResult]:
         """Get all calculated results for a project."""
+        from app.models.spt_interval import SPTInterval
+        from app.models.borehole import Borehole
+        
         return (
             self.db.query(CalculatedResult)
             .join(CalculatedResult.spt_interval)
-            .join("borehole")  # Join through SPTInterval to Borehole
-            .filter_by(project_id=project_id)
+            .join(SPTInterval.borehole)  # Join through SPTInterval to Borehole using the relationship
+            .filter(Borehole.project_id == project_id)
             .order_by(CalculatedResult.spt_interval_id)
             .all()
         )

@@ -60,24 +60,22 @@ export type BehaviorType = typeof BehaviorType[keyof typeof BehaviorType];
 export interface Stratum {
   id: number;
   project_id: number;
-  stratum_code: number; // Should be number, not string
-  name: string; // Added name field to match backend
+  stratum_code: number;
+  name: string;
   description: string;
-  initial_depth: number;
-  final_depth: number;
   gamma_humid: number;
   gamma_saturated: number;
   behavior_type: BehaviorType;
   plasticity_index?: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface StratumCreate {
-  project_id?: number; // Optional since it can be set in bulk operations
-  stratum_code: number; // Should be number, not string
-  name: string; // Added name field to match backend
+  project_id: number;
+  stratum_code: number;
+  name: string;
   description: string;
-  initial_depth: number;
-  final_depth: number;
   gamma_humid: number;
   gamma_saturated: number;
   behavior_type: BehaviorType;

@@ -152,6 +152,7 @@ def normalize_n_values(
 ) -> Dict[str, float]:
     """
     Normaliza valores N a diferentes energías de referencia.
+    Basado en las fórmulas del Excel CP-00633.
     
     Args:
         n_field: Valor Nspt en campo (golpes/30cm)
@@ -168,10 +169,16 @@ def normalize_n_values(
     ce_55 = 55.0
     ce_60 = 60.0 
     
-    n45 = ( n_field * ce_45 ) / (cb_factor * cs_factor * cr_factor * 60) 
-    n55 = n_field * cb_factor * cs_factor * cr_factor * ce_55
-    n60 = n_field * cb_factor * cs_factor * cr_factor * ce_60
-    n145 = n_field * cb_factor * cs_factor * cr_factor * ce_45 * cn_factor
+    # Fórmulas exactas del Excel CP-00633:
+    # N45: =(I16*45)/(K16*L16*M16*60) 
+    # N55: =O16*55/60*K16*L16*M16 donde O16=N45
+    # N60: =O16*45/60*K16*L16*M16 donde O16=N45, W5=45
+    # N145: =N16*O16 donde N16=Cn, O16=N45
+    
+    n45 = (n_field * ce_45) / (cb_factor * cs_factor * cr_factor * 60) 
+    n55 = n45 * (ce_55/60) * cb_factor * cs_factor * cr_factor
+    n60 = n45 * (ce_45/60) * cb_factor * cs_factor * cr_factor  # W5=45
+    n145 = cn_factor * n45
     
     return {
         "n45": n45,
@@ -264,16 +271,27 @@ def calculate_spt_parameters(
     formulation = project_data["formulation"]
     borehole_diameter = borehole_data["diameter_mm"]
     
+    print(f"    🔢 SPT Calculation Input:")
+    print(f"       N-SPT Field: {n_field}")
+    print(f"       Depth: {depth}m")
+    print(f"       Water Table: {water_table_depth}m")
+    print(f"       Field Energy: {field_energy}%")
+    print(f"       γ_humid: {gamma_humid} kN/m³, γ_saturated: {gamma_saturated} kN/m³")
+    print(f"       Borehole Diameter: {borehole_diameter}mm")
+    print(f"       Formulation: {formulation}")
+    
     # Calcular tensiones
     stress_results = calculate_stress(
         depth, gamma_humid, gamma_saturated, water_table_depth
     )
+    print(f"    🌍 Stress Results: σ'={stress_results['sigma_prime']:.2f} kPa")
     
     # Factores de corrección (CR se basa en la profundidad del punto medio)
     correction_factors = calculate_correction_factors(
         borehole_diameter, "standard", depth
     )
     cn_factor = calculate_cn_factor(stress_results["sigma_prime"])
+    print(f"    📐 Correction Factors: CB={correction_factors['cb_factor']}, CS={correction_factors['cs_factor']}, CR={correction_factors['cr_factor']}, Cn={cn_factor:.4f}")
     
     # Normalización de N
     n_values = normalize_n_values(
@@ -284,16 +302,19 @@ def calculate_spt_parameters(
         correction_factors["cr_factor"],
         cn_factor
     )
+    print(f"    📊 N-Values: N45={n_values['n45']:.2f}, N55={n_values['n55']:.2f}, N60={n_values['n60']:.2f}, N145={n_values['n145']:.2f}")
     
     # Parámetros geotécnicos
     phi_prime = calculate_friction_angle(n_values["n145"], FormulationType(formulation))
     elastic_modulus = calculate_elastic_modulus(n_values["n60"])
+    print(f"    🧮 Geotechnical: φ'={phi_prime:.2f}°, E={elastic_modulus:.0f} kPa")
     
     # Resistencia al corte: τ = c' + σ' × tan(φ′), asumiendo c′=0
     tau_resistance = stress_results["sigma_prime"] * math.tan(math.radians(phi_prime))
     
     # Resistencia no drenada
     su_undrained = calculate_undrained_shear_strength(n_values["n60"])
+    print(f"    💪 Resistances: τ={tau_resistance:.2f} kPa, Su={su_undrained:.0f} kPa")
     
     return {
         "sigma_prime": stress_results["sigma_prime"],

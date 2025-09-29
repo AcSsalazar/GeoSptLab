@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.repositories.borehole import BoreholeRepository
 from app.repositories.project import ProjectRepository
-from app.repositories.stratum import StratumRepository
+from app.repositories.stratum import StratumDefinitionRepository
 from app.schemas.borehole import (
     BoreholeCreate, BoreholeUpdate, BoreholeResponse, generate_borehole_name,
     BoreholeBulkCreate, BoreholeWithStrata
@@ -172,7 +172,7 @@ def create_boreholes_with_strata(
     """Create multiple boreholes with their strata assignments in bulk."""
     project_repo = ProjectRepository(db)
     borehole_repo = BoreholeRepository(db)
-    stratum_repo = StratumRepository(db)
+    stratum_repo = StratumDefinitionRepository(db)
     
     # Verify project exists
     project = project_repo.get_by_id(bulk_data.project_id)

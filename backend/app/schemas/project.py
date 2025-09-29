@@ -7,7 +7,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional, List
 from pydantic import BaseModel, Field, field_validator
-from app.schemas.stratum import StratumResponse
+from app.schemas.stratum import StratumDefinitionResponse
 from app.schemas.borehole import BoreholeResponse
 
 
@@ -86,7 +86,7 @@ class ProjectResponse(ProjectBase):
 
 class ProjectWithDetails(ProjectResponse):
     """Schema for Project response with related data."""
-    strata: List[StratumResponse] = []
+    strata: List[StratumDefinitionResponse] = []
     boreholes: List[BoreholeResponse] = []
 
     class Config:

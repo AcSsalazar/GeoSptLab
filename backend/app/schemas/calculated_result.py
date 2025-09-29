@@ -55,7 +55,6 @@ class CalculatedResultResponse(CalculatedResultBase):
 
 class SPTCalculationRequest(BaseModel):
     """Schema for SPT calculation request."""
-    project_id: int = Field(..., gt=0, description="Project ID")
     recalculate_all: bool = Field(False, description="Whether to recalculate all intervals")
 
 

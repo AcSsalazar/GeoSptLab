@@ -269,6 +269,7 @@ class APITester:
                 payload = {
                     "borehole_id": self.borehole_ids[borehole_stratum_data["borehole"]],
                     "stratum_definition_id": self.stratum_definition_ids[borehole_stratum_data["stratum_code"]],
+                    "stratum_code": borehole_stratum_data["stratum_code"],  # Add missing stratum_code
                     "initial_depth": borehole_stratum_data["initial_depth"],
                     "final_depth": borehole_stratum_data["final_depth"]
                 }
@@ -311,6 +312,7 @@ class APITester:
                 
                 # Build API payload
                 payload = {
+                    "borehole_id": self.borehole_ids[interval_data["borehole"]],  # Add missing borehole_id
                     "borehole_stratum_id": borehole_stratum_id,
                     "depth_from": interval_data["depth_from"],
                     "depth_to": interval_data["depth_to"],
@@ -362,11 +364,15 @@ class APITester:
         self.log("🧮 Step 6: Triggering calculations...")
         
         try:
-            # Check if calculations endpoint exists
-            response = self.make_request("POST", f"/calculations/project/{self.project_id}/calculate", {})
+            # Use the correct RESTful endpoint with project_id in URL
+            payload = {
+                "recalculate_all": True
+            }
+            response = self.make_request("POST", f"/calculations/project/{self.project_id}/calculate", payload)
             
             if response.status_code == 200:
-                self.log("✅ Calculations triggered successfully")
+                result = response.json()
+                self.log(f"✅ Calculations triggered successfully: {result['calculated_intervals']} intervals calculated")
                 return True
             else:
                 self.log(f"⚠️  Calculations endpoint returned status {response.status_code}", "WARN")

@@ -32,11 +32,11 @@ class ProjectRepository:
         return self.db.query(Project).filter(Project.project_code == project_code).first()
 
     def get_with_details(self, project_id: int) -> Optional[Project]:
-        """Get project with strata and boreholes."""
+        """Get project with stratum definitions and boreholes."""
         return (
             self.db.query(Project)
             .options(
-                selectinload(Project.strata),
+                selectinload(Project.stratum_definitions),
                 selectinload(Project.boreholes)
             )
             .filter(Project.id == project_id)
