@@ -138,7 +138,6 @@ class BoreholeBulkCreate(BaseModel):
                         "final_depth": 10.0,
                         "diameter_mm": 150.0,
                         "field_energy_percent": 45.0,
-                        "rod_length": 15.0,
                         "water_table_depth": 3.0,
                         "formulation": "kishida",
                         "strata_assignments": [

@@ -167,8 +167,7 @@ export const boreholesAPI = {
       borehole_name?: string;
       final_depth: number;
       diameter_mm?: number;
-      field_energy_percent?: number;
-      rod_length?: number;
+      field_energy_percent?: number;  // Deleted rod_length from the next linecode
       water_table_depth?: number;
       formulation?: string;
       strata_assignments: {

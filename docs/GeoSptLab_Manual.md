@@ -634,3 +634,271 @@ Notas:
 ```
 
 ---
+
+## 11. Arquitectura del Frontend y Flujo de Trabajo
+
+Esta sección describe en detalle cómo funciona el flujo de trabajo del frontend, incluyendo la gestión de estado, el flujo de datos, y los patrones de comunicación entre componentes.
+
+### 11.1 Arquitectura General
+
+La aplicación frontend está construida con React.js + TypeScript utilizando los siguientes patrones y tecnologías:
+
+- **React Hook Form + Zod**: Gestión de formularios con validación en tiempo real
+- **Custom Hooks**: Hook personalizado `useProjectWorkflow` para gestión centralizada del estado
+- **CSS Modules**: Estilos encapsulados por componente
+- **Wizard Pattern**: Flujo multi-paso con navegación controlada
+- **Optimistic UI**: Actualizaciones inmediatas con rollback en caso de error
+
+### 11.2 Gestión de Estado Central - useProjectWorkflow Hook
+
+El corazón de la aplicación es el hook `useProjectWorkflow` que centraliza todo el estado del proyecto:
+
+#### Estructura del Estado:
+
+```typescript
+interface ProjectWorkflowState {
+  // Estado de configuración del proyecto
+  projectData: ProjectData | null;
+  strataDefinitions: StratumDefinition[];
+  boreholeConfigurations: BoreholeConfiguration[];
+  
+  // Estado del flujo de trabajo
+  currentStep: number;
+  completedSteps: number[];
+  
+  // Estado de carga y errores
+  isSubmitting: boolean;
+  errors: Record<string, string>;
+}
+```
+
+#### Funciones del Hook:
+
+1. **submitProjectData**: Envía datos básicos del proyecto al backend
+2. **submitBoreholeStrataData**: Envía configuraciones de perforaciones y estratos
+3. **submitSPTIntervalsData**: Envía intervalos SPT para cálculos
+4. **markStepCompleted**: Marca un paso como completado
+5. **updateProjectData/Strata/Boreholes**: Actualizaciones locales del estado
+
+### 11.3 Flujo de Datos Completo
+
+#### Paso 1: Configuración Inicial del Proyecto
+```
+Usuario completa DatosBase.tsx
+    ↓
+react-hook-form captura datos
+    ↓
+Validación con Zod schema
+    ↓
+submitProjectData() en useProjectWorkflow
+    ↓
+POST /api/v1/projects/ al backend
+    ↓
+Estado actualizado con respuesta del servidor
+    ↓
+Navegación automática al siguiente paso
+```
+
+#### Paso 2: Definición de Estratos
+```
+Usuario completa StrataDefinitionForm.tsx
+    ↓
+Formulario dinámico basado en projectData.number_of_strata
+    ↓
+Validación en tiempo real (Zod + react-hook-form)
+    ↓
+Transformación de datos (código de estrato a número)
+    ↓
+Estado local actualizado inmediatamente (optimistic UI)
+    ↓
+submitBoreholeStrataData() al completar el paso
+    ↓
+POST /api/v1/stratum-definitions/bulk al backend
+    ↓
+Confirmación del servidor y navegación al siguiente paso
+```
+
+#### Paso 3: Configuración de Perforaciones
+```
+Usuario completa BoreholesConfigurationForm.tsx
+    ↓
+Tabs dinámicas basadas en projectData.number_of_boreholes
+    ↓
+Cada tab tiene formulario independiente con:
+  - Datos básicos de la perforación
+  - Asignación de estratos con profundidades
+  - Validación de profundidades consistentes
+    ↓
+Estado sincronizado entre tabs
+    ↓
+submitBoreholeStrataData() procesa:
+  1. Crear perforaciones (POST /api/v1/boreholes/)
+  2. Asignar estratos a perforaciones (POST /api/v1/borehole-strata/)
+    ↓
+Navegación al paso de intervalos SPT
+```
+
+#### Paso 4: Intervalos SPT y Cálculos
+```
+Usuario completa formularios de intervalos SPT
+    ↓
+Formularios dinámicos por perforación
+    ↓
+submitSPTIntervalsData() procesa:
+  1. POST /api/v1/spt-intervals/ (múltiples intervalos)
+  2. Trigger de cálculos en backend
+    ↓
+GET /api/v1/calculated-results/ para obtener resultados
+    ↓
+Navegación al reporte final
+```
+
+### 11.4 Patrones de Comunicación Entre Componentes
+
+#### 1. Prop Drilling Controlado
+Los datos fluyen de padres a hijos de forma explícita:
+```
+SPTCalculator (orchestrator)
+    ↓ projectData, strataDefinitions
+StrataDefinitionForm
+    ↓ availableStrata
+BoreholesConfigurationForm
+```
+
+#### 2. Event Bubbling para Acciones
+Los eventos suben de hijos a padres:
+```
+BoreholesConfigurationForm
+    ↓ onNext(formData)
+SPTCalculator
+    ↓ useProjectWorkflow.submitBoreholeStrataData()
+Backend API
+```
+
+#### 3. Estado Compartido via Custom Hook
+Múltiples componentes acceden al mismo estado:
+```
+useProjectWorkflow() ← SPTCalculator
+useProjectWorkflow() ← Navigation
+useProjectWorkflow() ← ErrorBoundary
+```
+
+### 11.5 Validación Multi-Capa
+
+#### Capa 1: Validación en Tiempo Real (Frontend)
+- **Zod schemas** validan tipos y rangos
+- **react-hook-form** maneja errores en vivo
+- **Custom validators** para lógica de negocio
+
+#### Capa 2: Validación de Consistencia (Frontend)
+- Verificación de profundidades consistentes
+- Validación de códigos de estrato únicos
+- Comprobación de datos requeridos entre pasos
+
+#### Capa 3: Validación del Backend
+- Pydantic models validan estructura
+- Business logic validation en servicios
+- Constraints de base de datos
+
+### 11.6 Manejo de Errores y Estado de Carga
+
+#### Estrategias de Error:
+1. **Errores de Validación**: Mostrados inline en formularios
+2. **Errores de Red**: Toasts/notifications globales  
+3. **Errores de Estado**: Rollback automático del estado optimista
+4. **Errores Críticos**: Error boundaries para recuperación
+
+#### Estados de Carga:
+```typescript
+// Estado granular por operación
+isSubmitting: boolean;           // Envío general
+isSubmittingProject: boolean;    // Específico por paso
+isLoadingResults: boolean;       // Carga de resultados
+```
+
+### 11.7 Optimizaciones de Rendimiento
+
+#### 1. Memoización Estratégica
+- `React.memo()` en componentes pesados
+- `useMemo()` para cálculos costosos
+- `useCallback()` para funciones pasadas como props
+
+#### 2. Lazy Loading
+- Componentes de reporte cargados bajo demanda
+- Datos de resultados solo cuando se necesitan
+
+#### 3. Debouncing
+- Validaciones diferidas en inputs numéricos
+- API calls optimizadas
+
+### 11.8 Persistencia y Recuperación de Estado
+
+#### LocalStorage Strategy:
+```typescript
+// Auto-save del progreso
+useEffect(() => {
+  localStorage.setItem('projectWorkflow', JSON.stringify(state));
+}, [state]);
+
+// Recovery al cargar la página
+useEffect(() => {
+  const saved = localStorage.getItem('projectWorkflow');
+  if (saved) {
+    setState(JSON.parse(saved));
+  }
+}, []);
+```
+
+### 11.9 Patrones de Diseño Implementados
+
+#### 1. **Wizard Pattern**
+- Navegación secuencial con validación por paso
+- Estado persistente entre pasos
+- Capacidad de ir hacia atrás sin perder datos
+
+#### 2. **Observer Pattern**
+- `useProjectWorkflow` como subject
+- Componentes como observers del estado
+- Actualizaciones automáticas en cambios de estado
+
+#### 3. **Command Pattern**  
+- Acciones encapsuladas (`submitProjectData`, `markStepCompleted`)
+- Rollback automático en errores
+- Logging centralizado de operaciones
+
+#### 4. **Factory Pattern**
+- Generación dinámica de formularios basada en configuración
+- Creación de tabs y campos según `number_of_strata`/`number_of_boreholes`
+
+### 11.10 Flujo de Datos Visual
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   DatosBase     │───▶│ useProjectWorkflow│───▶│   Backend API   │
+│   (Form)        │    │     (Hook)       │    │   (FastAPI)     │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+        │                       │                       │
+        ▼                       ▼                       ▼
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│StrataDefinition │    │   Local State    │    │   Database      │
+│   (Dynamic)     │    │   (Optimistic)   │    │   (PostgreSQL)  │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+        │                       │                       │
+        ▼                       ▼                       ▼
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│ BoreholeConfig  │    │   Validation     │    │   Calculations  │
+│  (Tabs/Forms)   │    │ (Zod + Custom)   │    │ (spt_calculations)│
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+```
+
+### 11.11 Consideraciones de Escalabilidad
+
+#### Preparación para Funcionalidades Futuras:
+1. **Modularity**: Cada formulario es independiente
+2. **Extensibility**: Fácil agregar nuevos tipos de formularios
+3. **Configuration-Driven**: Formularios basados en configuración JSON
+4. **API Flexibility**: Estructura preparada para endpoints adicionales
+
+Esta arquitectura garantiza que el frontend sea mantenible, escalable y proporcione una experiencia de usuario fluida mientras maneja la complejidad inherente de los cálculos geotécnicos del SPT.
+
+---

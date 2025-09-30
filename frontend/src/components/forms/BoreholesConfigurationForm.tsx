@@ -26,8 +26,7 @@ const boreholeSchema = z.object({
   borehole_name: z.string().min(1, "Nombre requerido").max(20, "Nombre muy largo"),
   final_depth: z.number().min(1, "Profundidad > 0").max(100, "Profundidad máx 100m"),
   diameter_mm: z.number().min(50, "Diámetro mín 50mm").max(500, "Diámetro máx 500mm"),
-  field_energy_percent: z.number().min(30, "Energía mín 30%").max(100, "Energía máx 100%"),
-  rod_length: z.number().min(5, "Longitud mín 5m").max(50, "Longitud máx 50m"),
+  field_energy_percent: z.number().min(30, "Energía mín 30%").max(100, "Energía máx 100%"), // Deleted rod_length from the next linecode
   water_table_depth: z.number().min(0, "Profundidad >= 0").optional().nullable(),
   strata_assignments: z.array(stratumAssignmentSchema).min(1, "Al menos un estrato requerido")
 }).refine(
@@ -97,8 +96,7 @@ const BoreholesConfigurationForm: React.FC<BoreholesConfigurationFormProps> = ({
         borehole_name: `P${index + 1}`,
         final_depth: 15.0,
         diameter_mm: 150,
-        field_energy_percent: 45,
-        rod_length: 15,
+        field_energy_percent: 45, // Deleted rod_length from the next linecode
         water_table_depth: null,
         strata_assignments: [
           // Default: assign first stratum to full depth
@@ -127,8 +125,7 @@ const BoreholesConfigurationForm: React.FC<BoreholesConfigurationFormProps> = ({
         borehole_name: borehole.borehole_name,
         final_depth: borehole.final_depth,
         diameter_mm: borehole.diameter_mm,
-        field_energy_percent: borehole.field_energy_percent,
-        rod_length: borehole.rod_length,
+        field_energy_percent: borehole.field_energy_percent, // Deleted rod_length from the next linecode
         water_table_depth: borehole.water_table_depth || undefined,
         formulation: projectData.formulation,
         // Note: strata assignments will be handled separately in backend
@@ -338,17 +335,8 @@ const BoreholesConfigurationForm: React.FC<BoreholesConfigurationFormProps> = ({
                     <label className={styles.label}>
                       Longitud de Barras (m) <span className={styles.required}>*</span>
                     </label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      {...register(`boreholes.${boreholeIndex}.rod_length`, { valueAsNumber: true })}
-                      className={`${styles.input} ${errors.boreholes?.[boreholeIndex]?.rod_length ? styles.inputError : ''}`}
-                    />
-                    {errors.boreholes?.[boreholeIndex]?.rod_length && (
-                      <span className={styles.errorText}>
-                        {errors.boreholes[boreholeIndex]?.rod_length?.message}
-                      </span>
-                    )}
+  
+
                   </div>
 
                   <div className={styles.inputGroup}>

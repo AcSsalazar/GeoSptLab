@@ -131,8 +131,7 @@ const BoreholeStrataManager: React.FC<BoreholeStrataManagerProps> = ({
       project_id: projectData.id,
       borehole_name: boreholeData.boreholeName,
       final_depth: Math.max(...boreholeData.strata.map(s => s.final_depth)),
-      diameter_mm: 150, // Default
-      rod_length: 15, // Default
+      diameter_mm: 150, // Default  , // Deleted rod_length from the next linecode
       field_energy_percent: 45, // Default
       water_table_depth: undefined,
       formulation: projectData.formulation,

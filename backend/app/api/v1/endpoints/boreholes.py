@@ -222,7 +222,7 @@ def create_boreholes_with_strata(
                 final_depth=borehole_data.final_depth,
                 diameter_mm=borehole_data.diameter_mm,
                 field_energy_percent=borehole_data.field_energy_percent,
-                rod_length=borehole_data.rod_length,
+                #rod_length=borehole_data.rod_length,
                 water_table_depth=borehole_data.water_table_depth,
                 formulation=borehole_data.formulation
             )

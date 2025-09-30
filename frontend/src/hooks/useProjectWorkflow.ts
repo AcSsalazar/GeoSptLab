@@ -157,7 +157,6 @@ export const useProjectWorkflow = () => {
           final_depth: borehole.final_depth,
           diameter_mm: borehole.diameter_mm || 150,
           field_energy_percent: borehole.field_energy_percent || 45,
-          rod_length: borehole.rod_length || 15,
           water_table_depth: borehole.water_table_depth,
           formulation: state.projectData?.formulation, // Use project formulation
           strata_assignments: borehole.strataAssignments.map(assignment => ({

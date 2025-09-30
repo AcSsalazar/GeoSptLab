@@ -29,8 +29,7 @@ export interface Project {
   number_of_strata: number;
   formulation: FormulationType;
   field_energy_percent: number;
-  borehole_diameter?: number;
-  rod_length?: number;
+  borehole_diameter?: number;        // Deleted rod_length from the next linecode because it's not used at the project level
   water_table_depth?: number;
   created_at: string;
   updated_at: string;
@@ -88,8 +87,8 @@ export interface Borehole {
   borehole_name: string;
   final_depth: number;
   diameter_mm: number;
-  field_energy_percent: number;
-  rod_length: number;
+  field_energy_percent: number;   // Deleted rod_length from the next linecode
+  
 }
 
 export interface BoreholeCreate {
@@ -97,8 +96,7 @@ export interface BoreholeCreate {
   borehole_name?: string; // Optional since it can be auto-generated
   final_depth: number;
   diameter_mm?: number;
-  field_energy_percent?: number;
-  rod_length?: number;
+  field_energy_percent?: number; // Deleted rod_length from the next linecode
   water_table_depth?: number;
   formulation?: FormulationType;
 }
