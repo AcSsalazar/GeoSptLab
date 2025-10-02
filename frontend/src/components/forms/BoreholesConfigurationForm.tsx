@@ -5,7 +5,7 @@ import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Plus, Trash2, MapPin, Layers, Target } from 'lucide-react'
-import type { Project, Stratum, BoreholeCreate } from '../../types/project'
+import type { Project, StratumCreate, BoreholeCreate } from '../../types/project'
 import styles from '@/styles/BoreholesConfigurationForm.module.css'
 
 // Schema for stratum assignment within a borehole
@@ -69,7 +69,7 @@ type BoreholesConfigFormData = z.infer<typeof boreholesConfigFormSchema>
 
 interface BoreholesConfigurationFormProps {
   projectData: Project
-  availableStrata: Stratum[] // The strata types defined in previous step
+  availableStrata: StratumCreate[] // The strata types defined in previous step (before API submission)
   onValidData: (data: BoreholeCreate[], isValid: boolean) => void
 }
 
@@ -216,8 +216,8 @@ const BoreholesConfigurationForm: React.FC<BoreholesConfigurationFormProps> = ({
       <div className={styles.strataReference}>
         <h4><Layers size={16} /> Tipos de Estratos Disponibles</h4>
         <div className={styles.strataList}>
-          {availableStrata.map(stratum => (
-            <div key={stratum.id} className={styles.stratumTag}>
+          {availableStrata.map((stratum, index) => (
+            <div key={`stratum-${stratum.stratum_code}-${index}`} className={styles.stratumTag}>
               <span className={styles.stratumCode}>{stratum.name}</span>
               <span className={styles.stratumDesc}>{stratum.description}</span>
               <span className={styles.stratumType}>({stratum.behavior_type})</span>
@@ -418,7 +418,7 @@ const BoreholesConfigurationForm: React.FC<BoreholesConfigurationFormProps> = ({
 const StrataAssignmentsList: React.FC<{
   control: any // eslint-disable-line @typescript-eslint/no-explicit-any
   boreholeIndex: number
-  availableStrata: Stratum[]
+  availableStrata: StratumCreate[]
   register: any // eslint-disable-line @typescript-eslint/no-explicit-any
   watch: any // eslint-disable-line @typescript-eslint/no-explicit-any
   errors: any // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -461,8 +461,8 @@ const StrataAssignmentsList: React.FC<{
                     styles.inputError : ''
                   }`}
                 >
-                  {availableStrata.map(stratum => (
-                    <option key={stratum.id} value={stratum.name}>
+                  {availableStrata.map((stratum, index) => (
+                    <option key={`stratum-option-${stratum.stratum_code}-${index}`} value={stratum.name}>
                       {stratum.name} - {stratum.description}
                     </option>
                   ))}
@@ -533,7 +533,7 @@ const BoreholeProfilePreview: React.FC<{
       depth_to: number
     }>
   }
-  availableStrata: Stratum[]
+  availableStrata: StratumCreate[]
 }> = ({ boreholeData, availableStrata }) => {
   const getStratumColor = (stratumCode: string) => {
     const colors = ['#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#3B82F6', '#6B7280', '#EC4899']

@@ -21,7 +21,6 @@ const SPTCalculator: React.FC = () => {
   const {
     steps,
     projectData,
-    strataData,
     boreholesData,
     loading,
     submitProjectData,
@@ -198,10 +197,10 @@ const SPTCalculator: React.FC = () => {
       id: "borehole-creation",
       title: "Crear perforaciones",
       description: "Create boreholes with locations and depths",
-      component: projectData && strataData.length > 0 ? (
+      component: projectData && currentStrataData.length > 0 ? (
         <BoreholesConfigurationForm
           projectData={projectData}
-          availableStrata={strataData}
+          availableStrata={currentStrataData}
           onValidData={handleBoreholesDataChange}
         />
       ) : (
@@ -209,10 +208,16 @@ const SPTCalculator: React.FC = () => {
           <p className={styles.placeholderTitle}>Esperando definición de estratos...</p>
           <p className={styles.placeholderDescription}>
             Los estratos deben definirse antes de configurar las perforaciones.
+            {projectData && (
+              <span style={{display: 'block', marginTop: '10px', color: '#666'}}>
+                Estado actual: {currentStrataData.length} estratos definidos, 
+                Válido: {isStrataFormValid ? 'Sí' : 'No'}
+              </span>
+            )}
           </p>
         </div>
       ),
-      isValid: projectData && strataData.length > 0 ? isBoreholesFormValid : false
+      isValid: projectData && currentStrataData.length > 0 ? isBoreholesFormValid : false
     },
     {
       id: "spt-intervals",
