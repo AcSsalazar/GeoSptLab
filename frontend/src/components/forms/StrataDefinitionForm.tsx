@@ -93,16 +93,16 @@ const StrataDefinitionForm: React.FC<StrataDefinitionFormProps> = ({
   } = useForm<StrataDefinitionFormData>({
     resolver: zodResolver(strataDefinitionFormSchema),
     defaultValues: {
-      // Initialize with the number of strata types defined in project
+      // Initialize empty fields for the number of strata defined in project
       strata: Array.from(
         { length: projectData.number_of_strata },
-        (_, index) => ({
-          stratum_code: `E${index + 1}`,
-          name: `E${index + 1}`,
-          description: `Tipo de suelo ${index + 1}`,
-          gamma_humid: 10.0,
-          gamma_saturated: 10.0,
-          behavior_type: BehaviorType.GRANULAR,
+        () => ({
+          stratum_code: "", // Empty instead of `E${index + 1}`
+          name: "", // Empty instead of `E${index + 1}`
+          description: "", // Empty instead of `Tipo de suelo ${index + 1}`
+          gamma_humid: undefined, // undefined instead of 10.0
+          gamma_saturated: undefined, // undefined instead of 10.0
+          behavior_type: BehaviorType.GRANULAR, // Keep default for dropdown
           plasticity_index: undefined,
         })
       ),
@@ -200,7 +200,7 @@ const StrataDefinitionForm: React.FC<StrataDefinitionFormProps> = ({
         <div className={styles.infoContent}>
           <strong>¿Qué estamos definiendo aquí?</strong>
           <p>
-            Estos son los <strong>tipos de suelo</strong> que pueden aparecer en
+            Estos son los <b>tipos de suelo</b> que pueden aparecer en
             cualquiera de las perforaciones del proyecto. En el siguiente paso,
             asignarás qué tipos aparecen y a qué profundidades en cada
             perforación específica.
@@ -286,7 +286,7 @@ const StrataDefinitionForm: React.FC<StrataDefinitionFormProps> = ({
                         ? styles.inputError
                         : ""
                     }`}
-                    placeholder="Ej: Arcilla limosa café, Arena fina a media, etc."
+                    placeholder="Ej: Arcilla limosa, Arena fina a media, etc."
                   />
                   {errors.strata?.[index]?.description && (
                     <span className={styles.errorText}>

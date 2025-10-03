@@ -119,7 +119,7 @@ const FormWizard: React.FC<FormWizardProps> = ({ steps = [], onComplete, onStepC
       </div>
 
       {/* Current step content */}
-      <div className={styles.content}>
+      
         <div className={styles.contentHeader}>
           <h2 className={styles.contentTitle}></h2>
          {/* <p className={styles.contentDescription}>{currentStepData.description}</p> */}
@@ -134,7 +134,7 @@ const FormWizard: React.FC<FormWizardProps> = ({ steps = [], onComplete, onStepC
             {!isLastStep && <ChevronRight size={16} />}
           </button>
         </div>
-      </div>
+      
     </div>
   )
 }

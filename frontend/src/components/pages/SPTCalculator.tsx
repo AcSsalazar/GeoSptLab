@@ -269,9 +269,9 @@ const SPTCalculator: React.FC = () => {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <div className={styles.header}>
-          <p className={styles.subtitle}>Generador de parametros <b>&#964;</b> y <b>&#966;</b>   </p>
-        </div>
+{/*         <div className={styles.header}>
+          <p className={styles.subtitle}>Generador de parametros <b>&#964;</b> y <b>&#966;</b></p>
+        </div> */}
 
 
         {loading && (

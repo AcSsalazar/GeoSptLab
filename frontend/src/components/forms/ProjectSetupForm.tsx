@@ -33,8 +33,8 @@ const ProjectSetupForm: React.FC<ProjectSetupFormProps> = ({ initialData, onVali
     resolver: zodResolver(projectSchema),
     defaultValues: {
       project_name: initialData?.project_name || "",
-      number_of_boreholes: initialData?.number_of_boreholes || 3,
-      number_of_strata: initialData?.number_of_strata || 3,
+      number_of_boreholes: initialData?.number_of_boreholes || undefined,
+      number_of_strata: initialData?.number_of_strata || undefined,
       formulation: initialData?.formulation || FormulationType.KISHIDA,
     },
     mode: "onChange",
@@ -62,7 +62,7 @@ const ProjectSetupForm: React.FC<ProjectSetupFormProps> = ({ initialData, onVali
           <input
             className={`${styles.inputField} ${errors.project_name ? styles.inputError : ""}`}
             {...register("project_name")}
-            placeholder="e.g., Edificio Residencial Aurora"
+            placeholder="Ej., Edificio Residencial Aurora"
           />
           {errors.project_name && <div className={styles.errorMessage}>{errors.project_name.message}</div>}
         </div>
@@ -93,7 +93,7 @@ const ProjectSetupForm: React.FC<ProjectSetupFormProps> = ({ initialData, onVali
             {...register("number_of_boreholes", { valueAsNumber: true })}
             min="1"
             max="30"
-            placeholder="3"
+            placeholder="Ej. 2"
           />
           {errors.number_of_boreholes && (
             <div className={styles.errorMessage}>{errors.number_of_boreholes.message}</div>
@@ -110,7 +110,7 @@ const ProjectSetupForm: React.FC<ProjectSetupFormProps> = ({ initialData, onVali
             {...register("number_of_strata", { valueAsNumber: true })}
             min="1"
             max="7"
-            placeholder="3"
+            placeholder="Ej. 2"
           />
           {errors.number_of_strata && <div className={styles.errorMessage}>{errors.number_of_strata.message}</div>}
         </div>
@@ -119,7 +119,7 @@ const ProjectSetupForm: React.FC<ProjectSetupFormProps> = ({ initialData, onVali
 
 
       {/* Project Summary Card */}
-      <div className={styles.projectSummary}>
+{/*       <div className={styles.projectSummary}>
         <h3 className={styles.summaryTitle}>Resumen del Proyecto</h3>
         <div className={styles.summaryContent}>
           <div className={styles.summaryItem}>
@@ -131,7 +131,7 @@ const ProjectSetupForm: React.FC<ProjectSetupFormProps> = ({ initialData, onVali
             <span className={styles.summaryValue}> {watch("number_of_strata")}</span> estratos totales
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }

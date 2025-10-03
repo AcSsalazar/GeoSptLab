@@ -10,7 +10,7 @@ function App() {
       <Header />
       
       {/* Main content with top margin for fixed header */}
-      <main style={{ marginTop: 'calc(var(--space-8) + var(--space-2))' }}>
+      <main style={{ marginTop: 'calc(var(--space-6) + var(--space-2))' }}>
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/calculator' element={<SPTCalculator />} />

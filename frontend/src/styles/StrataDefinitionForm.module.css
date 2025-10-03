@@ -32,7 +32,7 @@
 }
 
 .formTitle {
-  font-size: 1.875rem;
+  font-size: var(--text-lg);
   font-weight: 700;
   color: #1f2937;
   margin: 0 0 8px 0;
@@ -40,7 +40,7 @@
 
 .formSubtitle {
   color: #6b7280;
-  font-size: 1rem;
+  font-size: var(--text-xs);
   margin: 0;
 }
 
@@ -52,12 +52,12 @@
 }
 
 .projectCode {
-  background: #3b82f6;
+  background: #332b81d3;
   color: white;
   padding: 6px 12px;
   border-radius: 6px;
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
 }
 
 .projectName {
@@ -68,13 +68,14 @@
 
 /* Info Card */
 .infoCard {
+  font-size: var(--text-sm);
   display: flex;
   gap: 12px;
-  padding: 16px;
+  padding: 9px;
   background: #eff6ff;
   border: 1px solid #bfdbfe;
   border-radius: 8px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .infoIcon {
@@ -83,16 +84,17 @@
 }
 
 .infoContent strong {
+
   color: #1e40af;
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   font-weight: 600;
 }
 
 .infoContent p {
   color: #374151;
   margin: 0;
-  font-size: 0.875rem;
+  font-size: var(--text-xs);
   line-height: 1.5;
 }
 
