@@ -1,4 +1,5 @@
-import MarkdownViewer from './MarkdownViewer';
+import MarkdownViewer from '@/components/MarkdownViewer';
+
 
 export default function DocumentationPage() {
   return (
@@ -7,3 +8,4 @@ export default function DocumentationPage() {
     </div>
   );
 }
+

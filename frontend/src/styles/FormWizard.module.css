@@ -180,24 +180,27 @@
   justify-content: flex-end;
   align-items: center;
   gap: var(--spacing-component);
-  padding-top: var(--spacing-component);
-  border-top: 1px solid var(--color-border-primary);
+  padding: var(--spacing-component) 0;
+  /* margin-top: var(--spacing-component); */
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .nextButton {
   background: linear-gradient(135deg, var(--brand-primary) 0%, var(--color-warning) 50%, var(--brand-primary-dark) 100%);
   color: var(--color-text-inverse);
-  border: none;
-  padding: var(--spacing-element) var(--spacing-5);
-  border-radius: var(--radius-lg);
   font-size: var(--text-base);
+  
+  /* padding: var(--spacing-element) var(--spacing-5); */
+  border-radius: var(--radius-base);
+  font-size: var(--text-lg );
   font-weight: var(--font-weight-semibold);
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: var(--spacing-1);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: var(--shadow-md);
   letter-spacing: 0.01em;
   position: relative;
   overflow: hidden;

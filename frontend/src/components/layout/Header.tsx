@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { SignedIn, SignedOut, UserButton, SignInButton, SignOutButton, useUser } from '@clerk/clerk-react';
-import logoImg from '@/assets/images/logoconsul.png';
+/* import logoImg from '@/assets/images/logoconsul.png'; */
 import styles from './Header.module.css';
 
 const Header: React.FC = () => {
@@ -11,25 +11,35 @@ const Header: React.FC = () => {
     <header className={styles.header}>
       <div className={styles.container}>
         {/* Logo Section */}
-        <Link to="/" className={styles.brand}>
+{/*         <Link to="/" className={styles.brand}>
           <img className={styles.logoImage} src={logoImg} alt="ConsulCivil Logo" />
-        </Link>
+        </Link> */}
 
         {/* Navigation */}
         <nav className={styles.nav}>
+          <Link to="/" className={styles.navLink}>
+            Inicio
+          </Link>
           <Link to="/about" className={styles.navLink}>
-            Acerca de la herramienta
+            Manual de Uso
           </Link>
           <Link to="/docs" className={styles.navLink}>
-            Documentación
+            Devopers Docs
           </Link>
+          <Link to="/theory" className={styles.navLink}>
+            Fundamentos Teóricos
+          </Link>
+          <Link to="/calculator" className={styles.navLink}>
+            Calculador
+          </Link>
+
           <a 
             href="https://github.com/AcSsalazar/SPT-Parameters-Calculator" 
             target="_blank" 
             rel="noopener noreferrer"
             className={styles.navLink}
           >
-            GitHub
+            Repositorio
           </a>
         </nav>
 

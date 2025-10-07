@@ -4,6 +4,7 @@ import React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
+import {Settings} from "lucide-react"
 import type { ProjectCreate } from "../../types/project"
 import { FormulationType } from "../../types/project"
 import styles from "@/styles/ProjectSetupForm.module.css"
@@ -52,8 +53,13 @@ const ProjectSetupForm: React.FC<ProjectSetupFormProps> = ({ initialData, onVali
 
   return (
     <div className={styles.formContainer}>
+      <div className={styles.titleSection}>
+      
+      <Settings className={styles.titleIcon} size={24} />
+      <div>
       <h2 className={styles.formTitle}>Configuración del Proyecto</h2>
-
+      </div>
+      </div>
       <div className={`${styles.gridContainer} ${styles.gridTwoColumns}`}>
         <div className={styles.inputGroup}>
           <label className={styles.inputLabel}>

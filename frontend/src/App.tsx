@@ -3,7 +3,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Home from '@/components/pages/Home';
 import SPTCalculator from '@/components/pages/SPTCalculator';
-
+import DocumentationPage from '@/components/pages/DocumentationPage';
 function App() {
   return (
     <>
@@ -14,6 +14,7 @@ function App() {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/calculator' element={<SPTCalculator />} />
+          <Route path='/theory' element={<DocumentationPage />} />
         </Routes>
       </main>
       

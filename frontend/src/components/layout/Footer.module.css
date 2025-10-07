@@ -3,7 +3,7 @@
  */
 
 .footer {
-  background-color: var(--color-background-primary);
+  background-color: #f6fbff;
   border-top: 1px solid var(--color-border-primary);
   margin-top: auto;
   padding: var(--spacing-section) 0 var(--spacing-component) 0;

@@ -11,6 +11,7 @@ interface WizardStep {
   title: string
   component: React.ReactNode
   isValid?: boolean
+  onNext?: () => void // Optional callback for form to trigger next
 }
 
 interface FormWizardProps {
@@ -118,23 +119,16 @@ const FormWizard: React.FC<FormWizardProps> = ({ steps = [], onComplete, onStepC
         </div>
       </div>
 
-      {/* Current step content */}
-      
-        <div className={styles.contentHeader}>
-          <h2 className={styles.contentTitle}></h2>
-         {/* <p className={styles.contentDescription}>{currentStepData.description}</p> */}
-        </div>
+      {/* Minimalist: Just render the component directly */}
+      {currentStepData.component}
 
-        <div className={styles.contentBody}>{currentStepData.component}</div>
-
-        {/* Navigation buttons */}
-        <div className={styles.navigation}>
-          <button onClick={handleNext} disabled={currentStepData.isValid === false} className={styles.nextButton}>
-            {isLastStep ? "Complete" : "Next"}
-            {!isLastStep && <ChevronRight size={16} />}
-          </button>
-        </div>
-      
+      {/* Navigation buttons */}
+      <div className={styles.navigation}>
+        <button onClick={handleNext} disabled={currentStepData.isValid === false} className={styles.nextButton}>
+          {isLastStep ? "Complete" : "Next"}
+          {!isLastStep && <ChevronRight size={16} />}
+        </button>
+      </div>
     </div>
   )
 }

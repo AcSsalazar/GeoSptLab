@@ -1,0 +1,25 @@
+.bgCards {
+    padding: 2rem; 
+    border-radius: 12px;
+    border: 1px dashed #7b7e8b;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    gap: 1rem;
+}
+
+.bgCards:hover {
+    border-color: #321e8a;
+    box-shadow: 0 4px 15px rgba(60, 72, 85, 0.37);
+    transform: translateY(-5px);
+}
+
+.bgCards img {
+    position: absolute;
+    transform: scale(0.6);
+    filter: blur(0.5px) opacity(0.6);
+    z-index: -1;
+    transform-origin: center;
+}
+

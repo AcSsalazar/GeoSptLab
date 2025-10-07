@@ -13,27 +13,13 @@ const Footer: React.FC = () => {
               Herramienta profesional para análisis de ensayos SPT y cálculo de parámetros geotécnicos.
             </p>
           </div>
-          
-          <div className={styles.section}>
-            <h4 className={styles.subtitle}>Enlaces útiles</h4>
-            <nav className={styles.links}>
-              <Link to="/docs" className={styles.link}>Documentación</Link>
-              <Link to="/about" className={styles.link}>Acerca de</Link>
-              <a 
-                href="https://github.com/AcSsalazar/SPT-Parameters-Calculator" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className={styles.link}
-              >
-                GitHub
-              </a>
-            </nav>
-          </div>
+
         </div>
         
         <div className={styles.bottom}>
           <p className={styles.copyright}>
-            © 2025 ConsulCivil. Desarrollado para ingenieros geotécnicos.
+            © 2025 by AcSalazar. Desarrollado según las características de los suelos en Colombia. 
+            Consulte la version completa en <Link to="/changelog" >Changelogs & versions</Link>.
           </p>
         </div>
       </div>
