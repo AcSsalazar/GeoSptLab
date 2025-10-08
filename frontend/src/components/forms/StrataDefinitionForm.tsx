@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -84,12 +84,12 @@ const StrataDefinitionForm: React.FC<StrataDefinitionFormProps> = ({
   onValidData,
 }) => {
   const {
-    control,
-    register,
-    watch,
-    setValue,
-    formState: { errors, isValid },
-    getValues,
+  control,
+  register,
+  watch,
+  setValue,
+  formState: { errors, isValid, isDirty },
+  getValues,
   } = useForm<StrataDefinitionFormData>({
     resolver: zodResolver(strataDefinitionFormSchema),
     defaultValues: {
@@ -115,41 +115,32 @@ const StrataDefinitionForm: React.FC<StrataDefinitionFormProps> = ({
     name: "strata",
   });
 
-  // Watch all form values and notify parent
+  // Notify parent only when the form is dirty and valid, and payload changed.
+  const prevPayloadRef = useRef<string | null>(null);
+
   useEffect(() => {
-    const subscription = watch(() => {
-      const formData = getValues();
-      const strataCreateData: StratumCreate[] = formData.strata.map(
-        (stratum, index) => ({
-          project_id: projectData.id,
-          stratum_code: index + 1,
-          name: stratum.name,
-          description: stratum.description,
-          gamma_humid: stratum.gamma_humid,
-          gamma_saturated: stratum.gamma_saturated,
-          behavior_type: stratum.behavior_type,
-          // Only include plasticity_index for cohesive soils
-          plasticity_index: stratum.behavior_type === BehaviorType.COHESIVE ? stratum.plasticity_index : undefined,
-        })
-      );
-      
-      // Enhanced validation reporting
-      console.log('Strata Form Validation Details:', {
-        isValid,
-        errors: Object.keys(errors).length > 0 ? errors : 'No errors',
-        formData: formData.strata.map((s, i) => ({
-          index: i,
-          code: s.stratum_code,
-          behavior: s.behavior_type,
-          hasPlasticityIndex: s.plasticity_index !== undefined,
-          plasticityValue: s.plasticity_index
-        }))
-      });
-      
-      onValidData(strataCreateData, isValid);
-    });
-    return () => subscription.unsubscribe();
-  }, [watch, getValues, onValidData, isValid, projectData.id, errors]);
+    if (!isDirty || !isValid) return;
+
+    const formData = getValues();
+    const strataCreateData: StratumCreate[] = formData.strata.map(
+      (stratum, index) => ({
+        project_id: projectData.id,
+        stratum_code: index + 1,
+        name: stratum.name,
+        description: stratum.description,
+        gamma_humid: stratum.gamma_humid,
+        gamma_saturated: stratum.gamma_saturated,
+        behavior_type: stratum.behavior_type,
+        plasticity_index: stratum.behavior_type === BehaviorType.COHESIVE ? stratum.plasticity_index : undefined,
+      })
+    );
+
+    const payload = JSON.stringify({ data: strataCreateData, isValid });
+    if (prevPayloadRef.current === payload) return;
+    prevPayloadRef.current = payload;
+
+    onValidData(strataCreateData, isValid);
+  }, [getValues, onValidData, isValid, isDirty, projectData.id]);
 
   const addStratum = () => {
     append({

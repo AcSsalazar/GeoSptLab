@@ -39,24 +39,29 @@ const SPTCalculator: React.FC = () => {
   const [isBoreholesFormValid, setIsBoreholesFormValid] = useState(false);
 
   const handleProjectDataChange = (data: ProjectFormData, isValid: boolean) => {
-    // Store the form data and validation state, but don't submit to API yet
-    setCurrentFormData(data);
-    setIsFormValid(isValid);
-    console.log('Form data updated:', data, 'Valid:', isValid);
+    // Store the form data and validation state only when it changed to avoid loops
+    const prev = JSON.stringify(currentFormData);
+    const next = JSON.stringify(data);
+    if (prev !== next) setCurrentFormData(data);
+    if (isFormValid !== isValid) setIsFormValid(isValid);
+  // debugLog('Form data updated:', data, 'Valid:', isValid);
   };
 
   const handleStrataDataChange = (data: StratumCreate[], isValid: boolean) => {
-    // Store the strata form data and validation state, but don't submit to API yet
-    setCurrentStrataData(data);
-    setIsStrataFormValid(isValid);
-    console.log('Strata data updated:', data, 'Valid:', isValid);
+    // Only update when payload actually changes
+    const prev = JSON.stringify(currentStrataData);
+    const next = JSON.stringify(data);
+    if (prev !== next) setCurrentStrataData(data);
+    if (isStrataFormValid !== isValid) setIsStrataFormValid(isValid);
+  // debugLog('Strata data updated:', data, 'Valid:', isValid);
   };
 
   const handleBoreholesDataChange = (data: BoreholeCreate[], isValid: boolean) => {
-    // Store the boreholes form data and validation state, but don't submit to API yet
-    setCurrentBoreholesData(data);
-    setIsBoreholesFormValid(isValid);
-    console.log('Boreholes data updated:', data, 'Valid:', isValid);
+    const prev = JSON.stringify(currentBoreholesData);
+    const next = JSON.stringify(data);
+    if (prev !== next) setCurrentBoreholesData(data);
+    if (isBoreholesFormValid !== isValid) setIsBoreholesFormValid(isValid);
+  // debugLog('Boreholes data updated:', data, 'Valid:', isValid);
   };
 
   // This function will be called when the "Next" button is clicked
@@ -78,7 +83,7 @@ const SPTCalculator: React.FC = () => {
       };
       
       const result = await submitProjectData(projectCreateData);
-      console.log('Project submitted successfully!', result);
+  // debugLog('Project submitted successfully!', result);
       return result; // Return the result for further processing
     } catch (error) {
       console.error('Failed to create project:', error);
@@ -96,7 +101,7 @@ const SPTCalculator: React.FC = () => {
     try {
       // For now, we'll store the strata data and proceed
       // The actual API submission would be handled differently
-      console.log('Strata ready for submission:', currentStrataData);
+  // debugLog('Strata ready for submission:', currentStrataData);
       return currentStrataData;
     } catch (error) {
       console.error('Failed to prepare strata:', error);
@@ -113,7 +118,7 @@ const SPTCalculator: React.FC = () => {
     try {
       // For now, we'll store the boreholes data and proceed
       // The actual API submission would be handled differently
-      console.log('Boreholes ready for submission:', currentBoreholesData);
+  // debugLog('Boreholes ready for submission:', currentBoreholesData);
       return currentBoreholesData;
     } catch (error) {
       console.error('Failed to prepare boreholes:', error);
@@ -128,26 +133,26 @@ const SPTCalculator: React.FC = () => {
         // Step 1: Submit project data when leaving this step
         const result = await handleProjectSubmit();
         if (result) {
-          console.log('Project created successfully, proceeding to next step');
+          // debugLog('Project created successfully, proceeding to next step');
         }
       } else if (stepIndex === 1) {
         // Step 2: Submit strata data when leaving this step
         const result = await handleStrataSubmit();
         if (result) {
-          console.log('Strata created successfully, proceeding to next step');
+          // debugLog('Strata created successfully, proceeding to next step');
         }
       } else if (stepIndex === 2) {
         // Step 3: Submit boreholes data when leaving this step
         const result = await handleBoreholesSubmit();
         if (result) {
-          console.log('Boreholes created successfully, proceeding to next step');
+          // debugLog('Boreholes created successfully, proceeding to next step');
         }
       }
       // Add more step handlers here for steps 3-4
       // if (stepIndex === 2) await handleBoreholesSubmit();
       // if (stepIndex === 3) await handleSPTIntervalsSubmit();
       
-      console.log(`Step ${stepIndex} completed successfully`);
+  // debugLog(`Step ${stepIndex} completed successfully`);
       // Navigation will be handled by FormWizard after this function returns successfully
     } catch (error) {
       console.error('Failed to submit step data:', error);
@@ -157,7 +162,7 @@ const SPTCalculator: React.FC = () => {
 
   const handleWizardComplete = async () => {
     // This gets called on the final step
-    console.log('Workflow complete - ready for results analysis');
+  // debugLog('Workflow complete - ready for results analysis');
   };
 
   const wizardSteps = [

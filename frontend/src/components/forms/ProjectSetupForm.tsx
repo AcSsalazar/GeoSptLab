@@ -28,7 +28,7 @@ const ProjectSetupForm: React.FC<ProjectSetupFormProps> = ({ initialData, onVali
   const {
     register,
     watch,
-    formState: { errors, isValid },
+  formState: { errors, isValid, isDirty },
     getValues,
   } = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema),
@@ -41,15 +41,17 @@ const ProjectSetupForm: React.FC<ProjectSetupFormProps> = ({ initialData, onVali
     mode: "onChange",
   })
 
-  // Watch all form values and notify parent of changes
+  // Notify parent only when the form has been edited and is valid.
+  // We intentionally do NOT depend on `watch()` here so this effect won't run
+  // on every keystroke. It will run only when `isValid` or `isDirty` change.
   React.useEffect(() => {
-    const subscription = watch(() => {
-      const formData = getValues()
-      onValidData(formData, isValid)
-      console.log("Form Data Changed:", formData)
-    })
-    return () => subscription.unsubscribe()
-  }, [watch, getValues, onValidData, isValid])
+    // Require both user interaction and valid form before notifying parent.
+    if (!isDirty || !isValid) return
+
+    const formData = getValues()
+    onValidData(formData, isValid)
+    // Intentionally no console.log here to avoid flooding the console.
+  }, [getValues, onValidData, isValid, isDirty])
 
   return (
     <div className={styles.formContainer}>

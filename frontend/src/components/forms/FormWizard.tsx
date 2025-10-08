@@ -58,7 +58,7 @@ const FormWizard: React.FC<FormWizardProps> = ({ steps = [], onComplete, onStepC
         setCurrentStep(nextStep)
         onStepChange?.(nextStep)
       }
-      console.log("Next button clicked")
+  // debugLog("Next button clicked")
     } else {
       onComplete()
     }
