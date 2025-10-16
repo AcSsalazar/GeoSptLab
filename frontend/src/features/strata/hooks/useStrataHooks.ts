@@ -10,7 +10,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { strataService, type StratumCreate, type Stratum } from '../services/strataService';
 import { queryKeys } from '@/lib/queryClient';
-import { showToast } from '@/lib/toast';
 import { useAppStore } from '@/store/appStore';
 
 // ===========================================
@@ -84,7 +83,7 @@ export function useCreateStrata() {
       }
       
       // 5. Toast de éxito
-      showToast.success(`✅ ${strata.length} estratos creados exitosamente`);
+      
       
       console.log('Strata created:', strata);
     },
@@ -104,7 +103,7 @@ export function useCreateStrata() {
         errorMessage = errorDetail[0]?.msg || errorMessage;
       }
       
-      showToast.error(errorMessage);
+      console.error('User-friendly error message:', errorMessage);
     },
   });
 }
@@ -130,14 +129,13 @@ export function useStrataWorkflow() {
 
   const submit = (strata: StratumCreate[]) => {
     if (!project?.id) {
-      showToast.error('No hay proyecto activo');
+      console.error('No active project to associate strata with.');
       return;
     }
 
     // Check if strata already exist for this project
     if (existingStrata.length > 0 && existingStrata[0].project_id === project.id) {
       console.log('Strata already exist, skipping creation and navigating to next step');
-      showToast.success('✅ Estratos ya configurados');
       markStepCompleted(1); // Mark step 1 (strata) as completed
       goToNextStep();
       return;

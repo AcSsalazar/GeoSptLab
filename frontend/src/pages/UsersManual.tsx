@@ -1,4 +1,4 @@
-import ManualViewer from "../MarkdownViewer"
+import ManualViewer from "../components/MarkdownViewer"
 
 
 function Manual() {

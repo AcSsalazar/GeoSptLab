@@ -7,7 +7,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { boreholesService, type BoreholeCreate, type Borehole } from '../services/boreholesService';
 import { boreholeStrataService, type BoreholeStratumCreate } from '../services/boreholeStrataService';
 import { queryKeys } from '@/lib/queryClient';
-import { showToast } from '@/lib/toast';
 import { useAppStore } from '@/store/appStore';
 
 // ===========================================
@@ -52,12 +51,12 @@ export function useCreateBoreholes() {
         });
       }
       
-      showToast.success(`✅ ${boreholes.length} perforaciones creadas`);
+      
       console.log('Boreholes created:', boreholes);
     },
     
     onError: (error: Error) => {
-      showToast.error(error.message || 'Error al crear perforaciones');
+      console.log(error.message || 'Error al crear perforaciones');
     },
   });
 }
@@ -90,7 +89,7 @@ export function useCreateBoreholeStrata() {
         });
       }
       
-      showToast.success(`✅ Estratos asignados a perforaciones`);
+      
       console.log('Borehole-Strata created:', boreholeStrata);
     },
     
@@ -114,7 +113,7 @@ export function useCreateBoreholeStrata() {
         errorMessage = err.message;
       }
       
-      showToast.error(errorMessage);
+      console.log(errorMessage);
     },
   });
 }
@@ -145,7 +144,7 @@ export function useBoreholeWorkflow() {
     }>;
   }) => {
     if (!project?.id) {
-      showToast.error('No hay proyecto activo');
+      console.log('No hay proyecto activo');
       return;
     }
 
@@ -182,7 +181,7 @@ export function useBoreholeWorkflow() {
         createBoreholeStrata.mutate(boreholeStrataData);
       } else {
         console.warn('⚠️ No borehole-strata data to submit!');
-        showToast.error('No se pudieron mapear los estratos a las perforaciones');
+        
       }
       
       return;

@@ -8,7 +8,6 @@ import {
   type CalculationRequest
 } from '../services/calculationsService';
 import { queryKeys } from '@/lib/queryClient';
-import { showToast } from '@/lib/toast';
 import { useAppStore } from '@/store/appStore';
 
 // ===========================================
@@ -59,7 +58,7 @@ export function useCalculateProject() {
     
     onMutate: async () => {
       console.log('Calculating SPT parameters...');
-      showToast.info('🧮 Calculando parámetros SPT...');
+      
     },
     
     onSuccess: (response) => {
@@ -76,16 +75,13 @@ export function useCalculateProject() {
         });
       }
       
-      // Toast de éxito
-      showToast.success(
-        `✅ ${response.calculated_intervals + response.updated_intervals} intervalos calculados`
-      );
+      
       
       console.log('Calculation response:', response);
     },
     
     onError: (error: Error) => {
-      showToast.error(error.message || 'Error al calcular parámetros');
+      
       console.error('Calculation error:', error);
     },
   });

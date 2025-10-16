@@ -5,7 +5,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { sptIntervalsService, type SPTIntervalCreate, type SPTInterval } from '../services/sptIntervalsService';
 import { queryKeys } from '@/lib/queryClient';
-import { showToast } from '@/lib/toast';
 import { useAppStore } from '@/store/appStore';
 
 // ===========================================
@@ -48,13 +47,11 @@ export function useCreateSPTIntervals() {
         });
       }
       
-      showToast.success(`✅ ${intervals.length} intervalos SPT creados`);
+      
       console.log('SPT Intervals created:', intervals);
     },
     
-    onError: (error: Error) => {
-      showToast.error(error.message || 'Error al crear intervalos SPT');
-    },
+
   });
 }
 
@@ -64,7 +61,7 @@ export function useSPTIntervalsWorkflow() {
 
   const submit = (intervals: SPTIntervalCreate[]) => {
     if (!project?.id) {
-      showToast.error('No hay proyecto activo');
+      console.error('No active project to associate SPT intervals with.');
       return;
     }
 

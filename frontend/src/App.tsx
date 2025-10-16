@@ -1,12 +1,12 @@
 import { Routes, Route } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import Home from '@/components/pages/Home';
-import SPTCalculator from '@/components/pages/SPTCalculator';
-import Documentation from '@/components/pages/Documentation';
-import Manual from './components/pages/UsersManual';
-import TheoryDoc from './components/pages/Theory';
-import NotFound from './components/pages/NotFound';
+import Home from '@/pages/Home';
+import SPTCalculator from '@/pages/SPTCalculator';
+import Documentation from '@/pages/Documentation';
+import Manual from './pages/UsersManual';
+import TheoryDoc from './pages/Theory';
+import NotFound from './pages/NotFound';
 function App() {
   return (
     <>

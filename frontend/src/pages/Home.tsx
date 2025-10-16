@@ -1,5 +1,5 @@
 import styles from "@/styles/Home.module.css"
-import img from "/background01.png"
+import img from "/background01.webp"
 
 function Home() {
   return (

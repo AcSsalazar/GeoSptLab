@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Calculator, Download, RefreshCw, AlertCircle } from 'lucide-react';
 import { useAppStore } from '@/store/appStore';
 import { useCalculationsWorkflow } from '@/features/calculations/hooks/useCalculationsHooks';

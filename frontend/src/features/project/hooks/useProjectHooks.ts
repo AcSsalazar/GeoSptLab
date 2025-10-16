@@ -33,7 +33,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { projectService } from '../services/projectService';
 import { queryKeys, invalidateProjectData } from '@/lib/queryClient';
-import { showToast, toastMessages } from '@/lib/toast';
 import { useAppStore } from '@/store/appStore';
 import type { Project, ProjectCreate } from '@/types/project';
 
@@ -145,11 +144,11 @@ export function useCreateProject() {
       });
       
       // 5. Toast de éxito
-      showToast.success(toastMessages.project.created);
+      
     },
     
     onError: (error: Error) => {
-      showToast.error(error.message || toastMessages.project.error);
+      console.error('Error creating project:', error.message || 'Unknown error');
     },
   });
 }
@@ -181,12 +180,10 @@ export function useUpdateProject() {
       invalidateProjectData(project.id);
       
       // 3. Toast de éxito
-      showToast.success(toastMessages.project.updated);
+      
     },
     
-    onError: (error: Error) => {
-      showToast.error(error.message || toastMessages.project.error);
-    },
+   
   });
 }
 
@@ -229,11 +226,11 @@ export function useDeleteProject() {
       });
       
       // 4. Toast de éxito
-      showToast.success(toastMessages.project.deleted);
+      
     },
     
     onError: (error: Error) => {
-      showToast.error(error.message || toastMessages.project.error);
+      console.error('Error deleting project:', error.message || 'Unknown error');
     },
   });
 }
