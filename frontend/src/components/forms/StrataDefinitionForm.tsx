@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Plus, Trash2, Info, Layers } from "lucide-react";
-import type { Project, StratumCreate } from "../../types/project";
+import { useAppStore } from "@/store/appStore";
+import { useStrataWorkflow } from "@/features/strata/hooks/useStrataHooks";
+import type { StratumCreate } from "../../types/project";
 import { BehaviorType } from "../../types/project";
 import styles from "@/styles/StrataDefinitionForm.module.css";
 
@@ -74,28 +76,24 @@ const strataDefinitionFormSchema = z
 
 type StrataDefinitionFormData = z.infer<typeof strataDefinitionFormSchema>;
 
-interface StrataDefinitionFormProps {
-  projectData: Project;
-  onValidData: (data: StratumCreate[], isValid: boolean) => void;
-}
+const StrataDefinitionForm: React.FC = () => {
+  // === ARQUITECTURA ZUSTAND + REACT QUERY ===
+  const project = useAppStore((state) => state.project);
+  const { submit, isLoading } = useStrataWorkflow();
 
-const StrataDefinitionForm: React.FC<StrataDefinitionFormProps> = ({
-  projectData,
-  onValidData,
-}) => {
   const {
-  control,
-  register,
-  watch,
-  setValue,
-  formState: { errors, isValid, isDirty },
-  getValues,
+    control,
+    register,
+    watch,
+    setValue,
+    formState: { errors, isValid },
+    handleSubmit,
   } = useForm<StrataDefinitionFormData>({
     resolver: zodResolver(strataDefinitionFormSchema),
     defaultValues: {
       // Initialize empty fields for the number of strata defined in project
       strata: Array.from(
-        { length: projectData.number_of_strata },
+        { length: project?.number_of_strata || 1 },
         () => ({
           stratum_code: "", // Empty instead of `E${index + 1}`
           name: "", // Empty instead of `E${index + 1}`
@@ -115,40 +113,49 @@ const StrataDefinitionForm: React.FC<StrataDefinitionFormProps> = ({
     name: "strata",
   });
 
-  // Notify parent only when the form is dirty and valid, and payload changed.
-  const prevPayloadRef = useRef<string | null>(null);
+  if (!project) {
+    return <div className={styles.formContainer}>
+      <p>Por favor, crea un proyecto primero</p>
+    </div>;
+  }
 
-  useEffect(() => {
-    if (!isDirty || !isValid) return;
+  // === SUBMIT HANDLER (REACT QUERY) ===
+  const onSubmit = handleSubmit(
+    (formData) => {
+      console.log('Form is valid, submitting...', formData);
+      const strataCreateData: StratumCreate[] = formData.strata.map(
+        (stratum, index) => ({
+          project_id: project.id,
+          stratum_code: index + 1,
+          name: stratum.name,
+          description: stratum.description,
+          gamma_humid: stratum.gamma_humid,
+          gamma_saturated: stratum.gamma_saturated,
+          behavior_type: stratum.behavior_type,
+          plasticity_index: stratum.behavior_type === BehaviorType.COHESIVE ? stratum.plasticity_index : undefined,
+        })
+      );
 
-    const formData = getValues();
-    const strataCreateData: StratumCreate[] = formData.strata.map(
-      (stratum, index) => ({
-        project_id: projectData.id,
-        stratum_code: index + 1,
-        name: stratum.name,
-        description: stratum.description,
-        gamma_humid: stratum.gamma_humid,
-        gamma_saturated: stratum.gamma_saturated,
-        behavior_type: stratum.behavior_type,
-        plasticity_index: stratum.behavior_type === BehaviorType.COHESIVE ? stratum.plasticity_index : undefined,
-      })
-    );
-
-    const payload = JSON.stringify({ data: strataCreateData, isValid });
-    if (prevPayloadRef.current === payload) return;
-    prevPayloadRef.current = payload;
-
-    onValidData(strataCreateData, isValid);
-  }, [getValues, onValidData, isValid, isDirty, projectData.id]);
+      // ✅ USA REACT QUERY - POST al backend
+      submit(strataCreateData);
+      // Navigation automática en onSuccess del hook
+    },
+    (errors) => {
+      console.error('Form validation failed:', errors);
+      // Show which fields have errors
+      Object.keys(errors).forEach((key) => {
+        console.error(`Field "${key}" error:`, errors[key as keyof typeof errors]);
+      });
+    }
+  );
 
   const addStratum = () => {
     append({
-      stratum_code: `E${fields.length + 1}`,
-      name: `E${fields.length + 1}`,
-      description: `Tipo de suelo ${fields.length + 1}`,
-      gamma_humid: 10.0,
-      gamma_saturated: 10.0,
+      stratum_code: "",  // Empty to match defaultValues
+      name: "",
+      description: "",
+      gamma_humid: undefined as unknown as number,  // Type assertion for undefined
+      gamma_saturated: undefined as unknown as number,
       behavior_type: BehaviorType.GRANULAR,
       plasticity_index: undefined,
     });
@@ -161,7 +168,7 @@ const StrataDefinitionForm: React.FC<StrataDefinitionFormProps> = ({
   };
 
   return (
-    <div className={styles.formContainer}>
+    <form onSubmit={onSubmit} className={styles.formContainer}>
       <div className={styles.formHeader}>
         <div className={styles.headerContent}>
           <div className={styles.titleSection}>
@@ -177,10 +184,10 @@ const StrataDefinitionForm: React.FC<StrataDefinitionFormProps> = ({
           </div>
           <div className={styles.projectInfo}>
             <span className={styles.projectCode}>
-              {projectData.project_code}
+              {project.project_code}
             </span>
             <span className={styles.projectName}>
-              {projectData.project_name}
+              {project.project_name}
             </span>
           </div>
         </div>
@@ -458,11 +465,105 @@ const StrataDefinitionForm: React.FC<StrataDefinitionFormProps> = ({
           ))}
         </div>
 
+        {/* Add Stratum Button */}
+        <div className={styles.addStratumSection}>
+          <button
+            type="button"
+            onClick={addStratum}
+            className={styles.addStratumButton}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              padding: '10px 20px',
+              backgroundColor: '#007bff',
+              color: 'white',
+              border: '2px dashed #0056b3',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600',
+              width: '100%',
+              marginTop: '16px',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#0056b3';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#007bff';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            <Plus size={18} />
+            Agregar Otro Tipo de Estrato
+          </button>
+        </div>
+
         {errors.strata && typeof errors.strata.message === "string" && (
           <div className={styles.globalError}>{errors.strata.message}</div>
         )}
       </div>
-    </div>
+
+      {/* Botón de Submit */}
+      <div className={styles.submitSection}>
+        <button
+          type="submit"
+          disabled={!isValid || isLoading}
+          className={styles.submitButton}
+          style={{
+            padding: '12px 24px',
+            backgroundColor: !isValid || isLoading ? '#ccc' : '#28a745',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: !isValid || isLoading ? 'not-allowed' : 'pointer',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            width: '100%',
+            marginTop: '20px',
+          }}
+        >
+          {isLoading ? 'Guardando estratos...' : 'Guardar Estratos y Continuar'}
+        </button>
+        
+        {/* Debug info */}
+        {!isValid && (
+          <div style={{ 
+            marginTop: '10px', 
+            padding: '10px', 
+            backgroundColor: '#fff3cd', 
+            border: '1px solid #ffc107',
+            borderRadius: '4px',
+            fontSize: '12px'
+          }}>
+            <strong>Formulario incompleto:</strong>
+            <ul style={{ margin: '5px 0', paddingLeft: '20px' }}>
+              {errors.strata && Array.isArray(errors.strata) && errors.strata.map((stratumError, idx) => {
+                if (stratumError) {
+                  return (
+                    <li key={idx}>
+                      Estrato #{idx + 1}: {Object.keys(stratumError).map(field => 
+                        `${field}: ${stratumError[field as keyof typeof stratumError]?.message || 'error'}`
+                      ).join(', ')}
+                    </li>
+                  );
+                }
+                return null;
+              })}
+              {errors.strata && typeof errors.strata.message === 'string' && (
+                <li>Error general: {errors.strata.message}</li>
+              )}
+            </ul>
+            <p style={{ margin: '5px 0' }}>
+              Estratos: {fields.length} | Válido: {isValid ? 'Sí' : 'No'}
+            </p>
+          </div>
+        )}
+      </div>
+    </form>
   );
 };
 

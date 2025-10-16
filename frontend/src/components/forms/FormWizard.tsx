@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
 import { ChevronRight, Check } from "lucide-react"
 import styles from "@/styles/FormWizard.module.css"
@@ -64,13 +62,6 @@ const FormWizard: React.FC<FormWizardProps> = ({ steps = [], onComplete, onStepC
     }
   }
 
-  // const handlePrevious = () => {
-  //   if (currentStep > 0) {
-  //     const prevStep = currentStep - 1;
-  //     setCurrentStep(prevStep);
-  //     onStepChange?.(prevStep);
-  //   }
-  // };
 
   const goToStep = (stepIndex: number) => {
     setCurrentStep(stepIndex)

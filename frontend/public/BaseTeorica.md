@@ -1,13 +1,7 @@
-# Documentación GeoSptLab - 0.1.0 (beta)
+# Fundamentos Teóricos - 0.1.1
 
-Por: acSalazar  
-17/09/2025
 
-## Abstract
-
-Esta aplicación calcula los parámetros de resistencia del suelo (φ′, c′, E, Su, τ) utilizados en diseño geotécnico a partir de resultados de SPT (Standard Penetration Test), aplicando correcciones y normalizaciones de energía. Este manual incluye la base teórica en la que se ajustan algunos cálculos de literatura fundamental en geotecnia, con las características de suelo y procedimientos para Colombia. De igual manera, se presenta aquí el flujo de cálculo, variables de entrada/salida, consideraciones de uso y referencias.
-
-### 1. Base teórica
+### 1. Introducción
 
 El ensayo SPT (Standard Penetration Test) mide el número de golpes N necesarios para hincar 30 cm un muestreador estándar. El valor N es un indicador indirecto de la resistencia del suelo y, mediante correlaciones empíricas, se puede estimar:
 

@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { SignedIn, SignedOut, UserButton, SignInButton, SignOutButton, useUser } from '@clerk/clerk-react';
 /* import logoImg from '@/assets/images/logoconsul.png'; */
 import styles from './Header.module.css';
-
 const Header: React.FC = () => {
   const { user } = useUser();
 
@@ -20,10 +19,10 @@ const Header: React.FC = () => {
           <Link to="/" className={styles.navLink}>
             Inicio
           </Link>
-          <Link to="/about" className={styles.navLink}>
+          <Link to="/manual" className={styles.navLink}>
             Manual de Uso
           </Link>
-          <Link to="/docs" className={styles.navLink}>
+          <Link to="/devdocs" className={styles.navLink}>
             Devopers Docs
           </Link>
           <Link to="/theory" className={styles.navLink}>

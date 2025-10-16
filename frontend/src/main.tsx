@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { ClerkProvider } from "@clerk/clerk-react";
 import { esES } from "@clerk/localizations";
 import { BrowserRouter } from "react-router-dom";
+import { AppProviders } from "./providers/AppProviders";
 import App from "./App";
 import "./styles/desing-system/index.css";
 
@@ -32,9 +33,11 @@ if (!PUBLISHABLE_KEY) {
   createRoot(rootEl).render(
     <StrictMode>
       <ClerkProvider publishableKey={PUBLISHABLE_KEY} localization={esES}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <AppProviders>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </AppProviders>
       </ClerkProvider>
     </StrictMode>
   );

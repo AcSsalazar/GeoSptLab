@@ -1,9 +1,6 @@
-# Documentación GeoSptLab - 0.1.0 (beta)
+# Manual de Usuario GeoSptLab - 0.1.1
 
-Por: AcSalazar  
-20/10/2025
-
-## Abstract
+## Introducción
 
 GeoSptLab es una aplicación web para el análisis de ensayos SPT (Standard Penetration Test) y la estimación de parámetros geotécnicos del suelo mediante correlaciones empíricas. La herramienta permite ingresar datos de campo, aplicar correcciones y normalizaciones, y obtener parámetros como φ′, c′, Su y E, así como gráficos y tablas resumen.
 
@@ -36,6 +33,13 @@ Por cada perforación, el usuario debe ingresar:
 ---
 
 
-
-
-
+### 4. Datos por tramo
+Por cada tramo dentro de una perforación, el usuario debe ingresar:
+- Profundidad inicial (m): Profundidad de inicio del tramo.
+- Profundidad final (m): Profundidad de fin del tramo.      
+- Número de golpes N: Número total de golpes registrados en el tramo.
+- Tipo de martillo: Selección entre Manual, Motorizado y Automático.
+- Número de golpes en los últimos 15 cm: Número de golpes registrados en los últimos 15 cm del tramo.
+- Tipo de muestra: Selección entre SPT, SPT+Muestra, Muestra
+- Tipo de muestra: Selección entre SPT, SPT+Muestra, Muestra
+- Diámetro de la muestra: Selección entre 35 mm, 50 mm

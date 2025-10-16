@@ -14,9 +14,9 @@ function Home() {
             <div className={styles.badge}>
               <span>Desarrollado para Ingenieros</span>
             </div>
-            <h1 className={styles.mainTitle}>
-              <span className={styles.titleGradient}>GeoSptLab 1.0</span>
-            </h1>
+            <h3 className={styles.mainTitle}>
+              <span className={styles.titleGradient}>GeoSptLab 0.1.1</span>
+            </h3>
             <p className={styles.subtitle}>
               Herramienta profesional para análisis de ensayos de penetración estándar (SPT) en proyectos de consultoría
               geotécnica y de ingeniería civil.

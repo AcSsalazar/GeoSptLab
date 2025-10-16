@@ -4,63 +4,64 @@ import React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import {Settings} from "lucide-react"
+import { Settings } from "lucide-react"
+import { useProjectWorkflow } from "@/features/project/hooks/useProjectHooks"
+import { useAppStore } from "@/store/appStore"
 import type { ProjectCreate } from "../../types/project"
 import { FormulationType } from "../../types/project"
 import styles from "@/styles/ProjectSetupForm.module.css"
 
-// Esquema de validacion usando Zod para los campor del formulario base.
+// Esquema de validacion usando Zod para los campos del formulario base.
 const projectSchema = z.object({
   project_name: z.string().min(1, "Nombre del proyecto es necesario").max(100, "Nombre del proyecto es muy largo"),
-  number_of_boreholes: z.number().min(1, "Es necesario minimo una perforación").max(30, "Máximo 30 perforaciones"),
-  number_of_strata: z.number().min(1, "Es necesario minimo un estrato").max(7, "Máximo 7 estratos"),
-  formulation: z.nativeEnum(FormulationType),
+  number_of_boreholes: z.coerce.number().min(1, "Es necesario minimo una perforación").max(30, "Máximo 30 perforaciones"),
+  number_of_strata: z.coerce.number().min(1, "Es necesario minimo un estrato").max(7, "Máximo 7 estratos"),
+  formulation: z.enum(FormulationType),
 })
 
-type ProjectFormData = z.infer<typeof projectSchema>
-
-interface ProjectSetupFormProps {
-  initialData?: Partial<ProjectCreate>
-  onValidData: (data: ProjectFormData, isValid: boolean) => void
+// Tipo explícito para el formulario (después de coerce)
+type ProjectFormData = {
+  project_name: string;
+  number_of_boreholes: number;
+  number_of_strata: number;
+  formulation: "kishida" | "jrb";
 }
 
-const ProjectSetupForm: React.FC<ProjectSetupFormProps> = ({ initialData, onValidData }) => {
+const ProjectSetupForm: React.FC = () => {
+  // === ARQUITECTURA ZUSTAND ===
+  const { submit, isLoading, isEditMode } = useProjectWorkflow()
+  const project = useAppStore((state) => state.project)
+
   const {
     register,
-    watch,
-  formState: { errors, isValid, isDirty },
-    getValues,
+    formState: { errors, isValid },
+    handleSubmit,
   } = useForm<ProjectFormData>({
-    resolver: zodResolver(projectSchema),
-    defaultValues: {
-      project_name: initialData?.project_name || "",
-      number_of_boreholes: initialData?.number_of_boreholes || undefined,
-      number_of_strata: initialData?.number_of_strata || undefined,
-      formulation: initialData?.formulation || FormulationType.KISHIDA,
+    resolver: zodResolver(projectSchema) as any,
+    defaultValues: project || {
+      project_name: "",
+      number_of_boreholes: 1,
+      number_of_strata: 1,
+      formulation: FormulationType.KISHIDA,
     },
     mode: "onChange",
   })
 
-  // Notify parent only when the form has been edited and is valid.
-  // We intentionally do NOT depend on `watch()` here so this effect won't run
-  // on every keystroke. It will run only when `isValid` or `isDirty` change.
-  React.useEffect(() => {
-    // Require both user interaction and valid form before notifying parent.
-    if (!isDirty || !isValid) return
-
-    const formData = getValues()
-    onValidData(formData, isValid)
-    // Intentionally no console.log here to avoid flooding the console.
-  }, [getValues, onValidData, isValid, isDirty])
+  // Handler para submit del form
+  const onSubmit = handleSubmit((data) => {
+    submit(data as unknown as ProjectCreate)
+    // Navigation happens automatically in useCreateProject hook
+  })
 
   return (
-    <div className={styles.formContainer}>
+    <form onSubmit={onSubmit} className={styles.formContainer}>
       <div className={styles.titleSection}>
-      
-      <Settings className={styles.titleIcon} size={24} />
-      <div>
-      <h2 className={styles.formTitle}>Configuración del Proyecto</h2>
-      </div>
+        <Settings className={styles.titleIcon} size={24} />
+        <div>
+          <h2 className={styles.formTitle}>
+            {isEditMode ? 'Editar Configuración del Proyecto' : 'Configuración del Proyecto'}
+          </h2>
+        </div>
       </div>
       <div className={`${styles.gridContainer} ${styles.gridTwoColumns}`}>
         <div className={styles.inputGroup}>
@@ -124,23 +125,33 @@ const ProjectSetupForm: React.FC<ProjectSetupFormProps> = ({ initialData, onVali
         </div>
       </div>
 
-
-
-      {/* Project Summary Card */}
-{/*       <div className={styles.projectSummary}>
-        <h3 className={styles.summaryTitle}>Resumen del Proyecto</h3>
-        <div className={styles.summaryContent}>
-          <div className={styles.summaryItem}>
-            <span className={styles.summaryValue}>{watch("project_name") || "Sin nombre"}</span>
-            mediante formulación <span className={styles.summaryValue}>{watch("formulation")}</span>
-          </div>
-          <div className={styles.summaryItem}>
-            <span className={styles.summaryValue}>{watch("number_of_boreholes")}</span> perforaciones con
-            <span className={styles.summaryValue}> {watch("number_of_strata")}</span> estratos totales
-          </div>
-        </div>
-      </div> */}
-    </div>
+      {/* Botón de Submit */}
+      <div className={styles.inputGroup}>
+        <button
+          type="submit"
+          disabled={isLoading || !isValid}
+          className={styles.submitButton}
+          style={{
+            padding: '12px 24px',
+            backgroundColor: isLoading || !isValid ? '#ccc' : '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: isLoading || !isValid ? 'not-allowed' : 'pointer',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            width: '100%',
+          }}
+        >
+          {isLoading 
+            ? 'Guardando...' 
+            : isEditMode 
+              ? 'Actualizar Proyecto' 
+              : 'Crear Proyecto'
+          }
+        </button>
+      </div>
+    </form>
   )
 }
 

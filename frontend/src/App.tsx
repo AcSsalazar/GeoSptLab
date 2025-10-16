@@ -3,7 +3,10 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Home from '@/components/pages/Home';
 import SPTCalculator from '@/components/pages/SPTCalculator';
-import DocumentationPage from '@/components/pages/DocumentationPage';
+import Documentation from '@/components/pages/Documentation';
+import Manual from './components/pages/UsersManual';
+import TheoryDoc from './components/pages/Theory';
+import NotFound from './components/pages/NotFound';
 function App() {
   return (
     <>
@@ -14,7 +17,11 @@ function App() {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/calculator' element={<SPTCalculator />} />
-          <Route path='/theory' element={<DocumentationPage />} />
+          <Route path='/devdocs' element={<Documentation />} />
+          <Route path='/manual' element={<Manual />} />
+          <Route path='/theory' element={<TheoryDoc/>} />
+          <Route path='*' element={< NotFound/>} />
+          
         </Routes>
       </main>
       
