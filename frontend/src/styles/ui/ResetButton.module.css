@@ -1,0 +1,20 @@
+            
+.resetButton {
+  position: relative;
+  padding: var(--space-1);
+  font-size: var(--text-m );
+  font-weight: 500;
+  color: #fffefe;
+  background: #ccaeaac9;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: var(--radius-base);
+  
+}
+
+.resetButton:hover {
+    background: #d4944bde;
+  transform: translateX(6px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}

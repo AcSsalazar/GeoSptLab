@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronRight, Check } from "lucide-react";
 import styles from "@/styles/FormWizard.module.css";
+import ResetButton from "../ui/ResetButton";
 
 interface WizardStep {
   id: string;
@@ -133,11 +134,13 @@ const FormWizard: React.FC<FormWizardProps> = ({
 
       {/* Navigation buttons */}
       <div className={styles.navigation}>
+        <ResetButton/>
         <button
           onClick={handleNext}
           disabled={currentStepData.isValid === false}
           className={styles.nextButton}
         >
+          
           {isLastStep ? "Complete" : "Next"}
           {!isLastStep && <ChevronRight size={16} />}
         </button>
