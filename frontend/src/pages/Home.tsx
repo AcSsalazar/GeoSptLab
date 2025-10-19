@@ -1,5 +1,6 @@
 import styles from "@/styles/Home.module.css"
 import img from "/background01.webp"
+import { Link } from "react-router-dom"
 
 function Home() {
   return (
@@ -12,7 +13,7 @@ function Home() {
         <div className={styles.contentWrapper}>
           <div className={styles.titlesSection}>
             <div className={styles.badge}>
-              <span>Desarrollado para Ingenieros</span>
+              <Link to="/calculator">Comenzar Ahora</Link>
             </div>
             <h3 className={styles.mainTitle}>
               <span className={styles.titleGradient}>GeoSptLab 0.1.1</span>

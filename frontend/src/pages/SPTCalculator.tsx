@@ -14,12 +14,12 @@ const SPTCalculator: React.FC = () => {
   const steps = [
     {
       id: "project-setup",
-      title: "Configuración del Proyecto",
+      title: "Proyecto",
       component: <ProjectSetupForm />,
     },
     {
       id: "strata-definition",
-      title: "Configuración de Estratos",
+      title: "Estratos",
       component: <StrataDefinitionForm />,
     },
     {
@@ -29,7 +29,7 @@ const SPTCalculator: React.FC = () => {
     },
     {
       id: "spt-intervals",
-      title: "Ensayos SPT",
+      title: "Intervalos",
       component: <SPTIntervalsForm />,
     },
     {
@@ -48,7 +48,7 @@ const SPTCalculator: React.FC = () => {
   };
 
   return (
-    <div className="spt-calculator">
+    <div>
       <FormWizard
         steps={steps}
         onComplete={handleComplete}

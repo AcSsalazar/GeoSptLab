@@ -3,10 +3,12 @@
   position: relative;
   padding: var(--space-1);
   font-size: var(--text-m );
-  font-weight: 500;
+  font-weight: 400;
   color: #fffefe;
-  background: #ccaeaac9;
+  background: #837e7d96;
   border: none;
+  gap: var(--space-1);
+  display: flex;
   cursor: pointer;
   transition: all 0.3s ease;
   border-radius: var(--radius-base);
@@ -14,7 +16,7 @@
 }
 
 .resetButton:hover {
-    background: #d4944bde;
-  transform: translateX(6px);
+ background: #dab231ce;
+  transform: translateY(2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }

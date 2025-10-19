@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronRight, Check } from "lucide-react";
+import { ArrowBigRightDash, Check, ArrowBigLeftDash } from "lucide-react";
 import styles from "@/styles/FormWizard.module.css";
 import ResetButton from "../ui/ResetButton";
 
@@ -133,7 +133,12 @@ const FormWizard: React.FC<FormWizardProps> = ({
       {currentStepData.component}
 
       {/* Navigation buttons */}
+      
       <div className={styles.navigation}>
+        <button className={styles.nextButton}>
+          {isLastStep ? "" : ""}
+          {!isLastStep && <ArrowBigLeftDash width={47} height={35} color="#341c55c9" strokeWidth={1}/>}
+        </button>
         <ResetButton/>
         <button
           onClick={handleNext}
@@ -141,8 +146,8 @@ const FormWizard: React.FC<FormWizardProps> = ({
           className={styles.nextButton}
         >
           
-          {isLastStep ? "Complete" : "Next"}
-          {!isLastStep && <ChevronRight size={16} />}
+          {isLastStep ? "Finalizar" : ""}
+          {!isLastStep && <ArrowBigRightDash width={47} height={35} color="#341c55c9" strokeWidth={1}/>}
         </button>
       </div>
     </div>

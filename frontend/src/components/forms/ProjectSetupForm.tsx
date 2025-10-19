@@ -64,13 +64,13 @@ const ProjectSetupForm: React.FC = () => {
 
   return (
     <form onSubmit={onSubmit} className={styles.formContainer}>
-      <div className={styles.titleSection}>
-        <Settings className={styles.titleIcon} size={24} />
+      <div style={{display: "flex", gap: "12px"}}>
+        <Settings className={styles.titleIcon} size={20} />
         <div>
           <h2 className={styles.formTitle}>
             {isEditMode
-              ? "Editar Configuración del Proyecto"
-              : "Configuración del Proyecto"}
+              ? "1. Editar Configuración del Proyecto"
+              : "1. Configuración del Proyecto"}
           </h2>
         </div>
       </div>
@@ -165,15 +165,15 @@ const ProjectSetupForm: React.FC = () => {
           disabled={isLoading || !isValid}
           className={styles.submitButton}
           style={{
-            padding: "12px 24px",
-            backgroundColor: isLoading || !isValid ? "#ccc" : "#007bff",
+            padding: "8px 20px",
+            backgroundColor: isLoading || !isValid ? "#ccc" : "#144381ff",
             color: "white",
             border: "none",
             borderRadius: "4px",
             cursor: isLoading || !isValid ? "not-allowed" : "pointer",
             fontSize: "16px",
-            fontWeight: "bold",
-            width: "100%",
+            fontWeight: 500,
+            
           }}
         >
           {isLoading

@@ -23,18 +23,7 @@ const ResetButton: React.FC = () => {
         
           <button
             onClick={handleReset}
-            className={styles.resetButton}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.boxShadow =
-                "0 6px 20px rgba(255, 107, 107, 0.4)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow =
-                "0 4px 12px rgba(255, 107, 107, 0.3)";
-            }}
-          >
+            className={styles.resetButton}>
             <RefreshCw size={16} />
               Nuevo Proyecto
           </button>
