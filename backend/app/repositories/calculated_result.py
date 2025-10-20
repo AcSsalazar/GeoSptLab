@@ -40,14 +40,21 @@ class CalculatedResultRepository:
         )
 
     def get_by_project(self, project_id: int) -> List[CalculatedResult]:
-        """Get all calculated results for a project."""
+        """Get all calculated results for a project with nested relationships."""
         from app.models.spt_interval import SPTInterval
         from app.models.borehole import Borehole
+        from app.models.borehole_stratum import BoreholeStratum
+        from app.models.stratum import StratumDefinition
         
         return (
             self.db.query(CalculatedResult)
             .join(CalculatedResult.spt_interval)
-            .join(SPTInterval.borehole)  # Join through SPTInterval to Borehole using the relationship
+            .join(SPTInterval.borehole)
+            .options(
+                selectinload(CalculatedResult.spt_interval)
+                .selectinload(SPTInterval.borehole_stratum)
+                .selectinload(BoreholeStratum.stratum_definition)
+            )
             .filter(Borehole.project_id == project_id)
             .order_by(CalculatedResult.spt_interval_id)
             .all()

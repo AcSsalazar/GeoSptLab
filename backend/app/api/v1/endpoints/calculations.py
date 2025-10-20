@@ -191,15 +191,22 @@ def get_project_results(
             "elastic_modulus": result.elastic_modulus,
             "su_undrained": result.su_undrained,
             "n45": result.n45,
-            "created_at": result.created_at,
-            "updated_at": result.updated_at
+            "cb_factor": result.cb_factor,
+            "cs_factor": result.cs_factor,
+            "cr_factor": result.cr_factor,
+            "cn_factor": result.cn_factor,
+            "n55": result.n55,
+            "n60": result.n60,
+            "n145": result.n145
         }
         results_dicts.append(result_dict)
         
-        # Get stratum code for this result
-        interval = interval_repo.get_by_id(result.spt_interval_id)
-        if interval and interval.borehole_stratum and interval.borehole_stratum.stratum_definition:
-            stratum_mapping[result.id] = interval.borehole_stratum.stratum_definition.stratum_code
+        # Get stratum code for this result - use the interval's relationship
+        interval = result.spt_interval
+        if interval and interval.borehole_stratum:
+            borehole_stratum = interval.borehole_stratum
+            if borehole_stratum.stratum_definition:
+                stratum_mapping[result.id] = borehole_stratum.stratum_definition.stratum_code
     
     # Calculate regression analysis by stratum
     regression_by_stratum = {}
