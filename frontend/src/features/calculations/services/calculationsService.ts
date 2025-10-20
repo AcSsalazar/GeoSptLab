@@ -40,6 +40,34 @@ export interface CalculatedResult {
   su_undrained: number;
 }
 
+export interface RegressionData {
+  slope: number;
+  intercept: number;
+  r_squared: number;
+  phi_degrees: number;
+  cohesion: number;
+  equation: string;
+  data_points: number;
+}
+
+export interface StatisticalSummary {
+  count: number;
+  phi_mean: number;
+  phi_std: number;
+  phi_lower: number;
+  phi_upper: number;
+  modulus_mean: number;
+  modulus_std: number;
+  modulus_lower: number;
+  modulus_upper: number;
+}
+
+export interface ProjectResultsResponse {
+  results: CalculatedResult[];
+  regression_by_stratum: Record<number, RegressionData>;
+  statistical_summary_by_stratum: Record<number, StatisticalSummary>;
+}
+
 export const calculationsService = {
   /**
    * Calcular parámetros SPT para un proyecto
@@ -57,10 +85,10 @@ export const calculationsService = {
   },
 
   /**
-   * Obtener resultados calculados de un proyecto
+   * Obtener resultados calculados de un proyecto con análisis de regresión
    * GET /calculations/project/{projectId}/results
    */
-  async getProjectResults(projectId: number): Promise<CalculatedResult[]> {
+  async getProjectResults(projectId: number): Promise<ProjectResultsResponse> {
     const response = await axios.get(`${API_BASE_URL}/calculations/project/${projectId}/results`);
     return response.data;
   },

@@ -1,11 +1,15 @@
 """
 SPT Calculations API endpoints.
 """
-from typing import List
+from typing import List, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.core.database import get_db
-from app.core.spt_calculations import calculate_spt_parameters
+from app.core.spt_calculations import (
+    calculate_spt_parameters,
+    calculate_mohr_coulomb_regression_by_stratum,
+    calculate_statistical_summary_by_stratum
+)
 from app.repositories.project import ProjectRepository
 from app.repositories.spt_interval import SPTIntervalRepository
 from app.repositories.borehole_stratum import BoreholeStratumRepository
@@ -152,14 +156,15 @@ def calculate_spt_parameters_for_project(
     )
 
 
-@router.get("/project/{project_id}/results", response_model=List[CalculatedResultResponse])
+@router.get("/project/{project_id}/results")
 def get_project_results(
     project_id: int,
     db: Session = Depends(get_db)
-):
-    """Get all calculated results for a project."""
+) -> Dict[str, Any]:
+    """Get all calculated results for a project with regression analysis."""
     project_repo = ProjectRepository(db)
     result_repo = CalculatedResultRepository(db)
+    interval_repo = SPTIntervalRepository(db)
     
     # Verify project exists
     project = project_repo.get_by_id(project_id)
@@ -169,7 +174,55 @@ def get_project_results(
             detail=f"Project with ID {project_id} not found"
         )
     
-    return result_repo.get_by_project(project_id)
+    # Get calculated results
+    results = result_repo.get_by_project(project_id)
+    
+    # Convert SQLAlchemy models to dicts and build stratum mapping
+    results_dicts = []
+    stratum_mapping = {}
+    
+    for result in results:
+        result_dict = {
+            "id": result.id,
+            "spt_interval_id": result.spt_interval_id,
+            "sigma_prime": result.sigma_prime,
+            "tau_resistance": result.tau_resistance,
+            "phi_prime_eq": result.phi_prime_eq,
+            "elastic_modulus": result.elastic_modulus,
+            "su_undrained": result.su_undrained,
+            "n45": result.n45,
+            "created_at": result.created_at,
+            "updated_at": result.updated_at
+        }
+        results_dicts.append(result_dict)
+        
+        # Get stratum code for this result
+        interval = interval_repo.get_by_id(result.spt_interval_id)
+        if interval and interval.borehole_stratum and interval.borehole_stratum.stratum_definition:
+            stratum_mapping[result.id] = interval.borehole_stratum.stratum_definition.stratum_code
+    
+    # Calculate regression analysis by stratum
+    regression_by_stratum = {}
+    statistical_summary_by_stratum = {}
+    
+    if results_dicts and stratum_mapping:
+        print(f"\n📊 Calculating Mohr-Coulomb regression for {len(results_dicts)} results...")
+        regression_by_stratum = calculate_mohr_coulomb_regression_by_stratum(
+            results_dicts, stratum_mapping
+        )
+        print(f"✅ Regression calculated for {len(regression_by_stratum)} strata")
+        
+        print(f"\n📈 Calculating statistical summary...")
+        statistical_summary_by_stratum = calculate_statistical_summary_by_stratum(
+            results_dicts, stratum_mapping
+        )
+        print(f"✅ Statistical summary calculated for {len(statistical_summary_by_stratum)} strata")
+    
+    return {
+        "results": results_dicts,
+        "regression_by_stratum": regression_by_stratum,
+        "statistical_summary_by_stratum": statistical_summary_by_stratum
+    }
 
 
 @router.get("/interval/{interval_id}/result", response_model=CalculatedResultResponse)

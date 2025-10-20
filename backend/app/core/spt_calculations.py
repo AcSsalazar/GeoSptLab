@@ -331,3 +331,223 @@ def calculate_spt_parameters(
         "tau_resistance": tau_resistance,
         "su_undrained": su_undrained
     }
+
+
+# -----------------------------
+# Regresión Mohr-Coulomb
+# -----------------------------
+def calculate_linear_regression(x_values: list[float], y_values: list[float]) -> Dict[str, float]:
+    """
+    Calcula regresión lineal por mínimos cuadrados: y = mx + b
+    Para envolvente de falla Mohr-Coulomb: τ = c' + σ' × tan(φ')
+    
+    Args:
+        x_values: Lista de valores x (sigma_prime)
+        y_values: Lista de valores y (tau_resistance)
+    
+    Returns:
+        Diccionario con:
+        - slope: pendiente (tan(φ'))
+        - intercept: intercepto (c' - cohesión)
+        - r_squared: coeficiente de determinación R²
+        - phi_degrees: ángulo de fricción en grados
+        - cohesion: cohesión efectiva en kPa
+    """
+    if len(x_values) < 2 or len(y_values) < 2:
+        return {
+            "slope": 0.0,
+            "intercept": 0.0,
+            "r_squared": 0.0,
+            "phi_degrees": 0.0,
+            "cohesion": 0.0,
+            "equation": "N/A"
+        }
+    
+    n = len(x_values)
+    
+    # Sumas necesarias para la regresión
+    sum_x = sum(x_values)
+    sum_y = sum(y_values)
+    sum_xy = sum(x * y for x, y in zip(x_values, y_values))
+    sum_x2 = sum(x ** 2 for x in x_values)
+    sum_y2 = sum(y ** 2 for y in y_values)
+    
+    # Cálculo de pendiente e intercepto
+    # y = mx + b
+    denominator = n * sum_x2 - sum_x ** 2
+    
+    if denominator == 0:
+        return {
+            "slope": 0.0,
+            "intercept": 0.0,
+            "r_squared": 0.0,
+            "phi_degrees": 0.0,
+            "cohesion": 0.0,
+            "equation": "N/A"
+        }
+    
+    slope = (n * sum_xy - sum_x * sum_y) / denominator
+    intercept = (sum_y - slope * sum_x) / n
+    
+    # Cálculo de R² (coeficiente de determinación)
+    mean_y = sum_y / n
+    ss_total = sum((y - mean_y) ** 2 for y in y_values)
+    ss_residual = sum((y - (slope * x + intercept)) ** 2 for x, y in zip(x_values, y_values))
+    
+    r_squared = 1 - (ss_residual / ss_total) if ss_total != 0 else 0.0
+    
+    # Conversión de pendiente a ángulo de fricción
+    phi_degrees = math.degrees(math.atan(slope)) if slope > 0 else 0.0
+    
+    # El intercepto representa la cohesión efectiva
+    cohesion = max(0.0, intercept)  # No puede ser negativa
+    
+    # Ecuación en formato string
+    equation = f"y = {intercept:.2f} + {slope:.4f}x"
+    
+    return {
+        "slope": slope,
+        "intercept": intercept,
+        "r_squared": r_squared,
+        "phi_degrees": phi_degrees,
+        "cohesion": cohesion,
+        "equation": equation
+    }
+
+
+def calculate_mohr_coulomb_regression_by_stratum(
+    results: list[Dict[str, Any]],
+    stratum_mapping: Dict[int, int]  # result_id -> stratum_code
+) -> Dict[int, Dict[str, float]]:
+    """
+    Calcula regresión Mohr-Coulomb para cada estrato.
+    
+    Args:
+        results: Lista de resultados calculados con sigma_prime y tau_resistance
+        stratum_mapping: Mapeo de result_id a stratum_code
+    
+    Returns:
+        Diccionario con stratum_code como llave y datos de regresión como valor
+    """
+    # Agrupar resultados por estrato
+    results_by_stratum: Dict[int, list[Dict[str, Any]]] = {}
+    
+    for result in results:
+        result_id = result.get("id")
+        if result_id in stratum_mapping:
+            stratum_code = stratum_mapping[result_id]
+            if stratum_code not in results_by_stratum:
+                results_by_stratum[stratum_code] = []
+            results_by_stratum[stratum_code].append(result)
+    
+    # Calcular regresión para cada estrato
+    regressions = {}
+    
+    for stratum_code, stratum_results in results_by_stratum.items():
+        if len(stratum_results) < 2:
+            # No hay suficientes datos para regresión
+            regressions[stratum_code] = {
+                "slope": 0.0,
+                "intercept": 0.0,
+                "r_squared": 0.0,
+                "phi_degrees": 0.0,
+                "cohesion": 0.0,
+                "equation": "N/A",
+                "data_points": len(stratum_results)
+            }
+            continue
+        
+        # Extraer sigma_prime y tau_resistance
+        sigma_values = [r["sigma_prime"] for r in stratum_results]
+        tau_values = [r["tau_resistance"] for r in stratum_results]
+        
+        # Calcular regresión
+        regression = calculate_linear_regression(sigma_values, tau_values)
+        regression["data_points"] = len(stratum_results)
+        
+        regressions[stratum_code] = regression
+        
+        print(f"  📊 Stratum {stratum_code}: {regression['equation']}, R²={regression['r_squared']:.4f}, φ'={regression['phi_degrees']:.2f}°")
+    
+    return regressions
+
+
+def calculate_statistical_summary_by_stratum(
+    results: list[Dict[str, Any]],
+    stratum_mapping: Dict[int, int]
+) -> Dict[int, Dict[str, float]]:
+    """
+    Calcula estadísticas (media, desviación estándar, intervalos de confianza) por estrato.
+    
+    Args:
+        results: Lista de resultados calculados
+        stratum_mapping: Mapeo de result_id a stratum_code
+    
+    Returns:
+        Diccionario con estadísticas por estrato
+    """
+    results_by_stratum: Dict[int, list[Dict[str, Any]]] = {}
+    
+    for result in results:
+        result_id = result.get("id")
+        if result_id in stratum_mapping:
+            stratum_code = stratum_mapping[result_id]
+            if stratum_code not in results_by_stratum:
+                results_by_stratum[stratum_code] = []
+            results_by_stratum[stratum_code].append(result)
+    
+    statistics = {}
+    
+    for stratum_code, stratum_results in results_by_stratum.items():
+        n = len(stratum_results)
+        
+        if n == 0:
+            continue
+        
+        # Extraer valores de φ' y E
+        phi_values = [r["phi_prime_eq"] for r in stratum_results]
+        modulus_values = [r["elastic_modulus"] for r in stratum_results]
+        
+        # Calcular media
+        phi_mean = sum(phi_values) / n
+        modulus_mean = sum(modulus_values) / n
+        
+        if n > 1:
+            # Calcular desviación estándar
+            phi_variance = sum((x - phi_mean) ** 2 for x in phi_values) / (n - 1)
+            phi_std = math.sqrt(phi_variance)
+            
+            modulus_variance = sum((x - modulus_mean) ** 2 for x in modulus_values) / (n - 1)
+            modulus_std = math.sqrt(modulus_variance)
+            
+            # Intervalo de confianza 95% (±1.96 * std / sqrt(n))
+            t_value = 1.96  # Para muestras grandes; usar distribución t para pequeñas
+            phi_margin = t_value * phi_std / math.sqrt(n)
+            modulus_margin = t_value * modulus_std / math.sqrt(n)
+            
+            phi_lower = phi_mean - phi_margin
+            phi_upper = phi_mean + phi_margin
+            modulus_lower = modulus_mean - modulus_margin
+            modulus_upper = modulus_mean + modulus_margin
+        else:
+            # Solo un dato - no hay intervalo de confianza
+            phi_std = 0.0
+            phi_lower = phi_mean
+            phi_upper = phi_mean
+            modulus_std = 0.0
+            modulus_lower = modulus_mean
+            modulus_upper = modulus_mean
+        
+        statistics[stratum_code] = {
+            "count": n,
+            "phi_mean": phi_mean,
+            "phi_std": phi_std,
+            "phi_lower": phi_lower,
+            "phi_upper": phi_upper,
+            "modulus_mean": modulus_mean,
+            "modulus_std": modulus_std,
+            "modulus_lower": modulus_lower,
+            "modulus_upper": modulus_upper
+        }
+    
+    return statistics

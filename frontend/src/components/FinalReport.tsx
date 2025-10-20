@@ -1,7 +1,9 @@
 
+import React from 'react';
 import { Calculator, Download, RefreshCw, AlertCircle } from 'lucide-react';
 import { useAppStore } from '@/store/appStore';
 import { useCalculationsWorkflow } from '@/features/calculations/hooks/useCalculationsHooks';
+import StatisticalReport from './StatisticalReport';
 import styles from '@/styles/FinalReport.module.css';
 
 const FinalReport: React.FC = () => {
@@ -61,7 +63,7 @@ const FinalReport: React.FC = () => {
           )}
         </button>
         
-        {results && results.length > 0 && (
+        {results && results.results && results.results.length > 0 && (
           <button className={styles.exportButton}>
             <Download size={16} />
             Exportar a Excel
@@ -86,9 +88,9 @@ const FinalReport: React.FC = () => {
       )}
 
       {/* Results Table */}
-      {results && results.length > 0 && (
+      {results && results.results && results.results.length > 0 && (
         <div className={styles.resultsSection}>
-          <h3>Parámetros Calculados ({results.length} intervalos)</h3>
+          <h3>Parámetros Calculados ({results.results.length} intervalos)</h3>
           
           <div className={styles.tableResponsive}>
             <table className={styles.resultsTable}>
@@ -116,15 +118,15 @@ const FinalReport: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {results.map((result) => (
+                {results.results.map((result) => (
                   <tr key={result.id}>
                     <td>{result.id}</td>
                     <td>{result.spt_interval_id}</td>
                     <td className={styles.numeric}>{result.sigma_prime.toFixed(2)}</td>
-                    <td className={styles.numeric}>{result.cb_factor.toFixed(3)}</td>
-                    <td className={styles.numeric}>{result.cs_factor.toFixed(3)}</td>
-                    <td className={styles.numeric}>{result.cr_factor.toFixed(3)}</td>
-                    <td className={styles.numeric}>{result.cn_factor.toFixed(3)}</td>
+                    <td className={styles.numeric}>{result.cb_factor?.toFixed(3) || 'N/A'}</td>
+                    <td className={styles.numeric}>{result.cs_factor?.toFixed(3) || 'N/A'}</td>
+                    <td className={styles.numeric}>{result.cr_factor?.toFixed(3) || 'N/A'}</td>
+                    <td className={styles.numeric}>{result.cn_factor?.toFixed(3) || 'N/A'}</td>
                     <td className={styles.numeric}>{result.n45}</td>
                     <td className={styles.numeric}>{result.n55}</td>
                     <td className={styles.numeric}>{result.n60}</td>
@@ -146,28 +148,31 @@ const FinalReport: React.FC = () => {
               <div className={styles.statCard}>
                 <span className={styles.statLabel}>N₆₀ Promedio</span>
                 <span className={styles.statValue}>
-                  {(results.reduce((sum, r) => sum + r.n60, 0) / results.length).toFixed(1)}
+                  {(results.results.reduce((sum, r) => sum + r.n60, 0) / results.results.length).toFixed(1)}
                 </span>
               </div>
               <div className={styles.statCard}>
                 <span className={styles.statLabel}>φ&apos; Promedio</span>
                 <span className={styles.statValue}>
-                  {(results.reduce((sum, r) => sum + r.phi_prime_eq, 0) / results.length).toFixed(2)}°
+                  {(results.results.reduce((sum, r) => sum + r.phi_prime_eq, 0) / results.results.length).toFixed(2)}°
                 </span>
               </div>
               <div className={styles.statCard}>
                 <span className={styles.statLabel}>E Promedio</span>
                 <span className={styles.statValue}>
-                  {(results.reduce((sum, r) => sum + r.elastic_modulus, 0) / results.length).toFixed(0)} kPa
+                  {(results.results.reduce((sum, r) => sum + r.elastic_modulus, 0) / results.results.length).toFixed(0)} kPa
                 </span>
               </div>
             </div>
           </div>
+          
+          {/* Statistical Analysis by Stratum */}
+          <StatisticalReport resultsData={results} />
         </div>
       )}
 
       {/* Empty State */}
-      {!isLoadingResults && !resultsError && (!results || results.length === 0) && (
+      {!isLoadingResults && !resultsError && (!results || !results.results || results.results.length === 0) && (
         <div className={styles.emptyState}>
           <Calculator size={48} />
           <h3>No hay resultados calculados</h3>

@@ -18,6 +18,8 @@ interface FormWizardProps {
   onComplete: () => void;
   onStepChange?: (stepIndex: number) => void;
   onStepNext?: (stepIndex: number) => Promise<void> | void;
+  onStepBack?: (stepIndex: number) => Promise<void> | void;
+
 }
 
 const FormWizard: React.FC<FormWizardProps> = ({
@@ -25,6 +27,7 @@ const FormWizard: React.FC<FormWizardProps> = ({
   onComplete,
   onStepChange,
   onStepNext,
+  onStepBack,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -70,6 +73,35 @@ const FormWizard: React.FC<FormWizardProps> = ({
     }
   };
 
+ const handleBack = async () => {
+    if (currentStep > 0) {
+      // Call onStepBack if provided (for API calls)
+      if (onStepBack) {
+        try {
+          await onStepBack(currentStep);
+          // After successful API call, proceed with navigation
+          const previousStep = currentStep - 1;
+          setCurrentStep(previousStep);
+          onStepChange?.(previousStep);
+        } catch (error) {
+          console.error("Step back failed:", error);
+          // Don't proceed if submission fails
+          return;
+        }
+      } else {
+        // Fallback to default navigation
+        const previousStep = currentStep - 1;
+        setCurrentStep(previousStep);
+        onStepChange?.(previousStep);
+      }
+    }
+  };
+
+
+
+
+
+
   const goToStep = (stepIndex: number) => {
     setCurrentStep(stepIndex);
     onStepChange?.(stepIndex);
@@ -78,6 +110,7 @@ const FormWizard: React.FC<FormWizardProps> = ({
   const safeCurrentStep = Math.min(Math.max(0, currentStep), steps.length - 1);
   const currentStepData = steps[safeCurrentStep];
   const isLastStep = safeCurrentStep === steps.length - 1;
+  const isFirstStep = safeCurrentStep === 0;
 
   return (
     <div className={styles.wizard}>
@@ -133,22 +166,33 @@ const FormWizard: React.FC<FormWizardProps> = ({
       {currentStepData.component}
 
       {/* Navigation buttons */}
-      
+
       <div className={styles.navigation}>
-        <button className={styles.nextButton}>
-          {isLastStep ? "" : ""}
-          {!isLastStep && <ArrowBigLeftDash width={47} height={35} color="#341c55c9" strokeWidth={1}/>}
-        </button>
+        {!isFirstStep && (
+          <button 
+            onClick={handleBack}
+            className={styles.backButton}
+            aria-label="Atrás"
+          >  
+            <ArrowBigLeftDash width={47} height={35} color="#341c55c9" strokeWidth={1}/>
+          </button>
+        )}
+        
         <ResetButton/>
+        
         <button
           onClick={handleNext}
           disabled={currentStepData.isValid === false}
           className={styles.nextButton}
+          aria-label={isLastStep ? "Finalizar" : "Siguiente"}
         >
-          
-          {isLastStep ? "Finalizar" : ""}
-          {!isLastStep && <ArrowBigRightDash width={47} height={35} color="#341c55c9" strokeWidth={1}/>}
+          {isLastStep ? (
+            <Check width={47} height={35} color="#341c55c9" strokeWidth={1.5}/>
+          ) : (
+            <ArrowBigRightDash width={47} height={35} color="#341c55c9" strokeWidth={1}/>
+          )}
         </button>
+
       </div>
     </div>
   );
