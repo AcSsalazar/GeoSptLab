@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm'; // For tables, strikethrough, etc.
-import styles from '@/styles/MarkdownViewer.module.css';
+import styles from '@/styles/pages/MarkdownViewer.module.css';
 
 interface MarkdownViewerProps {
   filePath: string; // Path to markdown file

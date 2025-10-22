@@ -553,9 +553,10 @@ const StrataDefinitionForm: React.FC = () => {
                 }
                 return null;
               })}
-              {errors.strata && typeof errors.strata.message === 'string' && (
+              {errors.strata && 'message' in errors.strata && typeof errors.strata.message === 'string' && (
                 <li>Error general: {errors.strata.message}</li>
               )}
+              
             </ul>
             <p style={{ margin: '5px 0' }}>
               Estratos: {fields.length} | Válido: {isValid ? 'Sí' : 'No'}

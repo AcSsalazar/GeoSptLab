@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { SignedIn, SignedOut, UserButton, SignInButton, SignOutButton, useUser } from '@clerk/clerk-react';
 /* import logoImg from '@/assets/images/logoconsul.png'; */
-import styles from '@/styles/Header.module.css';
+import styles from '@/styles/ui/Header.module.css';
 const Header: React.FC = () => {
   const { user } = useUser();
 

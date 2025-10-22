@@ -493,13 +493,13 @@ const BoreholesConfigurationForm: React.FC = () => {
                     )}
                   </div>
 
-                  <div className={styles.inputGroup}>
+{/*                   <div className={styles.inputGroup}>
                     <label className={styles.label}>
                       Longitud de Barras (m) <span className={styles.required}>*</span>
                     </label>
   
 
-                  </div>
+                  </div> */}
 
                   <div className={styles.inputGroup}>
                     <label className={styles.label}>

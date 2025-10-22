@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ArrowBigRightDash, Check, ArrowBigLeftDash } from "lucide-react";
 import styles from "@/styles/FormWizard.module.css";
-import ResetButton from "../ui/ResetButton";
+import ResetButton from "../layout/ResetButton";
 
 interface WizardStep {
   id: string;

@@ -1,5 +1,5 @@
 import notFound from "/404.webp"
-import styles from "@/styles/NotFound.module.css"
+import styles from "@/styles/pages/NotFound.module.css"
 function NotFound() {
    
     return (

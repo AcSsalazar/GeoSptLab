@@ -28,9 +28,6 @@ export interface Project {
   number_of_boreholes: number;
   number_of_strata: number;
   formulation: FormulationType;
-  field_energy_percent: number;
-  borehole_diameter?: number;        // Deleted rod_length from the next linecode because it's not used at the project level
-  water_table_depth?: number;
   created_at: string;
   updated_at: string;
 }
