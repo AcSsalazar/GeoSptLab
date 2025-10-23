@@ -67,6 +67,7 @@ export function useCreateBoreholeStrata() {
   const setBoreholeStrata = useAppStore((state) => state.setBoreholeStrata);
   const markStepCompleted = useAppStore((state) => state.markStepCompleted);
   const goToNextStep = useAppStore((state) => state.goToNextStep);
+  const clearDraftBoreholes = useAppStore((state) => state.clearDraftBoreholes);
 
   return useMutation({
     mutationFn: boreholeStrataService.createMultiple,
@@ -78,6 +79,9 @@ export function useCreateBoreholeStrata() {
     onSuccess: (boreholeStrata) => {
       // Save to store
       setBoreholeStrata(boreholeStrata);
+      
+      // Clear draft state on successful submission
+      clearDraftBoreholes();
       
       // Mark step as completed and navigate
       markStepCompleted(2); // Step 2 = Boreholes

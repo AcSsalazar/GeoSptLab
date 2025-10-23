@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -86,6 +86,10 @@ const BoreholesConfigurationForm: React.FC = () => {
   // ============================================
   const project = useAppStore((state) => state.project);
   const strata = useAppStore((state) => state.strata);
+  const draftBoreholes = useAppStore((state) => state.draftBoreholes);
+  const draftBoreholeTab = useAppStore((state) => state.draftBoreholeTab);
+  const setDraftBoreholes = useAppStore((state) => state.setDraftBoreholes);
+  const setDraftBoreholeTab = useAppStore((state) => state.setDraftBoreholeTab);
   
   // ============================================
   // HOOKS - React Query Workflow
@@ -98,7 +102,7 @@ const BoreholesConfigurationForm: React.FC = () => {
   // ============================================
   // LOCAL STATE
   // ============================================
-  const [currentTab, setCurrentTab] = useState(0)
+  const [currentTab, setCurrentTab] = useState(draftBoreholeTab)
 
   // ============================================
   // FORM SETUP
@@ -114,7 +118,7 @@ const BoreholesConfigurationForm: React.FC = () => {
     handleSubmit
   } = useForm<BoreholesConfigFormData>({
     resolver: zodResolver(boreholesConfigFormSchema),
-    defaultValues: {
+    defaultValues: draftBoreholes || {
       // Create tabs based on number_of_boreholes from project
       boreholes: Array.from({ length: project?.number_of_boreholes || 1 }, (_, index) => ({
         borehole_name: `P${index + 1}`,
@@ -139,6 +143,40 @@ const BoreholesConfigurationForm: React.FC = () => {
     control,
     name: 'boreholes'
   })
+
+  // ============================================
+  // SAVE DRAFT STATE (Optimized - only on specific events)
+  // ============================================
+  
+  // Save form data to draft state
+  const saveDraft = React.useCallback(() => {
+    const currentFormData = getValues();
+    setDraftBoreholes(currentFormData);
+  }, [getValues, setDraftBoreholes]);
+
+  // Save before page unload/refresh (F5)
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      saveDraft();
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [saveDraft]);
+
+  // Save when component unmounts (navigation away)
+  useEffect(() => {
+    return () => {
+      saveDraft();
+    };
+  }, [saveDraft]);
+  
+  // Custom tab change handler that saves draft + tab position
+  const handleTabChange = (newTab: number) => {
+    saveDraft();
+    setCurrentTab(newTab);
+    setDraftBoreholeTab(newTab);
+  };
 
   // ============================================
   // FORM SUBMIT
@@ -394,7 +432,7 @@ const BoreholesConfigurationForm: React.FC = () => {
           {boreholeFields.map((field, index) => (
             <button
               key={field.id}
-              onClick={() => setCurrentTab(index)}
+              onClick={() => handleTabChange(index)}
               className={`${styles.tab} ${currentTab === index ? styles.active : ''} ${
                 errors.boreholes?.[index] ? styles.error : ''
               }`}

@@ -51,6 +51,10 @@ interface AppState {
   strataDraft: StratumCreate[];
   boreholesDraft: BoreholeCreate[];
   
+  // === DRAFT STATE FOR BOREHOLE CONFIGURATION FORM ===
+  draftBoreholes: Record<string, unknown> | null;  // Temporary form state for BoreholesConfigurationForm
+  draftBoreholeTab: number;     // Current tab position in BoreholesConfigurationForm
+  
   // === ESTADO UI ===
   loading: boolean;
   error: string | null;
@@ -94,6 +98,11 @@ interface AppActions {
   setBoreholeStrata: (boreholeStrata: BoreholeStratum[]) => void;
   addBoreholeStratum: (boreholeStratum: BoreholeStratum) => void;
   
+  // === DRAFT BOREHOLE FORM STATE ===
+  setDraftBoreholes: (draft: Record<string, unknown> | null) => void;
+  setDraftBoreholeTab: (tab: number) => void;
+  clearDraftBoreholes: () => void;
+  
   // === UI ===
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -126,6 +135,10 @@ const initialState: AppState = {
   projectDraft: null,
   strataDraft: [],
   boreholesDraft: [],
+  
+  // Draft borehole configuration form state
+  draftBoreholes: null,
+  draftBoreholeTab: 0,
   
   // UI
   loading: false,
@@ -267,6 +280,16 @@ export const useAppStore = create<AppStore>()(
             'addBoreholeStratum'
           ),
         
+        // === DRAFT BOREHOLE FORM STATE ACTIONS ===
+        setDraftBoreholes: (draftBoreholes) => 
+          set({ draftBoreholes }, false, 'setDraftBoreholes'),
+        
+        setDraftBoreholeTab: (draftBoreholeTab) => 
+          set({ draftBoreholeTab }, false, 'setDraftBoreholeTab'),
+        
+        clearDraftBoreholes: () => 
+          set({ draftBoreholes: null, draftBoreholeTab: 0 }, false, 'clearDraftBoreholes'),
+        
         // === UI ACTIONS ===
         setLoading: (loading) => 
           set({ loading }, false, 'setLoading'),
@@ -315,6 +338,8 @@ export const useAppStore = create<AppStore>()(
               projectDraft: null,
               strataDraft: [],
               boreholesDraft: [],
+              draftBoreholes: null,
+              draftBoreholeTab: 0,
               currentStep: 0,
               completedSteps: new Set<number>(),
             },
