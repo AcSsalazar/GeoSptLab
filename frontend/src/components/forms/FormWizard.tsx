@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
 import { ArrowBigRightDash, Check, ArrowBigLeftDash } from "lucide-react";
 import styles from "@/styles/FormWizard.module.css";
 import ResetButton from "../layout/ResetButton";
+import { useAppStore } from "@/store/appStore";
 
 interface WizardStep {
   id: string;
@@ -29,7 +30,14 @@ const FormWizard: React.FC<FormWizardProps> = ({
   onStepNext,
   onStepBack,
 }) => {
-  const [currentStep, setCurrentStep] = useState(0);
+  // ✅ USAR ZUSTAND STORE en lugar de useState local
+  const currentStep = useAppStore((state) => state.currentStep);
+  const setCurrentStep = useAppStore((state) => state.setCurrentStep);
+
+  // Notificar al padre cuando cambia el step en el store
+  useEffect(() => {
+    onStepChange?.(currentStep);
+  }, [currentStep, onStepChange]);
 
   if (!steps || steps.length === 0) {
     return (

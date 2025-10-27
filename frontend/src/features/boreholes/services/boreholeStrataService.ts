@@ -73,4 +73,13 @@ export const boreholeStrataService = {
   async delete(id: number): Promise<void> {
     await axios.delete(`${API_BASE_URL}/borehole-strata/${id}`);
   },
+
+  /**
+   * Eliminar todas las asignaciones de un borehole
+   * Helper function for re-submission
+   */
+  async deleteByBorehole(boreholeId: number): Promise<void> {
+    const assignments = await this.getByBorehole(boreholeId);
+    await Promise.all(assignments.map(a => this.delete(a.id)));
+  },
 };

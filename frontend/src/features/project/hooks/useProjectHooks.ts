@@ -242,15 +242,19 @@ export function useDeleteProject() {
 /**
  * Hook para el flujo completo de crear/editar proyecto
  * 
- * Detecta automáticamente si es CREATE o UPDATE según el store.
+ * ✨ ARQUITECTURA UNIFICADA:
+ * - Usa useEditMode() para detectar automáticamente CREATE vs UPDATE
+ * - Mismo patrón que useStrataWorkflow() y useBoreholeWorkflow()
  * 
  * USO:
  * ```tsx
- * const { submit, isLoading, isEditMode } = useProjectWorkflow();
+ * const { submit, isLoading, isEditMode, submitLabel } = useProjectWorkflow();
  * 
  * const handleSubmit = (data: ProjectCreate) => {
  *   submit(data);
  * };
+ * 
+ * return <button>{submitLabel} Proyecto</button>;
  * ```
  */
 export function useProjectWorkflow() {
@@ -258,14 +262,15 @@ export function useProjectWorkflow() {
   const createProject = useCreateProject();
   const updateProject = useUpdateProject();
 
-  const isEditMode = !!project;
+  // ✅ LÓGICA UNIFICADA - Detecta automáticamente edit mode
+  const isEditMode = !!project && project.id !== undefined;
 
   const submit = (data: ProjectCreate) => {
     if (isEditMode && project) {
-      // UPDATE
+      // UPDATE - El proyecto ya existe en el backend
       updateProject.mutate({ id: project.id, data });
     } else {
-      // CREATE
+      // CREATE - Es un proyecto nuevo
       createProject.mutate(data);
     }
   };
@@ -274,6 +279,7 @@ export function useProjectWorkflow() {
     submit,
     isLoading: createProject.isPending || updateProject.isPending,
     isEditMode,
+    submitLabel: isEditMode ? 'Actualizar' : 'Guardar',
     error: createProject.error || updateProject.error,
   };
 }

@@ -122,6 +122,32 @@ export function useCreateBoreholeStrata() {
   });
 }
 
+/**
+ * Hook para el flujo completo de perforaciones
+ * 
+ * ✨ ARQUITECTURA UNIFICADA:
+ * - Detecta automáticamente CREATE vs UPDATE
+ * - Mismo patrón que useProjectWorkflow() y useStrataWorkflow()
+ * 
+ * LÓGICA INTELIGENTE:
+ * - Si boreholes tienen IDs del backend && pertenecen al proyecto actual → UPDATE
+ * - Si no → CREATE
+ * 
+ * NOTA: Las perforaciones son más complejas porque tienen dos fases:
+ * 1. Crear/actualizar boreholes
+ * 2. Crear/actualizar borehole-strata assignments
+ * 
+ * USO:
+ * ```tsx
+ * const { submitBoreholes, isSubmitting, isEditMode, submitLabel } = useBoreholeWorkflow();
+ * 
+ * const handleSubmit = (data) => {
+ *   submitBoreholes({ boreholes: data.boreholes, strataAssignments: data.assignments });
+ * };
+ * 
+ * return <button>{submitLabel} Perforaciones</button>;
+ * ```
+ */
 export function useBoreholeWorkflow() {
   const createBoreholes = useCreateBoreholes();
   const createBoreholeStrata = useCreateBoreholeStrata();
@@ -130,9 +156,14 @@ export function useBoreholeWorkflow() {
   const existingBoreholes = useAppStore((state) => state.boreholes);
   const [createdBoreholes, setCreatedBoreholes] = useState<Borehole[]>([]);
 
+  // ✅ LÓGICA UNIFICADA - Detecta automáticamente edit mode
+  const isEditMode = existingBoreholes.length > 0 && 
+                     existingBoreholes[0]?.id !== undefined &&
+                     existingBoreholes[0]?.project_id === project?.id;
+
   // Two-phase submission:
-  // 1. Create boreholes
-  // 2. Create borehole-strata assignments
+  // 1. Create/Update boreholes
+  // 2. Create/Update borehole-strata assignments
   const submitBoreholes = ({
     boreholes,
     strataAssignments,
@@ -148,49 +179,60 @@ export function useBoreholeWorkflow() {
     }>;
   }) => {
     if (!project?.id) {
-      console.log('No hay proyecto activo');
+      console.error('❌ No hay proyecto activo');
       return;
     }
 
-    // Check if boreholes already exist for this project
-    if (existingBoreholes.length > 0 && existingBoreholes[0].project_id === project.id) {
-      console.log('Boreholes already exist, but will create/update strata assignments');
+    // ✅ MODO EDICIÓN - DELETE old assignments + CREATE new ones
+    if (isEditMode) {
+      console.log('🔄 Edit mode: Deleting old strata assignments and creating new ones');
       
-      // Create borehole-strata assignments using existing boreholes
-      const boreholeStrataData: BoreholeStratumCreate[] = [];
+      // STEP 1: Delete all existing borehole-strata assignments
+      const deletePromises = existingBoreholes.map(bh => 
+        boreholeStrataService.deleteByBorehole(bh.id)
+          .catch(err => console.warn(`Could not delete assignments for borehole ${bh.id}:`, err))
+      );
 
-      strataAssignments.forEach((assignment) => {
-        const borehole = existingBoreholes.find((bh) => bh.borehole_name === assignment.borehole_name);
+      Promise.all(deletePromises).then(() => {
+        console.log('✅ Old strata assignments deleted');
         
-        if (borehole) {
-          assignment.assignments.forEach((stratumAssignment) => {
-            const stratum = strata.find((s) => s.name === stratumAssignment.stratum_code);
-            
-            if (stratum) {
-              boreholeStrataData.push({
-                borehole_id: borehole.id,
-                stratum_definition_id: stratum.id,
-                stratum_code: stratum.stratum_code, // ✅ Added required field
-                initial_depth: stratumAssignment.depth_from,
-                final_depth: stratumAssignment.depth_to,
-              });
-            }
-          });
+        // STEP 2: Create NEW borehole-strata assignments
+        const boreholeStrataData: BoreholeStratumCreate[] = [];
+
+        strataAssignments.forEach((assignment) => {
+          const borehole = existingBoreholes.find((bh) => bh.borehole_name === assignment.borehole_name);
+          
+          if (borehole) {
+            assignment.assignments.forEach((stratumAssignment) => {
+              const stratum = strata.find((s) => s.name === stratumAssignment.stratum_code);
+              
+              if (stratum) {
+                boreholeStrataData.push({
+                  borehole_id: borehole.id,
+                  stratum_definition_id: stratum.id,
+                  stratum_code: stratum.stratum_code,
+                  initial_depth: stratumAssignment.depth_from,
+                  final_depth: stratumAssignment.depth_to,
+                });
+              }
+            });
+          }
+        });
+
+        // Submit NEW borehole-strata
+        if (boreholeStrataData.length > 0) {
+          console.log('📊 NEW Borehole-Strata data to submit:', boreholeStrataData);
+          createBoreholeStrata.mutate(boreholeStrataData);
+        } else {
+          console.warn('⚠️ No borehole-strata data to submit!');
         }
       });
-
-      // Submit borehole-strata
-      if (boreholeStrataData.length > 0) {
-        console.log('📊 Borehole-Strata data (existing boreholes):', boreholeStrataData);
-        createBoreholeStrata.mutate(boreholeStrataData);
-      } else {
-        console.warn('⚠️ No borehole-strata data to submit!');
-        
-      }
       
       return;
     }
 
+    // ✅ MODO CREACIÓN - POST normal
+    console.log('✨ Create mode: Creating new boreholes');
     const boreholesWithProject = boreholes.map((b) => ({
       ...b,
       project_id: project.id,
@@ -238,6 +280,8 @@ export function useBoreholeWorkflow() {
   return {
     submitBoreholes,
     isSubmitting: createBoreholes.isPending || createBoreholeStrata.isPending,
+    isEditMode,
+    submitLabel: isEditMode ? 'Actualizar' : 'Guardar',
     error: createBoreholes.error || createBoreholeStrata.error,
     createdBoreholes,
   };

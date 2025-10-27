@@ -14,12 +14,12 @@ import styles from "@/styles/ProjectSetupForm.module.css";
 const projectSchema = z.object({
   project_name: z
     .string()
-    .min(1, "Nombre del proyecto es necesario")
-    .max(100, "Nombre del proyecto es muy largo"),
+    .min(5, "Nombre demasiado corto")
+    .max(50, "Nombre del proyecto es muy largo"),
   number_of_boreholes: z.coerce
     .number()
     .min(1, "Es necesario minimo una perforación")
-    .max(30, "Máximo 30 perforaciones"),
+    .max(15, "Máximo 15 perforaciones"),
   number_of_strata: z.coerce
     .number()
     .min(1, "Es necesario minimo un estrato")
@@ -37,7 +37,7 @@ type ProjectFormData = {
 
 const ProjectSetupForm: React.FC = () => {
   // === ARQUITECTURA ZUSTAND ===
-  const { submit, isLoading, isEditMode } = useProjectWorkflow();
+  const { submit, isLoading, isEditMode, submitLabel } = useProjectWorkflow();
   const project = useAppStore((state) => state.project);
 
   const {
@@ -178,9 +178,7 @@ const ProjectSetupForm: React.FC = () => {
         >
           {isLoading
             ? "Guardando..."
-            : isEditMode
-            ? "Actualizar Proyecto"
-            : "Crear Proyecto"}
+            : `${submitLabel} Proyecto`}
         </button>
       </div>
     </form>

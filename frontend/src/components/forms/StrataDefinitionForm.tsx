@@ -79,7 +79,8 @@ type StrataDefinitionFormData = z.infer<typeof strataDefinitionFormSchema>;
 const StrataDefinitionForm: React.FC = () => {
   // === ARQUITECTURA ZUSTAND + REACT QUERY ===
   const project = useAppStore((state) => state.project);
-  const { submit, isLoading } = useStrataWorkflow();
+  const strata = useAppStore((state) => state.strata); // ✅ Load saved strata from store
+  const { submit, isLoading, submitLabel } = useStrataWorkflow(); // ✅ submitLabel para UI consistente
 
   const {
     control,
@@ -90,21 +91,31 @@ const StrataDefinitionForm: React.FC = () => {
     handleSubmit,
   } = useForm<StrataDefinitionFormData>({
     resolver: zodResolver(strataDefinitionFormSchema),
-    defaultValues: {
-      // Initialize empty fields for the number of strata defined in project
-      strata: Array.from(
-        { length: project?.number_of_strata || 1 },
-        () => ({
-          stratum_code: "", // Empty instead of `E${index + 1}`
-          name: "", // Empty instead of `E${index + 1}`
-          description: "", // Empty instead of `Tipo de suelo ${index + 1}`
-          gamma_humid: undefined, // undefined instead of 10.0
-          gamma_saturated: undefined, // undefined instead of 10.0
-          behavior_type: BehaviorType.GRANULAR, // Keep default for dropdown
-          plasticity_index: undefined,
-        })
-      ),
-    },
+    defaultValues: strata.length > 0 
+      ? { strata: strata.map(s => ({
+          stratum_code: s.name, // Use existing data
+          name: s.name,
+          description: s.description,
+          gamma_humid: s.gamma_humid,
+          gamma_saturated: s.gamma_saturated,
+          behavior_type: s.behavior_type,
+          plasticity_index: s.plasticity_index,
+        }))}
+      : {
+        // Initialize empty fields for the number of strata defined in project
+        strata: Array.from(
+          { length: project?.number_of_strata || 1 },
+          () => ({
+            stratum_code: "", // Empty instead of `E${index + 1}`
+            name: "", // Empty instead of `E${index + 1}`
+            description: "", // Empty instead of `Tipo de suelo ${index + 1}`
+            gamma_humid: undefined, // undefined instead of 10.0
+            gamma_saturated: undefined, // undefined instead of 10.0
+            behavior_type: BehaviorType.GRANULAR, // Keep default for dropdown
+            plasticity_index: undefined,
+          })
+        ),
+      },
     mode: "onChange",
   });
 
@@ -526,7 +537,10 @@ const StrataDefinitionForm: React.FC = () => {
             marginTop: '20px',
           }}
         >
-          {isLoading ? 'Guardando estratos...' : 'Guardar Estratos y Continuar'}
+          {isLoading 
+            ? 'Guardando estratos...' 
+            : `${submitLabel} Estratos y Continuar`
+          }
         </button>
         
         {/* Debug info */}

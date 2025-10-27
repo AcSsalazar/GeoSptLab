@@ -86,6 +86,8 @@ const BoreholesConfigurationForm: React.FC = () => {
   // ============================================
   const project = useAppStore((state) => state.project);
   const strata = useAppStore((state) => state.strata);
+  const boreholes = useAppStore((state) => state.boreholes); // ✅ Load saved boreholes
+  const boreholeStrata = useAppStore((state) => state.boreholeStrata); // ✅ Load saved assignments
   const draftBoreholes = useAppStore((state) => state.draftBoreholes);
   const draftBoreholeTab = useAppStore((state) => state.draftBoreholeTab);
   const setDraftBoreholes = useAppStore((state) => state.setDraftBoreholes);
@@ -94,7 +96,7 @@ const BoreholesConfigurationForm: React.FC = () => {
   // ============================================
   // HOOKS - React Query Workflow
   // ============================================
-  const { submitBoreholes, isSubmitting } = useBoreholeWorkflow();
+  const { submitBoreholes, isSubmitting, submitLabel } = useBoreholeWorkflow();
   
   // ============================================
   // LOCAL STATE
@@ -107,6 +109,44 @@ const BoreholesConfigurationForm: React.FC = () => {
   // ============================================
   // FORM SETUP
   // ============================================
+  // Helper function to build form data from saved boreholes
+  const buildFormDataFromSavedBoreholes = () => {
+    if (boreholes.length === 0) return null;
+    
+    return {
+      boreholes: boreholes.map(borehole => {
+        // Find strata assignments for this borehole
+        const assignments = boreholeStrata
+          .filter(bs => bs.borehole_id === borehole.id)
+          .sort((a, b) => a.initial_depth - b.initial_depth)
+          .map(bs => {
+            // Find the stratum definition to get its name
+            const stratumDef = strata.find(s => s.id === bs.stratum_definition_id);
+            return {
+              stratum_code: stratumDef?.name || 'E1',
+              depth_from: bs.initial_depth,
+              depth_to: bs.final_depth
+            };
+          });
+
+        return {
+          borehole_name: borehole.borehole_name,
+          final_depth: borehole.final_depth,
+          diameter_mm: borehole.diameter_mm,
+          field_energy_percent: borehole.field_energy_percent,
+          water_table_depth: null, // Not stored in backend Borehole model
+          strata_assignments: assignments.length > 0 ? assignments : [
+            {
+              stratum_code: strata[0]?.name || 'E1',
+              depth_from: 0,
+              depth_to: borehole.final_depth
+            }
+          ]
+        };
+      })
+    };
+  };
+
   const {
     control,
     register,
@@ -118,7 +158,7 @@ const BoreholesConfigurationForm: React.FC = () => {
     handleSubmit
   } = useForm<BoreholesConfigFormData>({
     resolver: zodResolver(boreholesConfigFormSchema),
-    defaultValues: draftBoreholes || {
+    defaultValues: draftBoreholes || buildFormDataFromSavedBoreholes() || {
       // Create tabs based on number_of_boreholes from project
       boreholes: Array.from({ length: project?.number_of_boreholes || 1 }, (_, index) => ({
         borehole_name: `P${index + 1}`,
@@ -638,7 +678,7 @@ const BoreholesConfigurationForm: React.FC = () => {
               Guardando...
             </>
           ) : (
-            'Guardar y Continuar'
+            `${submitLabel} y Continuar`
           )}
         </button>
         
