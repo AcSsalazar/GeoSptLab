@@ -56,7 +56,7 @@ export type BehaviorType = typeof BehaviorType[keyof typeof BehaviorType];
 export interface Stratum {
   id: number;
   project_id: number;
-  stratum_code: number;
+  stratum_code: string;
   name: string;
   description: string;
   gamma_humid: number;

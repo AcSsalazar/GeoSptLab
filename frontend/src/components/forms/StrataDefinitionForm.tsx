@@ -93,7 +93,7 @@ const StrataDefinitionForm: React.FC = () => {
     resolver: zodResolver(strataDefinitionFormSchema),
     defaultValues: strata.length > 0 
       ? { strata: strata.map(s => ({
-          stratum_code: s.name, // Use existing data
+          stratum_code: s.stratum_code, // Use existing data
           name: s.name,
           description: s.description,
           gamma_humid: s.gamma_humid,
