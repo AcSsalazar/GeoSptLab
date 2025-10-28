@@ -471,6 +471,7 @@ const BoreholesConfigurationForm: React.FC = () => {
         <div className={styles.tabList}>
           {boreholeFields.map((field, index) => (
             <button
+              type="button"
               key={field.id}
               onClick={() => handleTabChange(index)}
               className={`${styles.tab} ${currentTab === index ? styles.active : ''} ${
