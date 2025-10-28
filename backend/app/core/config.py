@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
     
     # App settings
-    app_name: str = "SPT Parameters Calculator API Beta"
+    app_name: str = "GeoSptLab 0.1.0"
     app_version: str = "0.1.0"
     debug: bool = False
     
