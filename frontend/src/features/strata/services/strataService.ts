@@ -15,7 +15,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000
 
 export interface StratumCreate {
   project_id: number;
-  stratum_code: number;
+  stratum_code: string;
   name: string;
   description: string;
   gamma_humid: number;

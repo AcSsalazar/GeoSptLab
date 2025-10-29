@@ -7,17 +7,16 @@ import { z } from "zod";
 import { Plus, Trash2, Info, Layers } from "lucide-react";
 import { useAppStore } from "@/store/appStore";
 import { useStrataWorkflow } from "@/features/strata/hooks/useStrataHooks";
-import type { StratumCreate } from "../../types/project";
+import type { StratumCreate } from "../../features/strata/services/strataService";
 import { BehaviorType } from "../../types/project";
 import styles from "@/styles/StrataDefinitionForm.module.css";
 
 // Zod schema for individual stratum definition
 const stratumDefinitionSchema = z
   .object({
-    stratum_code: z
-      .string()
-      .min(1, "Código requerido")
-      .max(10, "Código muy largo"),
+
+    stratum_code: z.string(),
+
     name: z.string().min(1, "Nombre requerido").max(100, "Nombre muy largo"),
     description: z
       .string()
@@ -63,16 +62,7 @@ const strataDefinitionFormSchema = z
       .array(stratumDefinitionSchema)
       .min(1, "Al menos un tipo de estrato requerido"),
   })
-  .refine(
-    (data) => {
-      const codes = data.strata.map((s) => s.stratum_code);
-      return codes.length === new Set(codes).size;
-    },
-    {
-      message: "Los códigos de estratos deben ser únicos",
-      path: ["strata"],
-    }
-  );
+
 
 type StrataDefinitionFormData = z.infer<typeof strataDefinitionFormSchema>;
 
@@ -137,7 +127,7 @@ const StrataDefinitionForm: React.FC = () => {
       const strataCreateData: StratumCreate[] = formData.strata.map(
         (stratum, index) => ({
           project_id: project.id,
-          stratum_code: index + 1,
+          stratum_code: `E${index + 1}`,
           name: stratum.name,
           description: stratum.description,
           gamma_humid: stratum.gamma_humid,
@@ -210,9 +200,7 @@ const StrataDefinitionForm: React.FC = () => {
           <strong>¿Qué estamos definiendo aquí?</strong>
           <p>
             Estos son los <b>tipos de suelo</b> que pueden aparecer en
-            cualquiera de las perforaciones del proyecto. En el siguiente paso,
-            asignarás qué tipos aparecen y a qué profundidades en cada
-            perforación específica.
+            cualquiera de las perforaciones del proyecto.
           </p>
         </div>
       </div>
@@ -241,7 +229,7 @@ const StrataDefinitionForm: React.FC = () => {
 
             <div className={styles.cardContent}>
               <div className={styles.formRow}>
-                <div className={styles.inputGroup}>
+{/*                 <div className={styles.inputGroup}>
                   <label className={styles.label}>
                     Código del Estrato{" "}
                     <span className={styles.required}>*</span>
@@ -260,7 +248,7 @@ const StrataDefinitionForm: React.FC = () => {
                       {errors.strata[index]?.stratum_code?.message}
                     </span>
                   )}
-                </div>
+                </div> */}
 
                 <div className={styles.inputGroup}>
                   <label className={styles.label}>
