@@ -35,7 +35,9 @@ import { projectService } from '../services/projectService';
 import { queryKeys, invalidateProjectData } from '@/lib/queryClient';
 import { useAppStore } from '@/store/appStore';
 import type { Project, ProjectCreate } from '@/types/project';
+import { toast } from 'react-toastify';
 
+  
 // ===========================================
 // QUERIES (GET)
 // ===========================================
@@ -142,13 +144,11 @@ export function useCreateProject() {
       queryClient.invalidateQueries({ 
         queryKey: queryKeys.projects.all 
       });
-      
-      // 5. Toast de éxito
-      
     },
     
     onError: (error: Error) => {
       console.error('Error creating project:', error.message || 'Unknown error');
+      toast.error('Error al crear proyecto. Intenta nuevamente.');
     },
   });
 }
@@ -178,9 +178,13 @@ export function useUpdateProject() {
       console.log('Project updated:', project);
       // 2. Invalidar cache del proyecto
       invalidateProjectData(project.id);
-      
-      // 3. Toast de éxito
-      
+      // 3. Toast de éxito (necesario porque no hay navegación automática)
+      toast.success('Proyecto actualizado exitosamente');
+    },
+    
+    onError: (error: Error) => {
+      console.error('Error updating project:', error.message || 'Unknown error');
+      toast.error('Error al actualizar proyecto. Intenta nuevamente.');
     },
     
    
@@ -224,13 +228,11 @@ export function useDeleteProject() {
       queryClient.removeQueries({
         queryKey: queryKeys.projects.detail(projectId)
       });
-      
-      // 4. Toast de éxito
-      
     },
     
     onError: (error: Error) => {
       console.error('Error deleting project:', error.message || 'Unknown error');
+      toast.error('Error al eliminar proyecto. Intenta nuevamente.');
     },
   });
 }

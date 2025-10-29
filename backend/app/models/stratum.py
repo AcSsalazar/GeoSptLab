@@ -25,7 +25,7 @@ class StratumDefinition(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     project_id = Column(Integer, ForeignKey("projects.id"), nullable=False)
-    stratum_code = Column(Integer, nullable=False)  # e.g., 1, 2, 3
+    stratum_code = Column(String, nullable=False)  # e.g., 1, 2, 3
     name = Column(String, nullable=False)  # Name of the stratum (e.g., "Ceniza Volcánica")
     description = Column(String, nullable=False)  # Soil description
     gamma_humid = Column(Float, nullable=False)  # kN/m³, humid unit weight

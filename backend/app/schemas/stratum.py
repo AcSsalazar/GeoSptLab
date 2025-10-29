@@ -14,7 +14,7 @@ class BehaviorType(str, Enum):
 
 class StratumDefinitionBase(BaseModel):
     """Base schema for stratum definition."""
-    stratum_code: int = Field(..., ge=1, le=10, description="Stratum identifier")
+    stratum_code: str = Field(..., min_length=1, max_length=3, description="Stratum identifier")
     name: str = Field(..., min_length=1, max_length=100, description="Name of the stratum")
     description: str = Field(..., min_length=1, max_length=500, description="Soil description")
     gamma_humid: float = Field(..., ge=10, le=40, description="Humid unit weight in kN/m³")
@@ -71,7 +71,7 @@ class StratumDefinitionBulkCreate(BaseModel):
                 "project_id": 1,
                 "strata": [
                     {
-                        "stratum_code": 1,
+                        "stratum_code": "E1",
                         "name": "Ceniza Volcánica",
                         "description": "Limos, suelos finogranulares",
                         "gamma_humid": 18.5,

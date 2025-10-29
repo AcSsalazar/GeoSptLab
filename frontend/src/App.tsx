@@ -1,4 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Home from '@/pages/Home';
@@ -7,6 +9,7 @@ import Documentation from '@/pages/Documentation';
 import Manual from './pages/UsersManual';
 import TheoryDoc from './pages/Theory';
 import NotFound from './pages/NotFound';
+
 function App() {
   return (
     <>
@@ -27,6 +30,20 @@ function App() {
       
       <Footer />
       <div id="popup-root"></div>
+      
+      {/* Toast Container para notificaciones globales */}
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </>
   );
 }
