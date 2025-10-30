@@ -22,9 +22,9 @@ import type {
   Stratum, 
   StratumCreate,
   Borehole, 
-  BoreholeCreate 
+  BoreholeCreate,
+  BoreholeStratum,
 } from '@/types/project';
-import type { BoreholeStratum } from '@/features/boreholes/services/boreholeStrataService';
 
 // ===========================================
 // TIPOS

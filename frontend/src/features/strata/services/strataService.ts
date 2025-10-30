@@ -10,25 +10,9 @@
  */
 
 import axios from 'axios';
+import type { Stratum, StratumCreate } from '@/types/project';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
-
-export interface StratumCreate {
-  project_id: number;
-  stratum_code: string;
-  name: string;
-  description: string;
-  gamma_humid: number;
-  gamma_saturated: number;
-  behavior_type: 'granular' | 'cohesive';
-  plasticity_index?: number;
-}
-
-export interface Stratum extends StratumCreate {
-  id: number;
-  created_at: string;
-  updated_at: string;
-}
 
 export const strataService = {
   /**

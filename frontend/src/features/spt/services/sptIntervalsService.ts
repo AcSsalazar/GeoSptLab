@@ -10,23 +10,9 @@
  */
 
 import axios from 'axios';
+import type { SPTInterval, SPTIntervalCreate } from '@/types/project';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
-
-export interface SPTIntervalCreate {
-  borehole_stratum_id: number;
-  depth_from: number;
-  depth_to: number;
-  nspt_field: number;
-}
-
-export interface SPTInterval extends SPTIntervalCreate {
-  id: number;
-  midpoint_depth: number;
-  borehole_id: number;
-  created_at: string;
-  updated_at: string;
-}
 
 export const sptIntervalsService = {
   /**

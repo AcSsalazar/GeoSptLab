@@ -8,7 +8,8 @@
  */
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { strataService, type StratumCreate, type Stratum } from '../services/strataService';
+import { strataService } from '../services/strataService';
+import type { Stratum, StratumCreate } from '@/types/project';
 import { queryKeys } from '@/lib/queryClient';
 import { useAppStore } from '@/store/appStore';
 

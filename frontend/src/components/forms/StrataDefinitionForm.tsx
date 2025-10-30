@@ -7,8 +7,8 @@ import { z } from "zod";
 import { Plus, Trash2, Info, Layers } from "lucide-react";
 import { useAppStore } from "@/store/appStore";
 import { useStrataWorkflow } from "@/features/strata/hooks/useStrataHooks";
-import type { StratumCreate } from "../../features/strata/services/strataService";
-import { BehaviorType } from "../../types/project";
+import type { StratumCreate } from "@/types/project";
+import { BehaviorType } from "@/types/project";
 import styles from "@/styles/StrataDefinitionForm.module.css";
 
 // Zod schema for individual stratum definition

@@ -11,24 +11,9 @@
  */
 
 import axios from 'axios';
+import type { Borehole, BoreholeCreate } from '@/types/project';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
-
-export interface BoreholeCreate {
-  project_id: number;
-  borehole_name: string;
-  final_depth: number;
-  diameter_mm: number;
-  field_energy_percent: number;
-  water_table_depth?: number;
-  formulation?: 'kishida' | 'jrb';
-}
-
-export interface Borehole extends BoreholeCreate {
-  id: number;
-  created_at: string;
-  updated_at: string;
-}
 
 export const boreholesService = {
   /**

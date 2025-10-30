@@ -8,65 +8,14 @@
  */
 
 import axios from 'axios';
+import type { CalculatedResult } from '@/types/project';
+import type {
+  CalculationRequest,
+  CalculationResponse,
+  ProjectResultsResponse,
+} from '@/types/api';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
-
-export interface CalculationRequest {
-  recalculate_all?: boolean;
-}
-
-export interface CalculationResponse {
-  project_id: number;
-  calculated_intervals: number;
-  updated_intervals: number;
-  message: string;
-}
-
-export interface CalculatedResult {
-  id: number;
-  spt_interval_id: number;
-  sigma_prime: number;
-  cb_factor: number;
-  cs_factor: number;
-  cr_factor: number;
-  cn_factor: number;
-  n45: number;
-  n55: number;
-  n60: number;
-  n145: number;
-  phi_prime_eq: number;
-  elastic_modulus: number;
-  tau_resistance: number;
-  su_undrained: number;
-}
-
-export interface RegressionData {
-  slope: number;
-  intercept: number;
-  r_squared: number;
-  phi_degrees: number;
-  cohesion: number;
-  equation: string;
-  data_points: number;
-}
-
-export interface StatisticalSummary {
-  count: number;
-  phi_mean: number;
-  phi_std: number;
-  phi_lower: number;
-  phi_upper: number;
-  modulus_mean: number;
-  modulus_std: number;
-  modulus_lower: number;
-  modulus_upper: number;
-}
-
-export interface ProjectResultsResponse {
-  results: CalculatedResult[];
-  regression_by_stratum: Record<number, RegressionData>;
-  statistical_summary_by_stratum: Record<number, StatisticalSummary>;
-}
 
 export const calculationsService = {
   /**

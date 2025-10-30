@@ -13,22 +13,9 @@
  */
 
 import axios from 'axios';
+import type { BoreholeStratum, BoreholeStratumCreate } from '@/types/project';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
-
-export interface BoreholeStratumCreate {
-  borehole_id: number;
-  stratum_definition_id: number;
-  stratum_code: number; // Added: required by backend
-  initial_depth: number;
-  final_depth: number;
-}
-
-export interface BoreholeStratum extends BoreholeStratumCreate {
-  id: number;
-  created_at: string;
-  updated_at: string;
-}
 
 export const boreholeStrataService = {
   /**

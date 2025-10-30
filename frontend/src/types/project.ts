@@ -69,7 +69,7 @@ export interface Stratum {
 
 export interface StratumCreate {
   project_id: number;
-  stratum_code: number;
+  stratum_code: string;  // Fixed: Should be string, not number
   name: string;
   description: string;
   gamma_humid: number;
@@ -84,16 +84,19 @@ export interface Borehole {
   borehole_name: string;
   final_depth: number;
   diameter_mm: number;
-  field_energy_percent: number;   // Deleted rod_length from the next linecode
-  
+  field_energy_percent: number;
+  water_table_depth?: number;
+  formulation?: FormulationType;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface BoreholeCreate {
-  project_id?: number; // Optional since it can be set in bulk operations
-  borehole_name?: string; // Optional since it can be auto-generated
+  project_id: number;          // Fixed: Required field
+  borehole_name: string;       // Fixed: Required field
   final_depth: number;
-  diameter_mm?: number;
-  field_energy_percent?: number; // Deleted rod_length from the next linecode
+  diameter_mm: number;         // Fixed: Required field
+  field_energy_percent: number; // Fixed: Required field
   water_table_depth?: number;
   formulation?: FormulationType;
 }
@@ -101,21 +104,20 @@ export interface BoreholeCreate {
 export interface SPTInterval {
   id: number;
   borehole_id: number;
-  stratum_id: number;
+  borehole_stratum_id: number;  // Fixed: Uses borehole_stratum relationship
   depth_from: number;
   depth_to: number;
   midpoint_depth: number;
   nspt_field: number;
-  description?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface SPTIntervalCreate {
-  borehole_id: number;
-  stratum_id: number;
+  borehole_stratum_id: number;  // Fixed: Uses borehole_stratum relationship
   depth_from: number;
   depth_to: number;
   nspt_field: number;
-  description?: string;
 }
 
 export interface CalculatedResult {
@@ -131,7 +133,23 @@ export interface CalculatedResult {
   n60: number;
   n145: number;
   phi_prime_eq: number;
-  elastic_modulus?: number;
-  tau_resistance?: number;
-  su_undrained?: number;
+  elastic_modulus: number;   // Fixed: Backend always calculates this
+  tau_resistance: number;    // Fixed: Backend always calculates this
+  su_undrained: number;      // Fixed: Backend always calculates this
+}
+
+// === BOREHOLE-STRATUM RELATIONSHIP ===
+// Added: This type was missing from central types file
+export interface BoreholeStratumCreate {
+  borehole_id: number;
+  stratum_definition_id: number;
+  stratum_code: number;
+  initial_depth: number;
+  final_depth: number;
+}
+
+export interface BoreholeStratum extends BoreholeStratumCreate {
+  id: number;
+  created_at: string;
+  updated_at: string;
 }

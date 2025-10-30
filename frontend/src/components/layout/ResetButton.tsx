@@ -1,4 +1,4 @@
-import { useAppStore } from "../../store/appStore";
+import { useAppStore } from "@/store/appStore";
 import { RefreshCw } from "lucide-react";
 import styles from "@/styles/ui/ResetButton.module.css";
 const ResetButton: React.FC = () => {
