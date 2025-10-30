@@ -2,7 +2,7 @@
 Borehole Stratum model for SPT Parameters Calculator.
 Represents the specific strata found in each borehole with their particular depths.
 """
-from sqlalchemy import Column, Integer, Float, ForeignKey
+from sqlalchemy import Column, Integer, Float, ForeignKey, String
 from sqlalchemy.orm import relationship
 
 from app.core.database import Base
@@ -18,7 +18,7 @@ class BoreholeStratum(Base):
     id = Column(Integer, primary_key=True, index=True)
     borehole_id = Column(Integer, ForeignKey("boreholes.id"), nullable=False)
     stratum_definition_id = Column(Integer, ForeignKey("stratum_definitions.id"), nullable=False)
-    stratum_code = Column(Integer, nullable=False)  # e.g., 1, 2, 3 (matches stratum definition)
+    stratum_code = Column(String, nullable=False)  # e.g., 1, 2, 3 (matches stratum definition)
     initial_depth = Column(Float, nullable=False)  # m, top depth of stratum in this borehole
     final_depth = Column(Float, nullable=False)  # m, bottom depth of stratum in this borehole
     

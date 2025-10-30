@@ -10,7 +10,7 @@ from app.schemas.stratum import StratumDefinitionResponse
 class BoreholeStratumBase(BaseModel):
     """Base schema for borehole stratum."""
     stratum_definition_id: int = Field(..., description="ID of the stratum definition")
-    stratum_code: int = Field(..., description="Code of the stratum (1, 2, 3, etc.)")
+    stratum_code: str = Field(..., description="Code of the stratum (1, 2, 3, etc.)")
     initial_depth: float = Field(..., description="Initial depth of stratum in this borehole (m)")
     final_depth: float = Field(..., description="Final depth of stratum in this borehole (m)")
 
