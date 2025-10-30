@@ -1,0 +1,92 @@
+:root {
+  --space-0: 0;
+  --space-1: 0.5rem; /* 8px */
+  --space-2: 1rem; /* 16px */
+  --space-3: 1.5rem; /* 24px */
+  --space-4: 2rem; /* 32px */
+  --space-5: 2.5rem; /* 40px */
+  --space-6: 3.052rem;
+  --space-7: 4rem;
+  --space-8: 5rem;
+  --space-10: 6rem;
+
+  /* ===== SEMANTIC SPACING ===== */
+  --spacing-element: var(--space-1); /* Entre elementos pequeños */
+  --spacing-component: var(--space-3); /* Entre componentes */
+  --spacing-section: var(--space-5); /* Entre secciones */
+  --spacing-page: var(--space-8); /* Márgenes de página */
+
+  /* ===== BRAND COLORS (Tus colores actuales) ===== */
+  --brand-primary: #ef8b17;
+  --brand-primary-dark: #b33800;
+  --brand-secondary: #464646;
+  --brand-accent: #13131a;
+
+  /* ===== SEMANTIC COLORS ===== */
+  --color-text-primary: #0f0c0c;
+  --color-text-secondary: #464646;
+  --color-text-tertiary: #8d8d8d;
+  --color-text-inverse: #ffffff;
+
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f8f9fa;
+  --color-background-tertiary: #f1f3f4;
+
+  --color-border-primary: #e5e7eb;
+  --color-border-secondary: #d1d5db;
+  --color-border-focus: var(--brand-primary);
+
+  /* ===== STATE COLORS ===== */
+  --color-success: #10b981;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+  --color-info: #3b82f6;
+
+  /* ===== TYPOGRAPHY ===== */
+  --font-family-primary: "Lexend Deca", system-ui, sans-serif;
+
+  /* Type Scale - Perfect Fourth (1.333) */
+  --text-xs: 0.75rem; /* 12px */
+  --text-sm: 0.875rem; /* 14px */
+  --text-base: 1rem; /* 16px */
+  --text-lg: 1.333rem; /* ~21px */
+  --text-xl: 1.777rem; /* ~28px */
+  --text-2xl: 2.369rem; /* ~38px */
+
+  /* Font Weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Line Heights - 8pt aligned */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* ===== SHADOWS ===== */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-base: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 8px 15px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 15px 25px rgba(0, 0, 0, 0.1);
+
+  /* ===== BORDER RADIUS - 8pt aligned ===== */
+  --radius-sm: 0.25rem; /* 4px */
+  --radius-base: 0.5rem; /* 8px */
+  --radius-md: 0.75rem; /* 12px */
+  --radius-lg: 1rem; /* 16px */
+  --radius-xl: 1.5rem; /* 24px */
+  --radius-full: 9999px;
+
+  /* ===== Z-INDEX SCALE ===== */
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-modal: 1400;
+  --z-popover: 1500;
+  --z-toast: 1700;
+}
+
+
+
+

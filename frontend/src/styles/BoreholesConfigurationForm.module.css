@@ -1,0 +1,678 @@
+.formContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.formHeader {
+  margin-bottom: 32px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 16px;
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.titleSection {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.titleIcon {
+  color: #3b82f6;
+  margin-top: 4px;
+}
+
+.formTitle {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+}
+
+.formSubtitle {
+  color: #6b7280;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.projectInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.projectCode {
+  background: #3b82f6;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.projectName {
+  color: #6b7280;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+/* Placeholder for empty state */
+.placeholderContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.placeholderIcon {
+  color: #d1d5db;
+  margin-bottom: 16px;
+}
+
+.placeholderContainer h3 {
+  margin: 0 0 8px 0;
+  color: #374151;
+}
+
+.placeholderContainer p {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+/* Strata Reference */
+.strataReference {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.strataReference h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px 0;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.strataList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.stratumTag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.75rem;
+}
+
+.stratumCode {
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+.stratumDesc {
+  color: #374151;
+}
+
+.stratumType {
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Tab System */
+.tabContainer {
+  margin-bottom: 24px;
+}
+
+.tabList {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #e5e7eb;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  background: #f9fafb;
+  color: #6b7280;
+  cursor: pointer;
+  border-radius: 8px 8px 0 0;
+  font-weight: 500;
+  white-space: nowrap;
+  position: relative;
+  transition: all 0.2s ease;
+  min-width: 120px;
+}
+
+.tab:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.tab.active {
+  background: #3b82f6;
+  color: white;
+  transform: translateY(2px);
+}
+
+.tab.error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+.tab.error.active {
+  background: #ef4444;
+}
+
+.tabLabel {
+  font-weight: 600;
+}
+
+.tabDepth {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.errorIndicator {
+  background: #ef4444;
+  color: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+/* Tab Content */
+.tabContent {
+  transition: all 0.3s ease;
+}
+
+.tabContent.active {
+  display: block;
+}
+
+.tabContent.hidden {
+  display: none;
+}
+
+.boreholeForm {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Basic Info Section */
+.basicInfoSection {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 20px 0;
+  color: #374151;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+}
+
+.required {
+  color: #ef4444;
+}
+
+.optional {
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.input, .select {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.input:focus, .select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.inputError {
+  border-color: #ef4444;
+}
+
+.inputError:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.errorText {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+/* Strata Assignments Section */
+.strataAssignmentsSection {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sectionActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.addButton:hover:not(:disabled) {
+  background: #059669;
+}
+
+.addButton:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+}
+
+.fixButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #f59e0b;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.fixButton:hover {
+  background: #d97706;
+}
+
+.assignmentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.assignmentCard {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.assignmentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.assignmentNumber {
+  background: #3b82f6;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.removeAssignmentButton {
+  padding: 4px;
+  background: #fef2f2;
+  color: #ef4444;
+  border: 1px solid #fecaca;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.removeAssignmentButton:hover {
+  background: #fee2e2;
+}
+
+.assignmentForm {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: end;
+}
+
+.depthInputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stratumInfo {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #eff6ff;
+  border-radius: 4px;
+}
+
+.stratumProps {
+  font-size: 0.75rem;
+  color: #1e40af;
+  font-weight: 500;
+}
+
+.assignmentErrors {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.assignmentError {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-top: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Profile Preview */
+.profilePreview {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.previewTitle {
+  margin: 0 0 16px 0;
+  color: #374151;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.profileContainer {
+  position: relative;
+}
+
+.profileHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.profileName {
+  font-weight: 700;
+  color: #3b82f6;
+  font-size: 1.125rem;
+}
+
+.profileDepth {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.profileColumns {
+  display: grid;
+  grid-template-columns: 100px 200px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.depthColumn, .stratumColumn, .descriptionColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.depthLabel, .stratumLabel, .descriptionLabel {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  padding: 8px 0;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.depthItem {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0;
+  font-size: 0.75rem;
+  color: #6b7280;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.stratumLayer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  min-height: 40px;
+}
+
+.layerCode {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.layerThickness {
+  font-size: 0.625rem;
+  opacity: 0.9;
+}
+
+.descriptionItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 0.75rem;
+}
+
+.descriptionItem strong {
+  color: #374151;
+  font-weight: 600;
+}
+
+.descriptionItem span {
+  color: #6b7280;
+}
+
+.descriptionItem small {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.waterTable {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #06b6d4;
+  display: flex;
+  align-items: center;
+}
+
+.waterTable span {
+  background: #06b6d4;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .formContainer {
+    padding: 16px;
+  }
+  
+  .formGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .profileColumns {
+    grid-template-columns: 80px 150px 1fr;
+    gap: 12px;
+  }
+  
+  .assignmentForm {
+    grid-template-columns: 1fr;
+  }
+  
+  .depthInputs {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .headerContent {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  
+  .titleSection {
+    gap: 12px;
+  }
+  
+  .projectInfo {
+    align-items: flex-start;
+    flex-direction: row;
+  }
+  
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .profileColumns {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .stratumLayer {
+    width: 100%;
+    height: 40px;
+    margin-bottom: 4px;
+  }
+  
+  .tabList {
+    flex-wrap: wrap;
+  }
+  
+  .tab {
+    min-width: 100px;
+  }
+  
+  .strataList {
+    flex-direction: column;
+  }
+  
+  .stratumTag {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}

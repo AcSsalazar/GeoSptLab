@@ -1,0 +1,324 @@
+/* Refactored to use design system tokens instead of hardcoded values */
+
+.wizard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-component);
+}
+
+.progress {
+  margin-bottom: var(--spacing-component);
+  background: #f9fbff;
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-element);
+  border: 1px solid var(--color-border-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+
+.progressSteps {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+  padding: 0 5%; /* Espaciado igual en los extremos */
+}
+
+.stepWrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.stepWrapper:last-child {
+  flex: 0; /* El último no se expande */
+}
+
+.stepContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative; /* IMPORTANTE: Para que absolute del title funcione */
+  z-index: var(--z-dropdown);
+  width: 35px; /* Ancho fijo igual al círculo - los títulos no afectan el layout */
+  min-height: 54px; /* Espacio para el círculo + título */
+}
+
+.stepButton {
+  width: 35px;
+  height: 35px;
+  border-radius: var(--radius-full);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.stepButton.completed {
+  background: linear-gradient(135deg, var(--color-success) 0%, #059669 100%);
+  color: var(--color-text-inverse);
+  transform: scale(1);
+  box-shadow: var(--shadow-md);
+}
+
+.stepButton.active {
+  background: radial-gradient(circle, rgb(159 199 23 / 72%) 5%, rgb(250 255 236) 69%);
+  border: 1px solid var(--color-text-tertiary);
+  color: #594f4f;;
+  box-shadow: var(--shadow-lg);
+  transform: scale(1.1);
+}
+
+.stepButton.inactive {
+  background: linear-gradient(135deg, var(--color-background-secondary) 0%, var(--color-background-tertiary) 100%);
+  color: var(--color-text-tertiary);
+  cursor: not-allowed;
+  box-shadow: var(--shadow-xs);
+}
+
+.stepButton.clickable:hover:not(.active):not(.completed) {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, var(--color-background-primary) 0%, var(--color-background-secondary) 100%);
+}
+
+.stepTitle {
+  font-size: 10px; /* Tamaño más pequeño y compacto */
+  font-weight: var(--font-weight-medium);
+  text-align: center;
+  max-width: 90px; /* Ancho reducido para mejor legibilidad */
+  line-height: 1.3; /* Line height más ajustado */
+  transition: all 0.3s ease;
+  white-space: normal; /* Permite que el texto haga wrap */
+  position: absolute; /* Saca del flujo para no afectar el espaciado */
+  top: 40px; /* Justo debajo del círculo (35px + 5px margen) */
+  left: 50%;
+  transform: translateX(-50%); /* Centra horizontalmente */
+  opacity: 0.85; /* Ligeramente transparente para menos peso visual */
+  z-index: 10; /* Por encima de las líneas */
+}
+
+.stepTitle.active {
+  color: #2d2e42;
+  font-weight: var(--font-weight-semibold);
+  transform: translateX(-50%); /* Mantiene el centrado */
+  opacity: 1; /* Totalmente visible cuando está activo */
+}
+
+.stepTitle.completed {
+  color: var(--color-success);
+  font-weight: var(--font-weight-medium);
+  transform: translateX(-50%); /* Mantiene el centrado */
+  opacity: 0.9;
+}
+
+.stepTitle.inactive {
+  color: var(--color-text-tertiary);
+  transform: translateX(-50%); /* Mantiene el centrado */
+  opacity: 0.7; /* Más transparente para menor énfasis */
+}
+
+.progressLine {
+  position: absolute;
+  top: 17px; /* Centrado vertical del círculo (35px / 2 ≈ 17px) */
+  left: 17.5px; /* Empieza desde el borde derecho del círculo (35px / 2) */
+  right: -17.5px; /* Termina en el borde izquierdo del siguiente círculo */
+  height: 3px;
+  z-index: 1;
+  border-radius: var(--radius-sm);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.progressLine.completed {
+  background: linear-gradient(90deg, var(--color-success) 0%, #059669 100%);
+  box-shadow: var(--shadow-sm);
+}
+
+.progressLine.incomplete {
+  background: linear-gradient(90deg, var(--color-border-primary) 0%, var(--color-border-secondary) 100%);
+}
+
+.content {
+  background: var(--color-background-primary);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-component);
+  position: relative;
+  overflow: hidden;
+}
+
+
+.contentHeader {
+  margin-bottom: var(--spacing-section);
+  text-align: center;
+}
+
+.contentTitle {
+  color: var(--color-text-primary);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-element);
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--brand-primary) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: var(--line-height-tight);
+}
+
+.contentDescription {
+  color: var(--color-text-secondary);
+  font-size: var(--text-lg);
+  line-height: var(--line-height-relaxed);
+  max-width: 600px;
+  margin: 0 auto;
+  font-weight: var(--font-weight-regular);
+}
+
+.contentBody {
+  margin-bottom: var(--spacing-section);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-sm);
+}
+
+.navigation {
+  display: flex;
+  border-radius: var(--radius-lg);
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f9fbff;
+  margin-top: var(--spacing-component);
+  padding: var(--spacing-2);
+  max-width: 1200px;
+}
+
+.backButton {
+  background: radial-gradient(circle, #d0db25d1 0%, rgb(255 255 255) 66%);
+  border: solid 1px #8d9cb5;
+  padding: var(--spacing-3);
+  border-radius: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.backButton:hover {
+  background: radial-gradient(circle, #5d50d1 0%, #f5f9f7 50%, rgb(255 255 255) 100%);
+  border-color: #6b8499;
+  transform: translateX(-4px);
+  box-shadow: 0 3px 12px rgba(107, 132, 153, 0.18);
+}
+
+.backButton:active {
+  transform: translateX(-2px);
+  box-shadow: 0 2px 6px rgba(107, 132, 153, 0.12);
+}
+
+.nextButton {
+  background: radial-gradient(circle, #d0db25d1 0%, rgb(255 255 255) 66%);
+  border: solid 1px #8d9cb5;
+  padding: var(--spacing-3);
+  border-radius: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nextButton:hover:not(:disabled) {
+  background: radial-gradient(circle, #62cc31  0%, #f5f9f7 50%, rgb(255 255 255) 100%);
+  border-color: #6b8499;
+  transform: translateX(4px);
+  box-shadow: 0 3px 12px rgba(107, 132, 153, 0.18);
+}
+
+.nextButton:active:not(:disabled) {
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.nextButton:disabled {
+  background: linear-gradient(135deg, #e5e7eb 0%, #f3f4f6 100%);
+  border-color: #d1d5db;
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .wizard {
+    padding: var(--spacing-element);
+  }
+
+  .content {
+    padding: var(--spacing-component);
+    border-radius: var(--radius-lg);
+  }
+
+  .stepTitle {
+    font-size: var(--text-xs);
+    max-width: 70px;
+  }
+
+  .stepButton {
+    width: 48px;
+    height: 48px;
+    font-size: var(--text-sm);
+  }
+
+  .stepContent {
+    width: 48px; /* Ancho fijo igual al círculo en mobile */
+  }
+
+  .stepTitle {
+    font-size: 9px; /* Aún más pequeño en mobile */
+    max-width: 70px;
+    line-height: 1.2;
+    margin-top: 4px;
+  }
+
+  .progressSteps {
+    padding: 0 3%; /* Menos padding en mobile */
+  }
+
+  .progressLine {
+    top: 24px; /* Centrado vertical del círculo en mobile (48px / 2 = 24px) */
+    left: 24px; /* Empieza desde el borde derecho del círculo (48px / 2) */
+    right: -24px; /* Termina en el borde izquierdo del siguiente círculo */
+  }
+
+  .contentTitle {
+    font-size: var(--text-xl);
+  }
+
+  .contentDescription {
+    font-size: var(--text-base);
+  }
+
+  .navigation {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nextButton {
+    width: 100%;
+    justify-content: center;
+  }
+}
+

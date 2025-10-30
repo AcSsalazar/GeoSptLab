@@ -1,0 +1,114 @@
+/**
+ * Footer Component - Using Design Tokens + 8pt Grid
+ */
+
+.footer {
+  background-color: #f6fbff;
+  border-top: 1px solid var(--color-border-primary);
+  margin-top: auto;
+  padding: var(--spacing-section) 0 var(--spacing-component) 0;
+}
+
+.container {
+  max-width: 75rem; /* 1200px */
+  margin: 0 auto;
+  padding: 0 var(--spacing-component);
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-section);
+  margin-bottom: var(--spacing-component);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-element);
+}
+
+.title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--brand-primary);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.description {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-element);
+}
+
+.link {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: var(--brand-primary);
+}
+
+.bottom {
+  padding-top: var(--spacing-component);
+  border-top: 1px solid var(--color-border-primary);
+}
+
+.copyright {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  text-align: center;
+  margin: 0;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .footer {
+    padding: var(--spacing-component) 0;
+  }
+  
+  .container {
+    padding: 0 var(--space-2);
+  }
+  
+  .content {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-component);
+    text-align: center;
+  }
+  
+  .links {
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 var(--space-1);
+  }
+  
+  .title {
+    font-size: var(--text-base);
+  }
+  
+  .subtitle {
+    font-size: var(--text-sm);
+  }
+}
