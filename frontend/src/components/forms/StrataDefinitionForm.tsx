@@ -253,9 +253,9 @@ const StrataDefinitionForm: React.FC = () => {
                     </span>
                   )}
                 </div>
-              </div>
+              
 
-              <div className={styles.formRow}>
+              
                 <div className={styles.inputGroup}>
                   <label className={styles.label}>
                     Descripción del Suelo{" "}
@@ -275,7 +275,11 @@ const StrataDefinitionForm: React.FC = () => {
                       {errors.strata[index]?.description?.message}
                     </span>
                   )}
+                
+
                 </div>
+
+                
 
                 <div className={styles.inputGroup}>
                   <label className={styles.label}>
@@ -313,37 +317,10 @@ const StrataDefinitionForm: React.FC = () => {
                   )}
                 </div>
 
-                {watch(`strata.${index}.behavior_type`) ===
-                  BehaviorType.COHESIVE && (
-                  <div className={styles.inputGroup}>
-                    <label className={styles.label}>
-                      Índice de Plasticidad (%){" "}
-                      <span className={styles.required}>*</span>
-                      <div title="Requerido para suelos cohesivos">
-                        <Info size={12} className={styles.tooltip} />
-                      </div>
-                    </label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      {...register(`strata.${index}.plasticity_index`, {
-                        valueAsNumber: true,
-                      })}
-                      className={`${styles.input} ${
-                        errors.strata?.[index]?.plasticity_index
-                          ? styles.inputError
-                          : ""
-                      }`}
-                      placeholder="15.0"
-                    />
-                    {errors.strata?.[index]?.plasticity_index && (
-                      <span className={styles.errorText}>
-                        {errors.strata[index]?.plasticity_index?.message}
-                      </span>
-                    )}
-                  </div>
-                )}
+                
               </div>
+
+
 
               <div className={styles.formRow}>
                 <div className={styles.inputGroup}>
@@ -398,26 +375,43 @@ const StrataDefinitionForm: React.FC = () => {
                     </span>
                   )}
                 </div>
+
+                              {watch(`strata.${index}.behavior_type`) ===
+                  BehaviorType.COHESIVE && (
+                  <div className={styles.inputGroup}>
+                    <label className={styles.label}>
+                      Índice de Plasticidad (%){" "}
+                      <span className={styles.required}>*</span>
+                      <div title="Requerido para suelos cohesivos">
+                        <Info size={12} className={styles.tooltip} />
+                      </div>
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      {...register(`strata.${index}.plasticity_index`, {
+                        valueAsNumber: true,
+                      })}
+                      className={`${styles.input} ${
+                        errors.strata?.[index]?.plasticity_index
+                          ? styles.inputError
+                          : ""
+                      }`}
+                      placeholder="15.0"
+                    />
+                    {errors.strata?.[index]?.plasticity_index && (
+                      <span className={styles.errorText}>
+                        {errors.strata[index]?.plasticity_index?.message}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className={styles.addStratumSection}>
-        <button
-          type="button"
-          onClick={addStratum}
-          className={styles.addStratumButton}
-        >
-          <Plus size={16} />
-          Agregar Otro Tipo de Estrato
-        </button>
-        <span className={styles.addInfo}>
-          Puedes agregar más tipos si en tu proyecto existen más variedades de
-          suelo
-        </span>
-      </div>
 
       {/* Summary Section */}
       <div className={styles.summarySection}>
