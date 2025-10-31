@@ -110,6 +110,86 @@ export function useCreateStrata() {
 }
 
 /**
+ * Hook para actualizar un estrato
+ * 
+ * USO:
+ * ```tsx
+ * const updateStratum = useUpdateStratum();
+ * 
+ * updateStratum.mutate({ 
+ *   id: 1, 
+ *   data: { name: 'Arena Fina', unit_weight: 17.5 } 
+ * });
+ * ```
+ */
+export function useUpdateStratum() {
+  const queryClient = useQueryClient();
+  const updateStratum = useAppStore((state) => state.updateStratum);
+  const project = useAppStore((state) => state.project);
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Partial<StratumCreate> }) =>
+      strataService.update(id, data),
+    
+    onSuccess: (stratum: Stratum) => {
+      // 1. Actualizar en el store
+      updateStratum(stratum.id, stratum);
+      
+      // 2. Invalidar cache del proyecto
+      if (project?.id) {
+        queryClient.invalidateQueries({ 
+          queryKey: queryKeys.projects.detail(project.id) 
+        });
+      }
+      
+      console.log('Stratum updated:', stratum);
+    },
+    
+    onError: (error: Error) => {
+      console.error('Error updating stratum:', error.message);
+    },
+  });
+}
+
+/**
+ * Hook para eliminar un estrato
+ * 
+ * USO:
+ * ```tsx
+ * const deleteStratum = useDeleteStratum();
+ * 
+ * deleteStratum.mutate(stratumId);
+ * ```
+ */
+export function useDeleteStratum() {
+  const queryClient = useQueryClient();
+  const removeStratum = useAppStore((state) => state.removeStratum);
+  const project = useAppStore((state) => state.project);
+
+  return useMutation({
+    mutationFn: strataService.delete,
+    
+    onSuccess: (_data, stratumId) => {
+      // 1. Remover del store
+      removeStratum(stratumId);
+      
+      // 2. Invalidar cache del proyecto
+      if (project?.id) {
+        queryClient.invalidateQueries({ 
+          queryKey: queryKeys.projects.detail(project.id) 
+        });
+      }
+      
+      console.log('Stratum deleted:', stratumId);
+    },
+    
+    onError: (error: Error) => {
+      console.error('Error deleting stratum:', error.message);
+    },
+  });
+}
+
+/**
  * Hook para el flujo completo de estratos
  * 
  * ✨ ARQUITECTURA UNIFICADA:

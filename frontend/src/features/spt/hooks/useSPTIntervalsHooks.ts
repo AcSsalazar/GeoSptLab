@@ -59,6 +59,86 @@ export function useCreateSPTIntervals() {
   });
 }
 
+/**
+ * Hook para actualizar un intervalo SPT
+ * 
+ * USO:
+ * ```tsx
+ * const updateInterval = useUpdateSPTInterval();
+ * 
+ * updateInterval.mutate({ 
+ *   id: 1, 
+ *   data: { nspt_field: 25, depth_from: 3.0, depth_to: 3.5 } 
+ * });
+ * ```
+ */
+export function useUpdateSPTInterval() {
+  const queryClient = useQueryClient();
+  const updateInterval = useAppStore((state) => state.updateInterval);
+  const project = useAppStore((state) => state.project);
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Partial<SPTIntervalCreate> }) =>
+      sptIntervalsService.update(id, data),
+    
+    onSuccess: (interval: SPTInterval) => {
+      // 1. Actualizar en el store
+      updateInterval(interval.id, interval);
+      
+      // 2. Invalidar cache del proyecto
+      if (project?.id) {
+        queryClient.invalidateQueries({ 
+          queryKey: queryKeys.projects.detail(project.id) 
+        });
+      }
+      
+      console.log('SPT Interval updated:', interval);
+    },
+    
+    onError: (error: Error) => {
+      console.error('Error updating SPT interval:', error.message);
+    },
+  });
+}
+
+/**
+ * Hook para eliminar un intervalo SPT
+ * 
+ * USO:
+ * ```tsx
+ * const deleteInterval = useDeleteSPTInterval();
+ * 
+ * deleteInterval.mutate(intervalId);
+ * ```
+ */
+export function useDeleteSPTInterval() {
+  const queryClient = useQueryClient();
+  const removeInterval = useAppStore((state) => state.removeInterval);
+  const project = useAppStore((state) => state.project);
+
+  return useMutation({
+    mutationFn: sptIntervalsService.delete,
+    
+    onSuccess: (_data, intervalId) => {
+      // 1. Remover del store
+      removeInterval(intervalId);
+      
+      // 2. Invalidar cache del proyecto
+      if (project?.id) {
+        queryClient.invalidateQueries({ 
+          queryKey: queryKeys.projects.detail(project.id) 
+        });
+      }
+      
+      console.log('SPT Interval deleted:', intervalId);
+    },
+    
+    onError: (error: Error) => {
+      console.error('Error deleting SPT interval:', error.message);
+    },
+  });
+}
+
 export function useSPTIntervalsWorkflow() {
   const createIntervals = useCreateSPTIntervals();
   const existingIntervals = useAppStore((state) => state.intervals);

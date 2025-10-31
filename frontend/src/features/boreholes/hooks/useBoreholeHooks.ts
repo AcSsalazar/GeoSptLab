@@ -4,8 +4,9 @@
 
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { boreholesService, type BoreholeCreate, type Borehole } from '../services/boreholesService';
-import { boreholeStrataService, type BoreholeStratumCreate } from '../services/boreholeStrataService';
+import { boreholesService } from '../services/boreholesService';
+import { boreholeStrataService } from '../services/boreholeStrataService';
+import type { Borehole, BoreholeCreate, BoreholeStratumCreate } from '@/types/project';
 import { queryKeys } from '@/lib/queryClient';
 import { useAppStore } from '@/store/appStore';
 
@@ -118,6 +119,90 @@ export function useCreateBoreholeStrata() {
       }
       
       console.log(errorMessage);
+    },
+  });
+}
+
+/**
+ * Hook para actualizar una perforación
+ * 
+ * USO:
+ * ```tsx
+ * const updateBorehole = useUpdateBorehole();
+ * 
+ * updateBorehole.mutate({ 
+ *   id: 1, 
+ *   data: { final_depth: 20.0, diameter_mm: 200 } 
+ * });
+ * ```
+ */
+export function useUpdateBorehole() {
+  const queryClient = useQueryClient();
+  const updateBorehole = useAppStore((state) => state.updateBorehole);
+  const project = useAppStore((state) => state.project);
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Partial<BoreholeCreate> }) =>
+      boreholesService.update(id, data),
+    
+    onSuccess: (borehole: Borehole) => {
+      // 1. Actualizar en el store
+      updateBorehole(borehole.id, borehole);
+      
+      // 2. Invalidar cache del proyecto
+      if (project?.id) {
+        queryClient.invalidateQueries({ 
+          queryKey: queryKeys.projects.detail(project.id) 
+        });
+      }
+      
+      console.log('Borehole updated:', borehole);
+    },
+    
+    onError: (error: Error) => {
+      console.error('Error updating borehole:', error.message);
+    },
+  });
+}
+
+/**
+ * Hook para eliminar una perforación
+ * 
+ * NOTA: Al eliminar una perforación, el backend debe eliminar en cascada:
+ * - borehole_strata assignments
+ * - spt_intervals relacionados
+ * 
+ * USO:
+ * ```tsx
+ * const deleteBorehole = useDeleteBorehole();
+ * 
+ * deleteBorehole.mutate(boreholeId);
+ * ```
+ */
+export function useDeleteBorehole() {
+  const queryClient = useQueryClient();
+  const removeBorehole = useAppStore((state) => state.removeBorehole);
+  const project = useAppStore((state) => state.project);
+
+  return useMutation({
+    mutationFn: boreholesService.delete,
+    
+    onSuccess: (_data, boreholeId) => {
+      // 1. Remover del store
+      removeBorehole(boreholeId);
+      
+      // 2. Invalidar cache del proyecto
+      if (project?.id) {
+        queryClient.invalidateQueries({ 
+          queryKey: queryKeys.projects.detail(project.id) 
+        });
+      }
+      
+      console.log('Borehole deleted:', boreholeId);
+    },
+    
+    onError: (error: Error) => {
+      console.error('Error deleting borehole:', error.message);
     },
   });
 }
