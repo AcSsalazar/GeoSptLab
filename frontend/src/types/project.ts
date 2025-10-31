@@ -103,6 +103,7 @@ export interface BoreholeCreate {
 
 export interface SPTInterval {
   id: number;
+  project_id: number;
   borehole_id: number;
   borehole_stratum_id: number;  // Fixed: Uses borehole_stratum relationship
   depth_from: number;

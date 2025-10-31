@@ -3,7 +3,8 @@
  */
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { sptIntervalsService, type SPTIntervalCreate, type SPTInterval } from '../services/sptIntervalsService';
+import { sptIntervalsService}  from '../services/sptIntervalsService';
+import type { SPTIntervalCreate, SPTInterval } from '@/types/project';
 import { queryKeys } from '@/lib/queryClient';
 import { useAppStore } from '@/store/appStore';
 
@@ -26,6 +27,7 @@ export function useSPTIntervalsByProject(projectId: number | undefined) {
 
 export function useCreateSPTIntervals() {
   const queryClient = useQueryClient();
+  const setIntervals = useAppStore((state) => state.setIntervals);
   const markStepCompleted = useAppStore((state) => state.markStepCompleted);
   const goToNextStep = useAppStore((state) => state.goToNextStep);
   const project = useAppStore((state) => state.project);
@@ -38,6 +40,8 @@ export function useCreateSPTIntervals() {
     },
     
     onSuccess: (intervals: SPTInterval[]) => {
+
+      setIntervals(intervals);
       markStepCompleted(3);
       goToNextStep();
       
@@ -57,8 +61,15 @@ export function useCreateSPTIntervals() {
 
 export function useSPTIntervalsWorkflow() {
   const createIntervals = useCreateSPTIntervals();
+  const existingIntervals = useAppStore((state) => state.intervals);
   const project = useAppStore((state) => state.project);
 
+  // ✅ LÓGICA UNIFICADA - Detecta automáticamente edit mode
+  // Los intervalos existen y tienen IDs = modo edición
+  const isEditMode = existingIntervals.length > 0 && 
+                     existingIntervals[0]?.id !== undefined &&
+                     existingIntervals[0]?.project_id === project?.id;
+                    
   const submit = (intervals: SPTIntervalCreate[]) => {
     if (!project?.id) {
       console.error('No active project to associate SPT intervals with.');
@@ -72,5 +83,6 @@ export function useSPTIntervalsWorkflow() {
     submit,
     isLoading: createIntervals.isPending,
     error: createIntervals.error,
+    isEditMode,  // Exportar para uso en componentes
   };
 }

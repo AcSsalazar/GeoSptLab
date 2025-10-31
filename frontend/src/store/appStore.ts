@@ -11,7 +11,7 @@
  * ARQUITECTURA:
  * - Store = Estado + Acciones
  * - Middleware = DevTools + Persist
- * - Slices = Separar por feature (project, strata, boreholes)
+ * - Slices = Separar por feature (project, strata, boreholes, intervals)
  */
 
 import { create } from 'zustand';
@@ -24,6 +24,8 @@ import type {
   Borehole, 
   BoreholeCreate,
   BoreholeStratum,
+  SPTInterval,
+  SPTIntervalCreate,
 } from '@/types/project';
 
 // ===========================================
@@ -45,16 +47,23 @@ interface AppState {
   strata: Stratum[];
   boreholes: Borehole[];
   boreholeStrata: BoreholeStratum[];  // Asignaciones de estratos a perforaciones
+  intervals: SPTInterval[];
   
   // === DATOS DE FORMULARIOS (TEMPORAL) ===
   projectDraft: ProjectCreate | null;
   strataDraft: StratumCreate[];
   boreholesDraft: BoreholeCreate[];
+  intervalsDraft: SPTIntervalCreate[];
   
   // === DRAFT STATE FOR BOREHOLE CONFIGURATION FORM ===
   draftBoreholes: Record<string, unknown> | null;  // Temporary form state for BoreholesConfigurationForm
   draftBoreholeTab: number;     // Current tab position in BoreholesConfigurationForm
-  
+  // draft state for intervals tabs
+
+  draftIntervals: Record<string, unknown> | null;  // Temporary form state for IntervalsConfigurationForm
+  draftIntervalsTab: number;  // Current tab position in IntervalsConfigurationForm
+
+
   // === ESTADO UI ===
   loading: boolean;
   error: string | null;
@@ -98,10 +107,22 @@ interface AppActions {
   setBoreholeStrata: (boreholeStrata: BoreholeStratum[]) => void;
   addBoreholeStratum: (boreholeStratum: BoreholeStratum) => void;
   
+  // === SPT INTERVALS ===
+  setIntervals: (intervals: SPTInterval[]) => void;
+  setIntervalsDraft: (draft: SPTIntervalCreate[]) => void;
+  addInterval: (interval: SPTInterval) => void;
+  updateInterval: (id: number, updates: Partial<SPTInterval>) => void;
+  removeInterval: (id: number) => void;
+  
   // === DRAFT BOREHOLE FORM STATE ===
   setDraftBoreholes: (draft: Record<string, unknown> | null) => void;
   setDraftBoreholeTab: (tab: number) => void;
   clearDraftBoreholes: () => void;
+  
+  // === DRAFT INTERVALS FORM STATE ===
+  setDraftIntervals: (draft: Record<string, unknown> | null) => void;
+  setDraftIntervalsTab: (tab: number) => void;
+  clearDraftIntervals: () => void;
   
   // === UI ===
   setLoading: (loading: boolean) => void;
@@ -130,15 +151,21 @@ const initialState: AppState = {
   strata: [],
   boreholes: [],
   boreholeStrata: [],
+  intervals: [],
   
   // Drafts
   projectDraft: null,
   strataDraft: [],
   boreholesDraft: [],
+  intervalsDraft: [],
   
   // Draft borehole configuration form state
   draftBoreholes: null,
   draftBoreholeTab: 0,
+  
+  // Draft intervals configuration form state
+  draftIntervals: null,
+  draftIntervalsTab: 0,
   
   // UI
   loading: false,
@@ -280,6 +307,40 @@ export const useAppStore = create<AppStore>()(
             'addBoreholeStratum'
           ),
         
+        // === SPT INTERVALS ACTIONS ===
+        setIntervals: (intervals) => 
+          set({ intervals }, false, 'setIntervals'),
+        
+        setIntervalsDraft: (intervalsDraft) => 
+          set({ intervalsDraft }, false, 'setIntervalsDraft'),
+        
+        addInterval: (interval) => 
+          set(
+            (state) => ({ intervals: [...state.intervals, interval] }),
+            false,
+            'addInterval'
+          ),
+        
+        updateInterval: (id, updates) => 
+          set(
+            (state) => ({
+              intervals: state.intervals.map(i => 
+                i.id === id ? { ...i, ...updates } : i
+              )
+            }),
+            false,
+            'updateInterval'
+          ),
+        
+        removeInterval: (id) => 
+          set(
+            (state) => ({ 
+              intervals: state.intervals.filter(i => i.id !== id) 
+            }),
+            false,
+            'removeInterval'
+          ),
+        
         // === DRAFT BOREHOLE FORM STATE ACTIONS ===
         setDraftBoreholes: (draftBoreholes) => 
           set({ draftBoreholes }, false, 'setDraftBoreholes'),
@@ -289,6 +350,16 @@ export const useAppStore = create<AppStore>()(
         
         clearDraftBoreholes: () => 
           set({ draftBoreholes: null, draftBoreholeTab: 0 }, false, 'clearDraftBoreholes'),
+        
+        // === DRAFT INTERVALS FORM STATE ACTIONS ===
+        setDraftIntervals: (draftIntervals) => 
+          set({ draftIntervals }, false, 'setDraftIntervals'),
+        
+        setDraftIntervalsTab: (draftIntervalsTab) => 
+          set({ draftIntervalsTab }, false, 'setDraftIntervalsTab'),
+        
+        clearDraftIntervals: () => 
+          set({ draftIntervals: null, draftIntervalsTab: 0 }, false, 'clearDraftIntervals'),
         
         // === UI ACTIONS ===
         setLoading: (loading) => 
@@ -338,8 +409,11 @@ export const useAppStore = create<AppStore>()(
               projectDraft: null,
               strataDraft: [],
               boreholesDraft: [],
+              intervalsDraft: [],
               draftBoreholes: null,
               draftBoreholeTab: 0,
+              draftIntervals: null,
+              draftIntervalsTab: 0,
               currentStep: 0,
               completedSteps: new Set<number>(),
             },
@@ -357,6 +431,7 @@ export const useAppStore = create<AppStore>()(
           strata: state.strata,
           boreholes: state.boreholes,
           boreholeStrata: state.boreholeStrata,  // ✅ Added
+          intervals: state.intervals,
           currentStep: state.currentStep,
           completedSteps: Array.from(state.completedSteps),  // ✅ Convert Set to Array for serialization
           // NO persistir: loading, error, drafts (temporal)
