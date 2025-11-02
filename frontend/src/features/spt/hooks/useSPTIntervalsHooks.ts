@@ -1,6 +1,3 @@
-/**
- * Custom Hooks para SPT Intervals con React Query
- */
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { sptIntervalsService}  from '../services/sptIntervalsService';
@@ -9,9 +6,6 @@ import { queryKeys } from '@/lib/queryClient';
 import { useAppStore } from '@/store/appStore';
 
 // ===========================================
-// QUERIES (GET)
-// ===========================================
-
 export function useSPTIntervalsByProject(projectId: number | undefined) {
   return useQuery({
     queryKey: [...queryKeys.projects.detail(projectId!), 'spt-intervals'],
@@ -21,9 +15,7 @@ export function useSPTIntervalsByProject(projectId: number | undefined) {
   });
 }
 
-// ===========================================
-// MUTATIONS (POST/PUT/DELETE)
-// ===========================================
+
 
 export function useCreateSPTIntervals() {
   const queryClient = useQueryClient();
@@ -59,19 +51,6 @@ export function useCreateSPTIntervals() {
   });
 }
 
-/**
- * Hook para actualizar un intervalo SPT
- * 
- * USO:
- * ```tsx
- * const updateInterval = useUpdateSPTInterval();
- * 
- * updateInterval.mutate({ 
- *   id: 1, 
- *   data: { nspt_field: 25, depth_from: 3.0, depth_to: 3.5 } 
- * });
- * ```
- */
 export function useUpdateSPTInterval() {
   const queryClient = useQueryClient();
   const updateInterval = useAppStore((state) => state.updateInterval);
@@ -100,17 +79,8 @@ export function useUpdateSPTInterval() {
     },
   });
 }
+// ===========================================
 
-/**
- * Hook para eliminar un intervalo SPT
- * 
- * USO:
- * ```tsx
- * const deleteInterval = useDeleteSPTInterval();
- * 
- * deleteInterval.mutate(intervalId);
- * ```
- */
 export function useDeleteSPTInterval() {
   const queryClient = useQueryClient();
   const removeInterval = useAppStore((state) => state.removeInterval);

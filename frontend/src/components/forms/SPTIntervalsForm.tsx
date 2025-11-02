@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -48,7 +48,10 @@ const SPTIntervalsForm: React.FC = () => {
   const boreholes = useAppStore((state) => state.boreholes);
   const boreholeStrata = useAppStore((state) => state.boreholeStrata);
   const strata = useAppStore((state) => state.strata);
-  
+  const drafIntervals = useAppStore((state) => state.intervals);
+  const draftIntervalsTab = useAppStore((state) => state.draftIntervalsTab);
+  const setDraftIntervals = useAppStore((state) => state.setDraftIntervals); 
+  const setDraftIntervalsTab = useAppStore((state) => state.setDraftIntervalsTab); 
   // ============================================
   // HOOKS - React Query Workflow
   // ============================================
@@ -64,6 +67,21 @@ const SPTIntervalsForm: React.FC = () => {
   // ============================================
   // PREPARE BOREHOLE-STRATUM OPTIONS
   // ============================================
+
+  // Helper function to build form data from saved boreholes
+
+  
+  const buildFormDataFromSavedBoreholes = () => {
+    if (boreholes.length === 0) return null;
+
+    return {
+      intervals: boreholes.map(borehole => {
+        const strataForBorehole = boreholeStrata.filter(bs => bs.borehole_id === borehole.id);
+
+
+    }
+
+
   const boreholeStratumOptions: BoreholeStratumInfo[] = boreholeStrata
     .filter(bs => bs.borehole_id === selectedBorehole)
     .map(bs => {
@@ -88,12 +106,13 @@ const SPTIntervalsForm: React.FC = () => {
     control,
     register,
     watch,
+    getValues,
     formState: { errors, isValid },
     handleSubmit,
     reset
   } = useForm<SPTIntervalsFormData>({
     resolver: zodResolver(sptIntervalsFormSchema),
-    defaultValues: {
+    defaultValues: drafIntervals ||{
       intervals: []
     },
     mode: 'onChange'
@@ -119,11 +138,13 @@ const SPTIntervalsForm: React.FC = () => {
       borehole_id: selectedBorehole,
       borehole_stratum_id: firstStratum.id,
       depth_from: midpoint,
-      depth_to: midpoint + 0.5, // Standard 50cm interval
+      depth_to: midpoint + 1.45, // Based in Excel document interval
       nspt_field: 0,
       description: ''
     });
   };
+
+  const [currentTab, setCurrentTab] = useState(draftIntervalsTab);
 
   const handleBoreholeChange = (boreholeId: number) => {
     setSelectedBorehole(boreholeId);
@@ -148,9 +169,21 @@ const SPTIntervalsForm: React.FC = () => {
     submit(data.intervals);
   };
 
-  // ============================================
-  // GUARDS
-  // ============================================
+  // Save form data to draft state
+  const saveDraft = React.useCallback(() => {
+    const currentFormData = getValues();
+    setDraftIntervals(currentFormData);
+  }, [getValues, setDraftIntervals]);
+
+    // Save before page unload/refresh (F5)
+    useEffect(() => {
+      const handleBeforeUnload = () => {
+        saveDraft();
+      };
+      window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [saveDraft]);
+
   
   if (!project) {
     return (
