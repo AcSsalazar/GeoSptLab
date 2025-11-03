@@ -2,16 +2,12 @@
  * 🗄️ ZUSTAND STORE - Estado Global Simplificado
  * 
  * VENTAJAS vs Context API:
- * ✅ Menos código (50% menos que Context)
- * ✅ Mejor performance (solo re-renderiza lo necesario)
- * ✅ DevTools integrado (debugging fácil)
- * ✅ Persist automático (guarda en localStorage)
- * ✅ No necesita Provider (acceso directo)
- * 
- * ARQUITECTURA:
- * - Store = Estado + Acciones
- * - Middleware = DevTools + Persist
- * - Slices = Separar por feature (project, strata, boreholes, intervals)
+ * Menos código (50% menos que Context)
+ * Mejor performance (solo re-renderiza lo necesario)
+ * DevTools integrado (debugging fácil)
+ * Persist automático (guarda en localStorage)
+ * No necesita Provider (acceso directo)
+
  */
 
 import { create } from 'zustand';
@@ -352,6 +348,8 @@ export const useAppStore = create<AppStore>()(
           set({ draftBoreholes: null, draftBoreholeTab: 0 }, false, 'clearDraftBoreholes'),
         
         // === DRAFT INTERVALS FORM STATE ACTIONS ===
+
+        
         setDraftIntervals: (draftIntervals) => 
           set({ draftIntervals }, false, 'setDraftIntervals'),
         
