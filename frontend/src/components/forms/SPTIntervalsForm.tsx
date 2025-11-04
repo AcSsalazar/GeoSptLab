@@ -10,7 +10,7 @@ import { useSPTIntervalsWorkflow } from '@/features/spt/hooks/useSPTIntervalsHoo
 import styles from '@/styles/SPTIntervalsForm.module.css'
 
 // ============================================
-// SCHEMAS
+// ZOD SCHEMAS
 // ============================================
 const sptIntervalSchema = z.object({
   borehole_stratum_id: z.number().int().positive("Debe seleccionar un estrato"),
@@ -77,9 +77,9 @@ const SPTIntervalsForm: React.FC = () => {
   // HELPER FUNCTION: BUILD FORM DATA
   // ============================================
   const buildFormDataFromSavedIntervals = (): SPTIntervalsFormData => {
-    console.log('🔍 Building form data from saved intervals')
+/*     console.log('🔍 Building form data from saved intervals')
     console.log('📦 Boreholes from store:', boreholes)
-    console.log('📦 Existing intervals from store:', existingIntervals)
+    console.log('📦 Existing intervals from store:', existingIntervals) */
 
     return {
       boreholes: boreholes.map(borehole => {
@@ -126,7 +126,6 @@ const SPTIntervalsForm: React.FC = () => {
   // ============================================
   const saveDraft = React.useCallback(() => {
     const currentFormData = getValues()
-    console.log('💾 Saving draft intervals:', currentFormData)
     setDraftIntervals(currentFormData)
   }, [getValues, setDraftIntervals])
 
@@ -153,7 +152,6 @@ const SPTIntervalsForm: React.FC = () => {
     saveDraft() // Save current tab data
     setCurrentTab(newTab)
     setDraftIntervalsTab(newTab)
-    console.log(`📑 Switched to tab ${newTab}`)
   }
 
   // ============================================

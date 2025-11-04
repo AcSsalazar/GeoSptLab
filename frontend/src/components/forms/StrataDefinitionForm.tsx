@@ -10,6 +10,7 @@ import { useStrataWorkflow } from "@/features/strata/hooks/useStrataHooks";
 import type { StratumCreate } from "@/types/project";
 import { BehaviorType } from "@/types/project";
 import styles from "@/styles/StrataDefinitionForm.module.css";
+import submitbtn from "@/styles/ui/SubmitButton.module.css";
 
 // Zod schema for individual stratum definition
 const stratumDefinitionSchema = z
@@ -188,14 +189,15 @@ const StrataDefinitionForm: React.FC = () => {
               <h2 className={styles.formTitle}>
                 Definición de Tipos de Estratos
               </h2>
-              <p className={styles.formSubtitle}>
+{/*               <p className={styles.formSubtitle}>
                 Define los tipos de suelo que existen en el área del proyecto
-              </p>
+              </p> */}
             </div>
           </div>
           <div className={styles.projectInfo}>
-            <span className={styles.projectCode}>{project.project_code}</span>
             <span className={styles.projectName}>{project.project_name}</span>
+            <span className={styles.projectCode}>{project.project_code}</span>
+            
           </div>
         </div>
       </div>
@@ -332,7 +334,7 @@ const StrataDefinitionForm: React.FC = () => {
                   </label>
                   <input
                     type="number"
-                    step="0.1"
+                    
                     {...register(`strata.${index}.gamma_humid`, {
                       valueAsNumber: true,
                     })}
@@ -359,7 +361,7 @@ const StrataDefinitionForm: React.FC = () => {
                   </label>
                   <input
                     type="number"
-                    step="0.1"
+                    
                     {...register(`strata.${index}.gamma_saturated`, {
                       valueAsNumber: true,
                     })}
@@ -388,7 +390,7 @@ const StrataDefinitionForm: React.FC = () => {
                     </label>
                     <input
                       type="number"
-                      step="0.1"
+                      
                       {...register(`strata.${index}.plasticity_index`, {
                         valueAsNumber: true,
                       })}
@@ -452,31 +454,7 @@ const StrataDefinitionForm: React.FC = () => {
             type="button"
             onClick={addStratum}
             className={styles.addStratumButton}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "8px",
-              padding: "10px 20px",
-              backgroundColor: "#007bff",
-              color: "white",
-              border: "2px dashed #0056b3",
-              borderRadius: "6px",
-              cursor: "pointer",
-              fontSize: "14px",
-              fontWeight: "600",
-              width: "100%",
-              marginTop: "16px",
-              transition: "all 0.2s",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "#0056b3";
-              e.currentTarget.style.transform = "translateY(-2px)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "#007bff";
-              e.currentTarget.style.transform = "translateY(0)";
-            }}
+
           >
             <Plus size={18} />
             Agregar Otro Tipo de Estrato
@@ -493,19 +471,7 @@ const StrataDefinitionForm: React.FC = () => {
         <button
           type="submit"
           disabled={!isValid || isLoading}
-          className={styles.submitButton}
-          style={{
-            padding: "12px 24px",
-            backgroundColor: !isValid || isLoading ? "#ccc" : "#28a745",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: !isValid || isLoading ? "not-allowed" : "pointer",
-            fontSize: "16px",
-            fontWeight: "bold",
-            width: "100%",
-            marginTop: "20px",
-          }}
+          className={submitbtn.btn}
         >
           {isLoading
             ? "Guardando estratos..."
