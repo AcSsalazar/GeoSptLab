@@ -56,7 +56,7 @@ const boreholeSchema = z.object({
       }
     }
     
-    console.log('✅ Strata assignments validation passed (Atento aca, pre log deleting )');
+    console.log('✅ Strata assignments validation passed (Atento acá, pre log deleting )');
     return true;
   },
   {

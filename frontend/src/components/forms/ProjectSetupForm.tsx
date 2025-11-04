@@ -9,7 +9,7 @@ import { useAppStore } from "@/store/appStore";
 import type { ProjectCreate } from "../../types/project";
 import { FormulationType } from "../../types/project";
 import styles from "@/styles/ProjectSetupForm.module.css";
-
+import common from "@/styles/ui/Common.module.css";
 // Esquema de validacion usando Zod para los campos del formulario base.
 const projectSchema = z.object({
   project_name: z
@@ -163,22 +163,9 @@ const ProjectSetupForm: React.FC = () => {
         <button
           type="submit"
           disabled={isLoading || !isValid}
-          className={common.submitButton}
-          style={{
-            padding: "8px 20px",
-            backgroundColor: isLoading || !isValid ? "#ccc" : "#144381ff",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: isLoading || !isValid ? "not-allowed" : "pointer",
-            fontSize: "16px",
-            fontWeight: 500,
-            
-          }}
+          className={`${common.submitButton} ${isLoading ? common.loading : ''} `}
         >
-          {isLoading
-            ? "Guardando..."
-            : `${submitLabel} Proyecto`}
+          {isLoading ? "Guardando..." : `${submitLabel} Proyecto`}
         </button>
       </div>
     </form>

@@ -9,7 +9,9 @@ import { useAppStore } from "@/store/appStore";
 import { useSPTIntervalsWorkflow } from "@/features/spt/hooks/useSPTIntervalsHooks";
 import styles from "@/styles/SPTIntervalsForm.module.css";
 import common from "@/styles/ui/Common.module.css";
+
 // ZOD SCHEMAS
+
 const sptIntervalSchema = z
   .object({
     borehole_stratum_id: z
@@ -267,7 +269,7 @@ const SPTIntervalsForm: React.FC = () => {
         <button
           type="submit"
           disabled={!isValid || isSubmitting}
-          className={styles.submitButton}
+          className={`${common.submitButton} ${isSubmitting ? common.loading : ''}`}
         >
           {isSubmitting ? (
             <>
@@ -286,9 +288,7 @@ const SPTIntervalsForm: React.FC = () => {
   );
 };
 
-// ============================================
 // TAB CONTENT COMPONENT
-// ============================================
 interface TabContentProps {
   boreholeIndex: number;
   borehole: {

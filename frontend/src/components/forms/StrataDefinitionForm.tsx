@@ -11,6 +11,7 @@ import type { StratumCreate } from "@/types/project";
 import { BehaviorType } from "@/types/project";
 import styles from "@/styles/StrataDefinitionForm.module.css";
 import common from "@/styles/ui/Common.module.css";
+import { OctagonAlert } from "lucide-react";
 
 // Zod schema for individual stratum definition
 const stratumDefinitionSchema = z
@@ -120,7 +121,9 @@ const StrataDefinitionForm: React.FC = () => {
   if (!project) {
     return (
       <div className={common.placeholderContainer}>
-        <p>Por favor, crea un proyecto primero</p>
+        <OctagonAlert size={48} className={common.placeholderIcon} />
+        <h3>No hay proyecto activo</h3>
+        <p>Debes crear un proyecto primero.</p>
       </div>
     );
   }
@@ -459,11 +462,9 @@ const StrataDefinitionForm: React.FC = () => {
         <button
           type="submit"
           disabled={isLoading || !isValid  }
-          className={common.mainButton}
-        >
+          className={`${common.mainButton} ${isLoading ? common.loading : ''} `}>
           {isLoading
-            ? "Guardando estratos..."
-            : `${submitLabel} Estratos y Continuar`}
+            ? "Guardando estratos..." : `${submitLabel} Estratos y Continuar`}
         </button>
 
         {/* Debug info */}
