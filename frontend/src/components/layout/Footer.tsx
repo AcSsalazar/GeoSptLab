@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
       <div className={styles.container}>
         <div className={styles.content}>
           <div className={styles.section}>
-            <h3 className={styles.title}>SPT Calculator</h3>
+            <h3 className={styles.title}>GeoSptLab</h3>
             <p className={styles.description}>
               Herramienta profesional para análisis de ensayos SPT y cálculo de parámetros geotécnicos.
             </p>

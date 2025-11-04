@@ -91,8 +91,11 @@
   font-size: 0.875rem;
 }
 
-.mainButton {
-  padding: 8px 20px;
+
+
+/* Base button */
+.submitButton {
+    padding: 8px 20px;
   background-color: rgb(20, 67, 129);
   color: white;
   border: none;
@@ -100,4 +103,28 @@
   cursor: pointer;
   font-size: 16px;
   font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+/* Estado normal */
+.submitButton:not(:disabled) {
+  background-color: #144381ff;
+  cursor: pointer;
+}
+
+.submitButton:not(:disabled):hover {
+  background-color: #0f3569;
+}
+
+/* Estado deshabilitado */
+.submitButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Variante loading */
+.submitButton.loading {
+  background-color: #ccc;
+  cursor: wait;
 }

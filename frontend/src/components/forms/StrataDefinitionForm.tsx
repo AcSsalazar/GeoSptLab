@@ -397,6 +397,23 @@ const StrataDefinitionForm: React.FC = () => {
         ))}
       </div>
 
+       {/* Add Stratum Button */}
+        <div className={styles.addStratumSection}>
+          <button
+            type="button"
+            onClick={addStratum}
+            className={styles.addStratumButton}
+          >
+            <Plus size={18} />
+            Agregar Otro Tipo de Estrato
+          </button>
+          <button className={styles.skeletonButton}></button>
+          <button className={styles.skeletonButton}></button>
+
+
+
+        </div>
+
       {/* Summary Section */}
       <div className={styles.summarySection}>
         <h3 className={styles.summaryTitle}>
@@ -430,17 +447,7 @@ const StrataDefinitionForm: React.FC = () => {
           ))}
         </div>
 
-        {/* Add Stratum Button */}
-        <div className={styles.addStratumSection}>
-          <button
-            type="button"
-            onClick={addStratum}
-            className={styles.addStratumButton}
-          >
-            <Plus size={18} />
-            Agregar Otro Tipo de Estrato
-          </button>
-        </div>
+
 
         {errors.strata && typeof errors.strata.message === "string" && (
           <div className={styles.globalError}>{errors.strata.message}</div>
@@ -451,8 +458,8 @@ const StrataDefinitionForm: React.FC = () => {
       <div className={styles.submitSection}>
         <button
           type="submit"
-          disabled={!isValid || isLoading}
-          className={common.btn}
+          disabled={isLoading || !isValid  }
+          className={common.mainButton}
         >
           {isLoading
             ? "Guardando estratos..."

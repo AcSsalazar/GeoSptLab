@@ -163,7 +163,7 @@ const ProjectSetupForm: React.FC = () => {
         <button
           type="submit"
           disabled={isLoading || !isValid}
-          className={styles.submitButton}
+          className={common.submitButton}
           style={{
             padding: "8px 20px",
             backgroundColor: isLoading || !isValid ? "#ccc" : "#144381ff",

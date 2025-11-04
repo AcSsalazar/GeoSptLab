@@ -48,7 +48,7 @@ const boreholeSchema = z.object({
       return false;
     }
     
-    // Check for gaps or overlaps
+    // Check for gaps or overlaps 
     for (let i = 0; i < assignments.length - 1; i++) {
       if (assignments[i].depth_to !== assignments[i + 1].depth_from) {
         console.error(`❌ Gap/overlap between stratum ${i} and ${i+1}: ${assignments[i].depth_to} !== ${assignments[i + 1].depth_from}`);
@@ -56,7 +56,7 @@ const boreholeSchema = z.object({
       }
     }
     
-    console.log('✅ Strata assignments validation passed');
+    console.log('✅ Strata assignments validation passed (Atento aca, pre log deleting )');
     return true;
   },
   {
@@ -568,14 +568,6 @@ const BoreholesConfigurationForm: React.FC = () => {
                     )}
                   </div>
 
-{/*                   <div className={styles.inputGroup}>
-                    <label className={styles.label}>
-                      Longitud de Barras (m) <span className={styles.required}>*</span>
-                    </label>
-  
-
-                  </div> */}
-
                   <div className={styles.inputGroup}>
                     <label className={styles.label}>
                       Nivel Freático (m) <span className={styles.optional}>(opcional)</span>
@@ -667,7 +659,7 @@ const BoreholesConfigurationForm: React.FC = () => {
         <button
           type="submit"
           disabled={isSubmitting || !isValid}
-          className={styles.submitButton}
+          className={common.maintButton}
         >
           {isSubmitting ? (
             <>
