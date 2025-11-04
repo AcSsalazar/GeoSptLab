@@ -1,0 +1,103 @@
+.formContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.formHeader {
+  margin-bottom: 32px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 16px;
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.titleSection {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.titleIcon {
+  color: #3b82f6;
+  margin-top: 4px;
+}
+
+.formTitle {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+}
+
+.formSubtitle {
+  color: #6b7280;
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+.projectInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.projectName {
+  background: #332b81d3;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: var(--text-sm);
+}
+
+.projectCode {
+  color: #6b7280;
+  font-weight: 500;
+  font-size: var(--text-sm);
+}
+
+/* Placeholder for empty state */
+.placeholderContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.placeholderIcon {
+  color: #d1d5db;
+  margin-bottom: 16px;
+}
+
+.placeholderContainer h3 {
+  margin: 0 0 8px 0;
+  color: #374151;
+}
+
+.placeholderContainer p {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.mainButton {
+  padding: 8px 20px;
+  background-color: rgb(20, 67, 129);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+}

@@ -10,7 +10,7 @@ import { useStrataWorkflow } from "@/features/strata/hooks/useStrataHooks";
 import type { StratumCreate } from "@/types/project";
 import { BehaviorType } from "@/types/project";
 import styles from "@/styles/StrataDefinitionForm.module.css";
-import submitbtn from "@/styles/ui/SubmitButton.module.css";
+import common from "@/styles/ui/Common.module.css";
 
 // Zod schema for individual stratum definition
 const stratumDefinitionSchema = z
@@ -119,7 +119,7 @@ const StrataDefinitionForm: React.FC = () => {
 
   if (!project) {
     return (
-      <div className={styles.formContainer}>
+      <div className={common.placeholderContainer}>
         <p>Por favor, crea un proyecto primero</p>
       </div>
     );
@@ -180,24 +180,20 @@ const StrataDefinitionForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={onSubmit} className={styles.formContainer}>
-      <div className={styles.formHeader}>
-        <div className={styles.headerContent}>
-          <div className={styles.titleSection}>
-            <Layers className={styles.titleIcon} size={24} />
+    <form onSubmit={onSubmit} className={common.formContainer}>
+      <div className={common.formHeader}>
+        <div className={common.headerContent}>
+          <div className={common.titleSection}>
+            <Layers className={common.titleIcon} size={24} />
             <div>
-              <h2 className={styles.formTitle}>
+              <h2 className={common.formTitle}>
                 Definición de Tipos de Estratos
               </h2>
-{/*               <p className={styles.formSubtitle}>
-                Define los tipos de suelo que existen en el área del proyecto
-              </p> */}
             </div>
           </div>
-          <div className={styles.projectInfo}>
-            <span className={styles.projectName}>{project.project_name}</span>
-            <span className={styles.projectCode}>{project.project_code}</span>
-            
+          <div className={common.projectInfo}>
+            <span className={common.projectCode}>{project.project_code}</span>
+            <span className={common.projectName}>{project.project_name}</span>
           </div>
         </div>
       </div>
@@ -255,9 +251,7 @@ const StrataDefinitionForm: React.FC = () => {
                     </span>
                   )}
                 </div>
-              
 
-              
                 <div className={styles.inputGroup}>
                   <label className={styles.label}>
                     Descripción del Suelo{" "}
@@ -277,11 +271,7 @@ const StrataDefinitionForm: React.FC = () => {
                       {errors.strata[index]?.description?.message}
                     </span>
                   )}
-                
-
                 </div>
-
-                
 
                 <div className={styles.inputGroup}>
                   <label className={styles.label}>
@@ -318,11 +308,7 @@ const StrataDefinitionForm: React.FC = () => {
                     </span>
                   )}
                 </div>
-
-                
               </div>
-
-
 
               <div className={styles.formRow}>
                 <div className={styles.inputGroup}>
@@ -334,7 +320,6 @@ const StrataDefinitionForm: React.FC = () => {
                   </label>
                   <input
                     type="number"
-                    
                     {...register(`strata.${index}.gamma_humid`, {
                       valueAsNumber: true,
                     })}
@@ -361,7 +346,6 @@ const StrataDefinitionForm: React.FC = () => {
                   </label>
                   <input
                     type="number"
-                    
                     {...register(`strata.${index}.gamma_saturated`, {
                       valueAsNumber: true,
                     })}
@@ -378,7 +362,7 @@ const StrataDefinitionForm: React.FC = () => {
                   )}
                 </div>
 
-                              {watch(`strata.${index}.behavior_type`) ===
+                {watch(`strata.${index}.behavior_type`) ===
                   BehaviorType.COHESIVE && (
                   <div className={styles.inputGroup}>
                     <label className={styles.label}>
@@ -390,7 +374,6 @@ const StrataDefinitionForm: React.FC = () => {
                     </label>
                     <input
                       type="number"
-                      
                       {...register(`strata.${index}.plasticity_index`, {
                         valueAsNumber: true,
                       })}
@@ -413,7 +396,6 @@ const StrataDefinitionForm: React.FC = () => {
           </div>
         ))}
       </div>
-
 
       {/* Summary Section */}
       <div className={styles.summarySection}>
@@ -454,7 +436,6 @@ const StrataDefinitionForm: React.FC = () => {
             type="button"
             onClick={addStratum}
             className={styles.addStratumButton}
-
           >
             <Plus size={18} />
             Agregar Otro Tipo de Estrato
@@ -471,7 +452,7 @@ const StrataDefinitionForm: React.FC = () => {
         <button
           type="submit"
           disabled={!isValid || isLoading}
-          className={submitbtn.btn}
+          className={common.btn}
         >
           {isLoading
             ? "Guardando estratos..."

@@ -8,6 +8,7 @@ import { Plus, Trash2, MapPin, Layers, Target, Loader2 } from 'lucide-react'
 import { useAppStore } from '@/store/appStore'
 import { useBoreholeWorkflow } from '@/features/boreholes/hooks/useBoreholeHooks'
 import styles from '@/styles/BoreholesConfigurationForm.module.css'
+import common from '@/styles/ui/Common.module.css'
 
 // Schema for stratum assignment within a borehole
 const stratumAssignmentSchema = z.object({
@@ -406,10 +407,7 @@ const BoreholesConfigurationForm: React.FC = () => {
     trigger(`boreholes.${boreholeIndex}.strata_assignments`);
   };
 
-  // ============================================
-  // GUARDS
-  // ============================================
-  
+
   if (!project) {
     return (
       <div className={styles.placeholderContainer}>
@@ -431,21 +429,21 @@ const BoreholesConfigurationForm: React.FC = () => {
   }
 
   return (
-    <form onSubmit={onSubmit} className={styles.formContainer}>
-      <div className={styles.formHeader}>
-        <div className={styles.headerContent}>
-          <div className={styles.titleSection}>
-            <MapPin className={styles.titleIcon} size={24} />
+    <form onSubmit={onSubmit} className={common.formContainer}>
+      <div className={common.formHeader}>
+        <div className={common.headerContent}>
+          <div className={common.titleSection}>
+            <MapPin className={common.titleIcon} size={24} />
             <div>
-              <h2 className={styles.formTitle}>Configuración de Perforaciones</h2>
-              <p className={styles.formSubtitle}>
+              <h2 className={common.formTitle}>Configuración de Perforaciones</h2>
+              <p className={common.formSubtitle}>
                 Configure cada perforación y asigne estratos a las profundidades específicas
               </p>
             </div>
           </div>
-          <div className={styles.projectInfo}>
-            <span className={styles.projectCode}>{project.project_code}</span>
-            <span className={styles.projectName}>{project.project_name}</span>
+          <div className={common.projectInfo}>
+            <span className={common.projectCode}>{project.project_code}</span>
+            <span className={common.projectName}>{project.project_name}</span>
           </div>
         </div>
       </div>
@@ -849,7 +847,7 @@ const BoreholeProfilePreview: React.FC<{
     name: string;
     description: string;
     behavior_type: string;
-    stratum_code: number;
+    stratum_code: string;
   }>
 }> = ({ boreholeData, availableStrata }) => {
   const getStratumColor = (stratumCode: string) => {
