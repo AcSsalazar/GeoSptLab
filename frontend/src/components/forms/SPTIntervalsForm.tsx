@@ -77,10 +77,6 @@ const SPTIntervalsForm: React.FC = () => {
             description: "",
           }));
 
-        console.log(
-          `✅ Borehole ${borehole.borehole_name} has ${intervalsForBorehole.length} intervals`
-        );
-
         return {
           borehole_id: borehole.id,
           borehole_name: borehole.borehole_name,

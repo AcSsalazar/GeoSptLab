@@ -2,15 +2,13 @@ import React, { useMemo } from 'react';
 import { TrendingUp, AlertCircle } from 'lucide-react';
 import { useAppStore } from '@/store/appStore';
 import MohrCoulombChart from './MohrCoulombChart';
-import type { 
-  CalculatedResult,
-  ProjectResultsResponse
-} from '@/features/calculations/services/calculationsService';
+import type {  ProjectResultsResponse} from '@/types/api';
+import type { CalculatedResult } from '@/types/project';
 import styles from '@/styles/StatisticalReport.module.css';
 
 interface StratumStats {
   stratum_name: string;
-  stratum_code: number;
+  stratum_code: string;
   count: number;
   phi_mean: number;
   phi_std: number;

@@ -1,31 +1,28 @@
-/**
- * Custom Hooks para Boreholes con React Query
- */
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { boreholesService } from "../services/boreholesService";
+import { boreholeStrataService } from "../services/boreholeStrataService";
+import type {
+  Borehole,
+  BoreholeCreate,
+  BoreholeStratumCreate,
+} from "@/types/project";
+import { queryKeys } from "@/lib/queryClient";
+import { useAppStore } from "@/store/appStore";
+import { toast } from "react-toastify";
 
-import { useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { boreholesService } from '../services/boreholesService';
-import { boreholeStrataService } from '../services/boreholeStrataService';
-import type { Borehole, BoreholeCreate, BoreholeStratumCreate } from '@/types/project';
-import { queryKeys } from '@/lib/queryClient';
-import { useAppStore } from '@/store/appStore';
-
-// ===========================================
 // QUERIES (GET)
-// ===========================================
 
 export function useBoreholesByProject(projectId: number | undefined) {
   return useQuery({
-    queryKey: [...queryKeys.projects.detail(projectId!), 'boreholes'],
+    queryKey: [...queryKeys.projects.detail(projectId!), "boreholes"],
     queryFn: () => boreholesService.getByProject(projectId!),
     enabled: !!projectId,
     staleTime: 1000 * 60 * 5,
   });
 }
 
-// ===========================================
 // MUTATIONS (POST/PUT/DELETE)
-// ===========================================
 
 export function useCreateBoreholes() {
   const queryClient = useQueryClient();
@@ -36,28 +33,27 @@ export function useCreateBoreholes() {
 
   return useMutation({
     mutationFn: boreholesService.createMultiple,
-    
+
     onMutate: async (newBoreholes) => {
       console.log(`Creating ${newBoreholes.length} boreholes...`);
     },
-    
+
     onSuccess: (boreholes: Borehole[]) => {
       setBoreholes(boreholes);
       markStepCompleted(2);
       goToNextStep();
-      
+      toast.success("Perforaciones guardadas con exito {•‿•}");
       if (project?.id) {
-        queryClient.invalidateQueries({ 
-          queryKey: queryKeys.projects.detail(project.id) 
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.projects.detail(project.id),
         });
       }
-      
-      
-      console.log('Boreholes created:', boreholes);
+
+      console.log("Boreholes created:", boreholes);
     },
-    
+
     onError: (error: Error) => {
-      console.log(error.message || 'Error al crear perforaciones');
+      console.log(error.message || "Error al crear perforaciones");
     },
   });
 }
@@ -72,44 +68,59 @@ export function useCreateBoreholeStrata() {
 
   return useMutation({
     mutationFn: boreholeStrataService.createMultiple,
-    
+
     onMutate: (data) => {
-      console.log('📤 Creating borehole-strata assignments:', data);
+      console.log("📤 Creating borehole-strata assignments:", data);
     },
-    
+
     onSuccess: (boreholeStrata) => {
       // Save to store
       setBoreholeStrata(boreholeStrata);
-      
+
       // Clear draft state on successful submission
       clearDraftBoreholes();
-      
+
       // Mark step as completed and navigate
       markStepCompleted(2); // Step 2 = Boreholes
       goToNextStep();
-      
+
       if (project?.id) {
-        queryClient.invalidateQueries({ 
-          queryKey: queryKeys.projects.detail(project.id) 
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.projects.detail(project.id),
         });
       }
-      
-      
-      console.log('Borehole-Strata created:', boreholeStrata);
+
+      console.log("Borehole-Strata created:", boreholeStrata);
     },
-    
+
     onError: (error: unknown) => {
-      const err = error as { response?: { data?: { detail?: string | Array<{type: string, loc: Array<string>, msg: string, input: unknown}> } }; message?: string };
-      console.error('❌ Error creating borehole-strata:', error);
-      console.error('❌ Error response:', err.response?.data);
-      
+      const err = error as {
+        response?: {
+          data?: {
+            detail?:
+              | string
+              | Array<{
+                  type: string;
+                  loc: Array<string>;
+                  msg: string;
+                  input: unknown;
+                }>;
+          };
+        };
+        message?: string;
+      };
+      console.error("❌ Error creating borehole-strata:", error);
+      console.error("❌ Error response:", err.response?.data);
+
       // Extract error message
-      let errorMessage = 'Error al asignar estratos';
+      let errorMessage = "Error al asignar estratos";
       if (err.response?.data?.detail) {
         if (Array.isArray(err.response.data.detail)) {
           // Pydantic validation errors
-          const validationErrors = err.response.data.detail.map(e => `${e.loc.join('.')}: ${e.msg}`).join(', ');
-          console.error('❌ Validation errors:', validationErrors);
+          const validationErrors = err.response.data.detail
+            .map((e) => `${e.loc.join(".")}: ${e.msg}`)
+            .join(", ");
+          console.error("❌ Validation errors:", validationErrors);
           errorMessage = `Error de validación: ${validationErrors}`;
         } else {
           errorMessage = err.response.data.detail;
@@ -117,25 +128,12 @@ export function useCreateBoreholeStrata() {
       } else if (err.message) {
         errorMessage = err.message;
       }
-      
+
       console.log(errorMessage);
     },
   });
 }
 
-/**
- * Hook para actualizar una perforación
- * 
- * USO:
- * ```tsx
- * const updateBorehole = useUpdateBorehole();
- * 
- * updateBorehole.mutate({ 
- *   id: 1, 
- *   data: { final_depth: 20.0, diameter_mm: 200 } 
- * });
- * ```
- */
 export function useUpdateBorehole() {
   const queryClient = useQueryClient();
   const updateBorehole = useAppStore((state) => state.updateBorehole);
@@ -144,41 +142,27 @@ export function useUpdateBorehole() {
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<BoreholeCreate> }) =>
       boreholesService.update(id, data),
-    
+
     onSuccess: (borehole: Borehole) => {
       // 1. Actualizar en el store
       updateBorehole(borehole.id, borehole);
-      
+
       // 2. Invalidar cache del proyecto
       if (project?.id) {
-        queryClient.invalidateQueries({ 
-          queryKey: queryKeys.projects.detail(project.id) 
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.projects.detail(project.id),
         });
       }
-      
-      console.log('Borehole updated:', borehole);
+
+      console.log("Borehole updated:", borehole);
     },
-    
+
     onError: (error: Error) => {
-      console.error('Error updating borehole:', error.message);
+      console.error("Error updating borehole:", error.message);
     },
   });
 }
 
-/**
- * Hook para eliminar una perforación
- * 
- * NOTA: Al eliminar una perforación, el backend debe eliminar en cascada:
- * - borehole_strata assignments
- * - spt_intervals relacionados
- * 
- * USO:
- * ```tsx
- * const deleteBorehole = useDeleteBorehole();
- * 
- * deleteBorehole.mutate(boreholeId);
- * ```
- */
 export function useDeleteBorehole() {
   const queryClient = useQueryClient();
   const removeBorehole = useAppStore((state) => state.removeBorehole);
@@ -186,53 +170,27 @@ export function useDeleteBorehole() {
 
   return useMutation({
     mutationFn: boreholesService.delete,
-    
+
     onSuccess: (_data, boreholeId) => {
       // 1. Remover del store
       removeBorehole(boreholeId);
-      
+
       // 2. Invalidar cache del proyecto
       if (project?.id) {
-        queryClient.invalidateQueries({ 
-          queryKey: queryKeys.projects.detail(project.id) 
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.projects.detail(project.id),
         });
       }
-      
-      console.log('Borehole deleted:', boreholeId);
+
+      console.log("Borehole deleted:", boreholeId);
     },
-    
+
     onError: (error: Error) => {
-      console.error('Error deleting borehole:', error.message);
+      console.error("Error deleting borehole:", error.message);
     },
   });
 }
 
-/**
- * Hook para el flujo completo de perforaciones
- * 
- * ✨ ARQUITECTURA UNIFICADA:
- * - Detecta automáticamente CREATE vs UPDATE
- * - Mismo patrón que useProjectWorkflow() y useStrataWorkflow()
- * 
- * LÓGICA INTELIGENTE:
- * - Si boreholes tienen IDs del backend && pertenecen al proyecto actual → UPDATE
- * - Si no → CREATE
- * 
- * NOTA: Las perforaciones son más complejas porque tienen dos fases:
- * 1. Crear/actualizar boreholes
- * 2. Crear/actualizar borehole-strata assignments
- * 
- * USO:
- * ```tsx
- * const { submitBoreholes, isSubmitting, isEditMode, submitLabel } = useBoreholeWorkflow();
- * 
- * const handleSubmit = (data) => {
- *   submitBoreholes({ boreholes: data.boreholes, strataAssignments: data.assignments });
- * };
- * 
- * return <button>{submitLabel} Perforaciones</button>;
- * ```
- */
 export function useBoreholeWorkflow() {
   const createBoreholes = useCreateBoreholes();
   const createBoreholeStrata = useCreateBoreholeStrata();
@@ -242,12 +200,11 @@ export function useBoreholeWorkflow() {
   const [createdBoreholes, setCreatedBoreholes] = useState<Borehole[]>([]);
 
   // ✅ LÓGICA UNIFICADA - Detecta automáticamente edit mode
-  const isEditMode = existingBoreholes.length > 0 && 
-                     existingBoreholes[0]?.id !== undefined &&
-                     existingBoreholes[0]?.project_id === project?.id;
+  const isEditMode =
+    existingBoreholes.length > 0 &&
+    existingBoreholes[0]?.id !== undefined &&
+    existingBoreholes[0]?.project_id === project?.id;
 
-  // Two-phase submission:
-  // 1. Create/Update boreholes
   // 2. Create/Update borehole-strata assignments
   const submitBoreholes = ({
     boreholes,
@@ -264,33 +221,44 @@ export function useBoreholeWorkflow() {
     }>;
   }) => {
     if (!project?.id) {
-      console.error('❌ No hay proyecto activo');
+      console.error("❌ No hay proyecto activo");
       return;
     }
 
-    // ✅ MODO EDICIÓN - DELETE old assignments + CREATE new ones
     if (isEditMode) {
-      console.log('🔄 Edit mode: Deleting old strata assignments and creating new ones');
-      
+      console.log(
+        "🔄 Edit mode: Deleting old strata assignments and creating new ones"
+      );
+
       // STEP 1: Delete all existing borehole-strata assignments
-      const deletePromises = existingBoreholes.map(bh => 
-        boreholeStrataService.deleteByBorehole(bh.id)
-          .catch(err => console.warn(`Could not delete assignments for borehole ${bh.id}:`, err))
+      const deletePromises = existingBoreholes.map((bh) =>
+        boreholeStrataService
+          .deleteByBorehole(bh.id)
+          .catch((err) =>
+            console.warn(
+              `Could not delete assignments for borehole ${bh.id}:`,
+              err
+            )
+          )
       );
 
       Promise.all(deletePromises).then(() => {
-        console.log('✅ Old strata assignments deleted');
-        
+        console.log("✅ Old strata assignments deleted");
+
         // STEP 2: Create NEW borehole-strata assignments
         const boreholeStrataData: BoreholeStratumCreate[] = [];
 
         strataAssignments.forEach((assignment) => {
-          const borehole = existingBoreholes.find((bh) => bh.borehole_name === assignment.borehole_name);
-          
+          const borehole = existingBoreholes.find(
+            (bh) => bh.borehole_name === assignment.borehole_name
+          );
+
           if (borehole) {
             assignment.assignments.forEach((stratumAssignment) => {
-              const stratum = strata.find((s) => s.name === stratumAssignment.stratum_code);
-              
+              const stratum = strata.find(
+                (s) => s.name === stratumAssignment.stratum_code
+              );
+
               if (stratum) {
                 boreholeStrataData.push({
                   borehole_id: borehole.id,
@@ -306,18 +274,21 @@ export function useBoreholeWorkflow() {
 
         // Submit NEW borehole-strata
         if (boreholeStrataData.length > 0) {
-          console.log('📊 NEW Borehole-Strata data to submit:', boreholeStrataData);
+          console.log(
+            "📊 NEW Borehole-Strata data to submit:",
+            boreholeStrataData
+          );
           createBoreholeStrata.mutate(boreholeStrataData);
         } else {
-          console.warn('⚠️ No borehole-strata data to submit!');
+          console.warn("⚠️ No borehole-strata data to submit!");
         }
       });
-      
+
       return;
     }
 
     // ✅ MODO CREACIÓN - POST normal
-    console.log('✨ Create mode: Creating new boreholes');
+    console.log("✨ Create mode: Creating new boreholes");
     const boreholesWithProject = boreholes.map((b) => ({
       ...b,
       project_id: project.id,
@@ -332,12 +303,16 @@ export function useBoreholeWorkflow() {
         const boreholeStrataData: BoreholeStratumCreate[] = [];
 
         strataAssignments.forEach((assignment) => {
-          const borehole = createdBhs.find((bh) => bh.borehole_name === assignment.borehole_name);
-          
+          const borehole = createdBhs.find(
+            (bh) => bh.borehole_name === assignment.borehole_name
+          );
+
           if (borehole) {
             assignment.assignments.forEach((stratumAssignment) => {
-              const stratum = strata.find((s) => s.name === stratumAssignment.stratum_code);
-              
+              const stratum = strata.find(
+                (s) => s.name === stratumAssignment.stratum_code
+              );
+
               if (stratum) {
                 boreholeStrataData.push({
                   borehole_id: borehole.id,
@@ -353,10 +328,10 @@ export function useBoreholeWorkflow() {
 
         // Submit borehole-strata
         if (boreholeStrataData.length > 0) {
-          console.log('📊 Borehole-Strata data to submit:', boreholeStrataData);
+          console.log("📊 Borehole-Strata data to submit:", boreholeStrataData);
           createBoreholeStrata.mutate(boreholeStrataData);
         } else {
-          console.warn('⚠️ No borehole-strata data to submit!');
+          console.warn("⚠️ No borehole-strata data to submit!");
         }
       },
     });
@@ -366,7 +341,7 @@ export function useBoreholeWorkflow() {
     submitBoreholes,
     isSubmitting: createBoreholes.isPending || createBoreholeStrata.isPending,
     isEditMode,
-    submitLabel: isEditMode ? 'Actualizar' : 'Guardar',
+    submitLabel: isEditMode ? "Actualizar" : "Guardar",
     error: createBoreholes.error || createBoreholeStrata.error,
     createdBoreholes,
   };

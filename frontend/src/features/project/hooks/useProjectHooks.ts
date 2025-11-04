@@ -1,16 +1,11 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { projectService } from "../services/projectService";
+import { queryKeys, invalidateProjectData } from "@/lib/queryClient";
+import { useAppStore } from "@/store/appStore";
+import type { Project, ProjectCreate } from "@/types/project";
+import { toast } from "react-toastify";
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { projectService } from '../services/projectService';
-import { queryKeys, invalidateProjectData } from '@/lib/queryClient';
-import { useAppStore } from '@/store/appStore';
-import type { Project, ProjectCreate } from '@/types/project';
-import { toast } from 'react-toastify';
-
-  
-// ===========================================
 // QUERIES (GET)
-// ===========================================
-
 
 export function useProjects() {
   return useQuery({
@@ -19,8 +14,6 @@ export function useProjects() {
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
 }
-
-
 
 export function useProject(id: number | undefined) {
   return useQuery({
@@ -31,20 +24,16 @@ export function useProject(id: number | undefined) {
   });
 }
 
-
 export function useProjectWithDetails(id: number | undefined) {
   return useQuery({
-    queryKey: [...queryKeys.projects.detail(id!), 'with-details'],
+    queryKey: [...queryKeys.projects.detail(id!), "with-details"],
     queryFn: () => projectService.getWithDetails(id!),
     enabled: !!id,
     staleTime: 1000 * 60 * 2, // 2 minutos (más dinámico)
   });
 }
 
-// ===========================================
-// MUTATIONS (POST/PUT/DELETE)
-// ===========================================
-
+// MUTATIONS
 
 export function useCreateProject() {
   const queryClient = useQueryClient();
@@ -54,36 +43,42 @@ export function useCreateProject() {
 
   return useMutation({
     mutationFn: projectService.create,
-    
+
     onMutate: async (newProject) => {
       // Optimistic update (opcional)
-      console.log('Creating project:', newProject.project_name);
+      console.log("Creating project:", newProject.project_name);
       console.log(newProject);
     },
-    
+
     onSuccess: (project: Project) => {
       // 1. Guardar en store global
       setProject(project);
-      
+
       // 2. Marcar paso como completado
       markStepCompleted(0);
-      
+
       // 3. Navegar al siguiente paso
       goToNextStep();
-      
-      // 4. Invalidar cache para refrescar listas
-      queryClient.invalidateQueries({ 
-        queryKey: queryKeys.projects.all 
+
+      // 4. Tostada exitosa xdxd
+
+      toast.success("Proyecto creado exitosamente {•‿•}");
+
+      // 5. Invalidar cache para refrescar listas
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.projects.all,
       });
     },
-    
+
     onError: (error: Error) => {
-      console.error('Error creating project:', error.message || 'Unknown error');
-      toast.error('Error al crear proyecto. Intenta nuevamente.');
+      console.error(
+        "Error creating project:",
+        error.message || "Unknown error"
+      );
+      toast.error("Error al crear proyecto. Intenta nuevamente.");
     },
   });
 }
-
 
 export function useUpdateProject() {
   const updateProject = useAppStore((state) => state.updateProject);
@@ -91,26 +86,26 @@ export function useUpdateProject() {
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<ProjectCreate> }) =>
       projectService.update(id, data),
-    
+
     onSuccess: (project: Project) => {
       // 1. Actualizar store
       updateProject(project);
-      console.log('Project updated:', project);
+      console.log("Project updated:", project);
       // 2. Invalidar cache del proyecto
       invalidateProjectData(project.id);
-      // 3. Toast de éxito (necesario porque no hay navegación automática)
-      toast.success('Proyecto actualizado exitosamente');
+      // 3. Toast
+      toast.success("Proyecto actualizado exitosamente");
     },
-    
+
     onError: (error: Error) => {
-      console.error('Error updating project:', error.message || 'Unknown error');
-      toast.error('Error al actualizar proyecto. Intenta nuevamente.');
+      console.error(
+        "Error updating project:",
+        error.message || "Unknown error"
+      );
+      toast.error("Error al actualizar proyecto. Intenta nuevamente.");
     },
-    
-   
   });
 }
-
 
 export function useDeleteProject() {
   const queryClient = useQueryClient();
@@ -118,36 +113,36 @@ export function useDeleteProject() {
 
   return useMutation({
     mutationFn: projectService.delete,
-    
+
     onSuccess: (_data, projectId) => {
       // 1. Limpiar store si es el proyecto actual
       const currentProject = useAppStore.getState().project;
       if (currentProject?.id === projectId) {
         setProject(null);
       }
-      
+
       // 2. Invalidar cache
-      queryClient.invalidateQueries({ 
-        queryKey: queryKeys.projects.all 
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.projects.all,
       });
-      
+
       // 3. Remover de cache específico
       queryClient.removeQueries({
-        queryKey: queryKeys.projects.detail(projectId)
+        queryKey: queryKeys.projects.detail(projectId),
       });
     },
-    
+
     onError: (error: Error) => {
-      console.error('Error deleting project:', error.message || 'Unknown error');
-      toast.error('Error al eliminar proyecto. Intenta nuevamente.');
+      console.error(
+        "Error deleting project:",
+        error.message || "Unknown error"
+      );
+      toast.error("Error al eliminar proyecto. Intenta nuevamente.");
     },
   });
 }
 
-// ===========================================
 // HOOKS COMPUESTOS (WORKFLOW)
-// ===========================================
-
 
 export function useProjectWorkflow() {
   const project = useAppStore((state) => state.project);
@@ -171,7 +166,7 @@ export function useProjectWorkflow() {
     submit,
     isLoading: createProject.isPending || updateProject.isPending,
     isEditMode,
-    submitLabel: isEditMode ? 'Actualizar' : 'Guardar',
+    submitLabel: isEditMode ? "Actualizar" : "Crear",
     error: createProject.error || updateProject.error,
   };
 }
