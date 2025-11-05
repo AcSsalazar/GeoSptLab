@@ -1,7 +1,7 @@
 /* Refactored to use design system tokens instead of hardcoded values */
 
 .wizard {
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: var(--spacing-component);
 }

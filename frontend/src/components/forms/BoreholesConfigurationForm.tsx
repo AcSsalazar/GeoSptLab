@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Plus, Trash2, MapPin, Layers, Target, Loader2 } from 'lucide-react'
+import { Plus, Trash2, OctagonAlert, CircleDot, Layers, Target, Loader2 } from 'lucide-react'
 import { useAppStore } from '@/store/appStore'
 import { useBoreholeWorkflow } from '@/features/boreholes/hooks/useBoreholeHooks'
 import styles from '@/styles/BoreholesConfigurationForm.module.css'
@@ -132,10 +132,10 @@ const BoreholesConfigurationForm: React.FC = () => {
           .filter(bs => bs.borehole_id === borehole.id)
           .sort((a, b) => a.initial_depth - b.initial_depth)
           .map(bs => {
-            // Find the stratum definition to get its name
+            // Find the stratum definition to get its code
             const stratumDef = strata.find(s => s.id === bs.stratum_definition_id);
             return {
-              stratum_code: stratumDef?.name || 'E1',
+              stratum_code: stratumDef?.stratum_code || 'E1',
               depth_from: bs.initial_depth,
               depth_to: bs.final_depth
             };
@@ -149,9 +149,9 @@ const BoreholesConfigurationForm: React.FC = () => {
           water_table_depth: borehole.water_table_depth,
           strata_assignments: assignments.length > 0 ? assignments : [
             {
-              stratum_code: strata[0]?.name || 'E1',
+              stratum_code: strata[0]?.stratum_code || 'E1',
               depth_from: 0,
-              depth_to: borehole.final_depth
+              depth_to: borehole.final_depth,
             }
           ]
         };
@@ -174,16 +174,16 @@ const BoreholesConfigurationForm: React.FC = () => {
       // Create tabs based on number_of_boreholes from project
       boreholes: Array.from({ length: project?.number_of_boreholes || 1 }, (_, index) => ({
         borehole_name: `P${index + 1}`,
-        final_depth: 15.0,
-        diameter_mm: 150,
+        final_depth: 0,
+        diameter_mm: '',
         field_energy_percent: 45,
         water_table_depth: '',
         strata_assignments: [
           // Default: assign first stratum to full depth
           {
-            stratum_code: strata[0]?.name || 'E1',
+            stratum_code: strata[0]?.stratum_code || 'E1',
             depth_from: 0,
-            depth_to: 15
+            depth_to: 0,
           }
         ]
       }))
@@ -299,7 +299,7 @@ const BoreholesConfigurationForm: React.FC = () => {
     
     // Find available stratum (one not already used in this borehole)
     const usedCodes = currentAssignments.map(a => a.stratum_code)
-    const availableStratum = strata.find(s => !usedCodes.includes(s.name))
+    const availableStratum = strata.find(s => !usedCodes.includes(s.stratum_code))
     
     console.log('Used codes:', usedCodes);
     console.log('Available stratum:', availableStratum);
@@ -335,7 +335,7 @@ const BoreholesConfigurationForm: React.FC = () => {
       
       // Add new assignment from midpoint to final depth
       const newAssignment = {
-        stratum_code: availableStratum.name,
+        stratum_code: availableStratum.stratum_code,
         depth_from: midDepth,
         depth_to: finalDepth
       };
@@ -350,7 +350,7 @@ const BoreholesConfigurationForm: React.FC = () => {
     } else if (lastAssignment.depth_to < finalDepth) {
       // Original logic: Add from last depth to final depth
       const newAssignment = {
-        stratum_code: availableStratum.name,
+        stratum_code: availableStratum.stratum_code,
         depth_from: lastAssignment.depth_to,
         depth_to: finalDepth
       };
@@ -420,21 +420,22 @@ const BoreholesConfigurationForm: React.FC = () => {
     trigger(`boreholes.${boreholeIndex}.strata_assignments`);
   };
 
-
+//replace this line
   if (!project) {
     return (
-      <div className={styles.placeholderContainer}>
-        <MapPin size={48} className={styles.placeholderIcon} />
+      <div className={common.placeholderContainer}>
+        <OctagonAlert size={48} className={common.placeholderIcon} />
         <h3>No hay proyecto activo</h3>
         <p>Debes crear un proyecto primero.</p>
       </div>
     );
   }
 
+
   if (strata.length === 0) {
     return (
-      <div className={styles.placeholderContainer}>
-        <Layers size={48} className={styles.placeholderIcon} />
+      <div className={common.placeholderContainer}>
+        <Layers size={48} className={common.placeholderIcon} />
         <h3>No hay estratos definidos</h3>
         <p>Debes definir al menos un tipo de estrato antes de configurar las perforaciones.</p>
       </div>
@@ -446,7 +447,7 @@ const BoreholesConfigurationForm: React.FC = () => {
       <div className={common.formHeader}>
         <div className={common.headerContent}>
           <div className={common.titleSection}>
-            <MapPin className={common.titleIcon} size={24} />
+            <CircleDot className={common.titleIcon} size={24} />
             <div>
               <h2 className={common.formTitle}>Configuración de Perforaciones</h2>
               <p className={common.formSubtitle}>
@@ -487,7 +488,7 @@ const BoreholesConfigurationForm: React.FC = () => {
                 errors.boreholes?.[index] ? styles.error : ''
               }`}
             >
-              <MapPin size={14} />
+              <CircleDot size={14} />
               <span className={styles.tabLabel}>
                 {watch(`boreholes.${index}.borehole_name`) || `P${index + 1}`}
               </span>
@@ -623,17 +624,6 @@ const BoreholesConfigurationForm: React.FC = () => {
                       <Plus size={14} />
                       Agregar Estrato
                     </button>
-                    
-                    {errors.boreholes?.[boreholeIndex]?.strata_assignments && (
-                      <button
-                        type="button"
-                        onClick={() => fixDepths(boreholeIndex)}
-                        className={styles.fixButton}
-                        title="Corregir profundidades automáticamente"
-                      >
-                        🔧 Corregir Profundidades
-                      </button>
-                    )}
                   </div>
                 </div>
 
@@ -750,7 +740,7 @@ const StrataAssignmentsList: React.FC<{
     <div className={styles.assignmentsList}>
       {fields.map((field, assignmentIndex) => {
         const selectedStratumCode = watch(`boreholes.${boreholeIndex}.strata_assignments.${assignmentIndex}.stratum_code`)
-        const selectedStratum = availableStrata.find(s => s.name === selectedStratumCode)
+        const selectedStratum = availableStrata.find(s => s.stratum_code === selectedStratumCode)
         
         return (
           <div key={field.id} className={styles.assignmentCard}>
@@ -779,7 +769,7 @@ const StrataAssignmentsList: React.FC<{
                   }`}
                 >
                   {availableStrata.map((stratum, index) => (
-                    <option key={`stratum-option-${stratum.stratum_code}-${index}`} value={stratum.name}>
+                    <option key={`stratum-option-${stratum.stratum_code}-${index}`} value={stratum.stratum_code}>
                       {stratum.name} - {stratum.description}
                     </option>
                   ))}
@@ -859,8 +849,8 @@ const BoreholeProfilePreview: React.FC<{
   }>
 }> = ({ boreholeData, availableStrata }) => {
   const getStratumColor = (stratumCode: string) => {
-    const colors = ['#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#3B82F6', '#6B7280', '#EC4899']
-    const index = availableStrata.findIndex(s => s.name === stratumCode)
+    const colors = ['#541F05', '#5C390D', '#847769', '#6D6D6D', '#2b3647ff', '#2e3136ff', '#311f1fff']
+    const index = availableStrata.findIndex(s => s.stratum_code === stratumCode)
     return colors[index % colors.length]
   }
 
@@ -875,40 +865,62 @@ const BoreholeProfilePreview: React.FC<{
         
         <div className={styles.profileColumns}>
           <div className={styles.depthColumn}>
-            <div className={styles.depthLabel}>Profundidad (m)</div>
+            <div className={styles.depthLabel}>Profundidad</div>
             {boreholeData.assignments.map((assignment, index) => (
               <div key={index} className={styles.depthItem}>
-                <span>{assignment.depth_from.toFixed(1)}</span>
-                <span>{assignment.depth_to.toFixed(1)}</span>
+                <span>{assignment.depth_from.toFixed(1)} m</span>
+                <span>{assignment.depth_to.toFixed(1)} m</span>
               </div>
             ))}
           </div>
           
-          <div className={styles.stratumColumn}>
+          <div className={styles.stratumColumn} style={{ position: 'relative' }}>
             <div className={styles.stratumLabel}>Estrato</div>
-            {boreholeData.assignments.map((assignment, index) => {
-              return (
+            <div className={styles.stratumTop}></div>
+            <div style={{ position: 'relative' }}>
+              
+              {boreholeData.assignments.map((assignment, index) => {
+                const layerHeight = ((assignment.depth_to - assignment.depth_from) / boreholeData.finalDepth) * 100;
+                return (
+                  
+                  <div 
+                    key={index} 
+                    className={styles.stratumLayer}
+                    style={{ 
+                      backgroundColor: getStratumColor(assignment.stratum_code),
+                      height: `${layerHeight}px`,
+                      
+                    }}
+                  >
+                    
+                    <span className={styles.layerCode}>{assignment.stratum_code}</span>
+                    <span className={styles.layerThickness}>
+                      {(assignment.depth_to - assignment.depth_from).toFixed(1)}m
+                    </span>
+                  </div>
+                )
+              })}
+              
+              {/* Water Table Line - positioned inside stratum column */}
+              {boreholeData.waterTable !== undefined && boreholeData.waterTable !== null && (
                 <div 
-                  key={index} 
-                  className={styles.stratumLayer}
+                  className={styles.waterTable}
                   style={{ 
-                    backgroundColor: getStratumColor(assignment.stratum_code),
-                    height: `${((assignment.depth_to - assignment.depth_from) / boreholeData.finalDepth) * 200}px`
+                    top: `${(boreholeData.waterTable / boreholeData.finalDepth) * 200}px`,
+                    left: 0,
+                    right: 0
                   }}
                 >
-                  <span className={styles.layerCode}>{assignment.stratum_code}</span>
-                  <span className={styles.layerThickness}>
-                    {(assignment.depth_to - assignment.depth_from).toFixed(1)}m
-                  </span>
+                  <span>N.F. {boreholeData.waterTable}m</span>
                 </div>
-              )
-            })}
+              )}
+            </div>
           </div>
           
           <div className={styles.descriptionColumn}>
             <div className={styles.descriptionLabel}>Descripción</div>
             {boreholeData.assignments.map((assignment, index) => {
-              const stratum = availableStrata.find(s => s.name === assignment.stratum_code)
+              const stratum = availableStrata.find(s => s.stratum_code === assignment.stratum_code)
               return (
                 <div key={index} className={styles.descriptionItem}>
                   <strong>{stratum?.name}</strong>
@@ -919,15 +931,6 @@ const BoreholeProfilePreview: React.FC<{
             })}
           </div>
         </div>
-
-        {boreholeData.waterTable && (
-          <div 
-            className={styles.waterTable}
-            style={{ top: `${(boreholeData.waterTable / boreholeData.finalDepth) * 200 + 40}px` }}
-          >
-            <span>N.F. {boreholeData.waterTable}m</span>
-          </div>
-        )}
       </div>
     </div>
   )
