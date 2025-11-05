@@ -323,6 +323,7 @@ const StrataDefinitionForm: React.FC = () => {
                   </label>
                   <input
                     type="number"
+                    step="any"
                     {...register(`strata.${index}.gamma_humid`, {
                       valueAsNumber: true,
                     })}
@@ -349,6 +350,7 @@ const StrataDefinitionForm: React.FC = () => {
                   </label>
                   <input
                     type="number"
+                    step="any"
                     {...register(`strata.${index}.gamma_saturated`, {
                       valueAsNumber: true,
                     })}
@@ -377,6 +379,7 @@ const StrataDefinitionForm: React.FC = () => {
                     </label>
                     <input
                       type="number"
+                      step="any"
                       {...register(`strata.${index}.plasticity_index`, {
                         valueAsNumber: true,
                       })}
@@ -462,7 +465,7 @@ const StrataDefinitionForm: React.FC = () => {
         <button
           type="submit"
           disabled={isLoading || !isValid  }
-          className={`${common.mainButton} ${isLoading ? common.loading : ''} `}>
+          className={`${common.submitButton} ${isLoading ? common.loading : ''} `}>
           {isLoading
             ? "Guardando estratos..." : `${submitLabel} Estratos y Continuar`}
         </button>

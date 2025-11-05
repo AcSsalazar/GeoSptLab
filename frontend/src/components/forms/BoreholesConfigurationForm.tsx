@@ -28,19 +28,32 @@ const boreholeSchema = z.object({
   borehole_name: z.string().min(1, "Nombre requerido").max(20, "Nombre muy largo"),
   final_depth: z.number().min(1, "Profundidad > 0").max(100, "Profundidad máx 100m"),
   diameter_mm: z.number().min(50, "Diámetro mín 50mm").max(500, "Diámetro máx 500mm"),
-  field_energy_percent: z.number().min(30, "Energía mín 30%").max(100, "Energía máx 100%"), // Deleted rod_length from the next linecode
-  water_table_depth: z.number().min(0, "Profundidad >= 0").optional().nullable(),
+  field_energy_percent: z.number().min(30, "Energía mín 30%").max(100, "Energía máx 100%"),
+  water_table_depth: z.number().min(0, "Profundidad >= 0").optional(),
   strata_assignments: z.array(stratumAssignmentSchema).min(1, "Al menos un estrato requerido")
 }).refine(
+  (data) => {
+    // Validate water table depth is less than or equal to final depth
+    if (data.water_table_depth !== undefined && data.water_table_depth > data.final_depth) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: "El nivel freático debe ser menor o igual a la profundidad final",
+    path: ["water_table_depth"],
+  }
+).refine(
   (data) => {
     // Validate that strata assignments don't overlap and cover the full depth
     const assignments = [...data.strata_assignments].sort((a, b) => a.depth_from - b.depth_from);
     
+
+    
     // CRITICAL: Check that assignments start at 0
-    if (assignments[0].depth_from !== 0) {
-      console.error(`❌ First stratum must start at 0, but starts at ${assignments[0].depth_from}`);
+/*     if (assignments[0].depth_from !== 0) {
       return false;
-    }
+    } */
     
     // CRITICAL: Check that assignments end at final depth
     if (assignments[assignments.length - 1].depth_to !== data.final_depth) {
@@ -133,7 +146,7 @@ const BoreholesConfigurationForm: React.FC = () => {
           final_depth: borehole.final_depth,
           diameter_mm: borehole.diameter_mm,
           field_energy_percent: borehole.field_energy_percent,
-          water_table_depth: null, // Not stored in backend Borehole model
+          water_table_depth: borehole.water_table_depth,
           strata_assignments: assignments.length > 0 ? assignments : [
             {
               stratum_code: strata[0]?.name || 'E1',
@@ -164,7 +177,7 @@ const BoreholesConfigurationForm: React.FC = () => {
         final_depth: 15.0,
         diameter_mm: 150,
         field_energy_percent: 45,
-        water_table_depth: null,
+        water_table_depth: '',
         strata_assignments: [
           // Default: assign first stratum to full depth
           {
@@ -522,7 +535,7 @@ const BoreholesConfigurationForm: React.FC = () => {
                     </label>
                     <input
                       type="number"
-                      step="0.1"
+                      step="any"
                       {...register(`boreholes.${boreholeIndex}.final_depth`, { 
                         valueAsNumber: true,
                         onChange: (e) => handleFinalDepthChange(boreholeIndex, parseFloat(e.target.value))
@@ -574,9 +587,12 @@ const BoreholesConfigurationForm: React.FC = () => {
                     </label>
                     <input
                       type="number"
-                      step="0.1"
-                      {...register(`boreholes.${boreholeIndex}.water_table_depth`, { valueAsNumber: true })}
+                      step="any"
+                      {...register(`boreholes.${boreholeIndex}.water_table_depth`, { 
+                        setValueAs: (v) => v === '' ? undefined : parseFloat(v)
+                      })}
                       className={`${styles.input} ${errors.boreholes?.[boreholeIndex]?.water_table_depth ? styles.inputError : ''}`}
+                      placeholder="Ej: 8.75"
                     />
                     {errors.boreholes?.[boreholeIndex]?.water_table_depth && (
                       <span className={styles.errorText}>
@@ -659,7 +675,7 @@ const BoreholesConfigurationForm: React.FC = () => {
         <button
           type="submit"
           disabled={isSubmitting || !isValid}
-          className={common.maintButton}
+          className={`${common.submitButton} ${isSubmitting? common.loading : ''} `}
         >
           {isSubmitting ? (
             <>
