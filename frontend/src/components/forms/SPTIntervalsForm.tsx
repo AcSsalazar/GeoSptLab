@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Plus, Trash2, Target, AlertCircle, Loader2 } from "lucide-react";
+import { Plus, Trash2, Target,  Loader2, OctagonAlert } from "lucide-react";
 import { useAppStore } from "@/store/appStore";
 import { useSPTIntervalsWorkflow } from "@/features/spt/hooks/useSPTIntervalsHooks";
 import styles from "@/styles/SPTIntervalsForm.module.css";
@@ -177,7 +177,7 @@ const SPTIntervalsForm: React.FC = () => {
   if (!project) {
     return (
       <div className={common.placeholderContainer}>
-        <Target size={48} className={common.placeholderIcon} />
+        <OctagonAlert size={48} className={common.placeholderIcon} />
         <h3>No hay proyecto activo</h3>
         <p>Debes crear un proyecto primero.</p>
       </div>
@@ -200,7 +200,7 @@ const SPTIntervalsForm: React.FC = () => {
   if (boreholeStrata.length === 0) {
     return (
       <div className={common.placeholderContainer}>
-        <AlertCircle size={48} className={common.placeholderIcon} />
+        <OctagonAlert size={48} className={common.placeholderIcon} />
         <h3>No hay asignación de estratos</h3>
         <p>Debes asignar estratos a las perforaciones primero.</p>
       </div>

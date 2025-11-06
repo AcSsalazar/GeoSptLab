@@ -62,7 +62,7 @@ export function useCreateStrata() {
         response?: { data?: { detail?: string | Array<{ msg: string }> } };
       };
       console.error("Strata creation error:", error);
-      console.error("Backend error details:", axiosError.response?.data);
+      
 
       const errorDetail = axiosError.response?.data?.detail;
       let errorMessage = error.message || "Error al crear estratos";
@@ -99,7 +99,7 @@ export function useUpdateStratum() {
         });
       }
 
-      console.log("Stratum updated:", stratum);
+      
     },
 
     onError: (error: Error) => {
@@ -127,7 +127,7 @@ export function useDeleteStratum() {
         });
       }
 
-      console.log("Stratum deleted:", stratumId);
+      
     },
 
     onError: (error: Error) => {
@@ -151,16 +151,14 @@ export function useStrataWorkflow() {
 
   const submit = (strata: StratumCreate[]) => {
     if (!project?.id) {
-      console.error("❌ No active project to associate strata with.");
+      
       return;
     }
 
     if (isEditMode) {
-      // MODO EDICIÓN: DELETE + CREATE (porque no hay UPDATE bulk en el backend)
-      console.log("🔄 Edit mode: Deleting old strata and creating new ones");
+  
 
-      // TODO: Implementar DELETE batch + CREATE bulk en el backend
-      // Por ahora, simplemente navegamos (los datos ya están en el store)
+   
       console.warn(
         "⚠️ Backend does not support bulk UPDATE yet. Skipping re-creation."
       );

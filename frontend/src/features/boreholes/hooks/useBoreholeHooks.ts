@@ -34,9 +34,6 @@ export function useCreateBoreholes() {
   return useMutation({
     mutationFn: boreholesService.createMultiple,
 
-    onMutate: async (newBoreholes) => {
-      console.log(`Creating ${newBoreholes.length} boreholes...`);
-    },
 
     onSuccess: (boreholes: Borehole[]) => {
       setBoreholes(boreholes);
@@ -49,7 +46,7 @@ export function useCreateBoreholes() {
         });
       }
 
-      console.log("Boreholes created:", boreholes);
+      
     },
 
     onError: (error: Error) => {
@@ -69,9 +66,7 @@ export function useCreateBoreholeStrata() {
   return useMutation({
     mutationFn: boreholeStrataService.createMultiple,
 
-    onMutate: (data) => {
-      console.log("📤 Creating borehole-strata assignments:", data);
-    },
+
 
     onSuccess: (boreholeStrata) => {
       // Save to store
@@ -90,7 +85,7 @@ export function useCreateBoreholeStrata() {
         });
       }
 
-      console.log("Borehole-Strata created:", boreholeStrata);
+     
     },
 
     onError: (error: unknown) => {
@@ -109,8 +104,7 @@ export function useCreateBoreholeStrata() {
         };
         message?: string;
       };
-      console.error("❌ Error creating borehole-strata:", error);
-      console.error("❌ Error response:", err.response?.data);
+  
 
       // Extract error message
       let errorMessage = "Error al asignar estratos";
@@ -120,7 +114,7 @@ export function useCreateBoreholeStrata() {
           const validationErrors = err.response.data.detail
             .map((e) => `${e.loc.join(".")}: ${e.msg}`)
             .join(", ");
-          console.error("❌ Validation errors:", validationErrors);
+          
           errorMessage = `Error de validación: ${validationErrors}`;
         } else {
           errorMessage = err.response.data.detail;
@@ -154,7 +148,7 @@ export function useUpdateBorehole() {
         });
       }
 
-      console.log("Borehole updated:", borehole);
+      
     },
 
     onError: (error: Error) => {
@@ -182,7 +176,7 @@ export function useDeleteBorehole() {
         });
       }
 
-      console.log("Borehole deleted:", boreholeId);
+      
     },
 
     onError: (error: Error) => {
@@ -256,7 +250,7 @@ export function useBoreholeWorkflow() {
           if (borehole) {
             assignment.assignments.forEach((stratumAssignment) => {
               const stratum = strata.find(
-                (s) => s.name === stratumAssignment.stratum_code
+                (s) => s.stratum_code === stratumAssignment.stratum_code
               );
 
               if (stratum) {
@@ -310,7 +304,7 @@ export function useBoreholeWorkflow() {
           if (borehole) {
             assignment.assignments.forEach((stratumAssignment) => {
               const stratum = strata.find(
-                (s) => s.name === stratumAssignment.stratum_code
+                (s) => s.stratum_code === stratumAssignment.stratum_code
               );
 
               if (stratum) {

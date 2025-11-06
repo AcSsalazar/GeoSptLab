@@ -9,6 +9,7 @@ import { useAppStore } from '@/store/appStore'
 import { useBoreholeWorkflow } from '@/features/boreholes/hooks/useBoreholeHooks'
 import styles from '@/styles/BoreholesConfigurationForm.module.css'
 import common from '@/styles/ui/Common.module.css'
+import { toast } from 'react-toastify'
 
 // Schema for stratum assignment within a borehole
 const stratumAssignmentSchema = z.object({
@@ -51,9 +52,9 @@ const boreholeSchema = z.object({
 
     
     // CRITICAL: Check that assignments start at 0
-/*     if (assignments[0].depth_from !== 0) {
+    if (assignments[0].depth_from !== 0) {
       return false;
-    } */
+    } 
     
     // CRITICAL: Check that assignments end at final depth
     if (assignments[assignments.length - 1].depth_to !== data.final_depth) {
@@ -196,10 +197,7 @@ const BoreholesConfigurationForm: React.FC = () => {
     name: 'boreholes'
   })
 
-  // ============================================
-  // SAVE DRAFT STATE (Optimized - only on specific events)
-  // ============================================
-  
+
   // Save form data to draft state
   const saveDraft = React.useCallback(() => {
     const currentFormData = getValues();
@@ -230,15 +228,13 @@ const BoreholesConfigurationForm: React.FC = () => {
     setDraftBoreholeTab(newTab);
   };
 
-  // ============================================
-  // FORM SUBMIT
-  // ============================================
+
   const onSubmit = handleSubmit(
     (data: BoreholesConfigFormData) => {
       console.log('✅ Form validation passed, submitting...', data);
       
       if (!project?.id) {
-        console.error('❌ No project ID available');
+        toast.error('No hay proyecto activo' );
         return;
       }
 
@@ -259,7 +255,7 @@ const BoreholesConfigurationForm: React.FC = () => {
         assignments: borehole.strata_assignments
       }));
 
-      console.log('📤 Submitting boreholes:', boreholesData);
+      console.log('📤 Submitting boreholes:', boreholesData); // Revisar estructura de estos datos
       console.log('📤 Submitting strata assignments:', strataAssignmentsMap);
 
       // Submit to API
@@ -281,10 +277,8 @@ const BoreholesConfigurationForm: React.FC = () => {
     }
   );
 
-  // ============================================
   // HELPER FUNCTIONS
-  // ============================================
-  
+
   // Add stratum assignment to a specific borehole
   const addStratumAssignment = (boreholeIndex: number) => {
     console.log(`🔵 Adding stratum assignment to borehole #${boreholeIndex + 1}`);
@@ -293,25 +287,19 @@ const BoreholesConfigurationForm: React.FC = () => {
     const lastAssignment = currentAssignments[currentAssignments.length - 1]
     const finalDepth = getValues(`boreholes.${boreholeIndex}.final_depth`)
     
-    console.log('Current assignments:', currentAssignments);
-    console.log('Last assignment:', lastAssignment);
-    console.log('Final depth:', finalDepth);
-    
     // Find available stratum (one not already used in this borehole)
     const usedCodes = currentAssignments.map(a => a.stratum_code)
     const availableStratum = strata.find(s => !usedCodes.includes(s.stratum_code))
     
-    console.log('Used codes:', usedCodes);
-    console.log('Available stratum:', availableStratum);
     
     if (!availableStratum) {
-      console.log('❌ No available stratum to add');
+      toast.error('❌ No available stratum to add');
       return;
     }
     
     // SMART LOGIC: If last assignment goes to final_depth, split it in half
     if (lastAssignment.depth_to === finalDepth) {
-      console.log('📊 Last assignment covers full depth, splitting...');
+
       
       // CRITICAL: Ensure first assignment starts at 0 (fix user edits)
       const correctedAssignments = [...currentAssignments];
@@ -340,10 +328,7 @@ const BoreholesConfigurationForm: React.FC = () => {
         depth_to: finalDepth
       };
       
-      console.log('✅ Split assignments:', {
-        updated: correctedAssignments[correctedAssignments.length - 1],
-        new: newAssignment
-      });
+
       
       setValue(`boreholes.${boreholeIndex}.strata_assignments`, [...correctedAssignments, newAssignment]);
       trigger(`boreholes.${boreholeIndex}.strata_assignments`);
@@ -355,15 +340,11 @@ const BoreholesConfigurationForm: React.FC = () => {
         depth_to: finalDepth
       };
       
-      console.log('✅ Adding new assignment:', newAssignment);
       
       setValue(`boreholes.${boreholeIndex}.strata_assignments`, [...currentAssignments, newAssignment]);
       trigger(`boreholes.${boreholeIndex}.strata_assignments`);
     } else {
-      console.log('❌ Cannot add assignment: last depth exceeds final depth', {
-        lastDepth: lastAssignment?.depth_to,
-        finalDepth
-      });
+      toast.error('❌ Cannot add assignment: last depth exceeds final depth')
     }
   }
 
@@ -392,35 +373,7 @@ const BoreholesConfigurationForm: React.FC = () => {
     trigger(`boreholes.${boreholeIndex}`)
   }
 
-  // FIX ALL DEPTHS - Auto-correct validation issues
-  const fixDepths = (boreholeIndex: number) => {
-    console.log(`🔧 Auto-fixing depths for borehole #${boreholeIndex + 1}`);
-    
-    const currentAssignments = getValues(`boreholes.${boreholeIndex}.strata_assignments`);
-    const finalDepth = getValues(`boreholes.${boreholeIndex}.final_depth`);
-    
-    if (currentAssignments.length === 0) return;
-    
-    // Sort by depth_from to ensure proper order
-    const sorted = [...currentAssignments].sort((a, b) => a.depth_from - b.depth_from);
-    
-    // Fix: First must start at 0
-    sorted[0].depth_from = 0;
-    
-    // Fix: Last must end at final_depth
-    sorted[sorted.length - 1].depth_to = finalDepth;
-    
-    // Fix: No gaps - each depth_to must equal next depth_from
-    for (let i = 0; i < sorted.length - 1; i++) {
-      sorted[i + 1].depth_from = sorted[i].depth_to;
-    }
-    
-    console.log('✅ Fixed assignments:', sorted);
-    setValue(`boreholes.${boreholeIndex}.strata_assignments`, sorted);
-    trigger(`boreholes.${boreholeIndex}.strata_assignments`);
-  };
 
-//replace this line
   if (!project) {
     return (
       <div className={common.placeholderContainer}>
@@ -435,7 +388,7 @@ const BoreholesConfigurationForm: React.FC = () => {
   if (strata.length === 0) {
     return (
       <div className={common.placeholderContainer}>
-        <Layers size={48} className={common.placeholderIcon} />
+        <OctagonAlert size={48} className={common.placeholderIcon} />
         <h3>No hay estratos definidos</h3>
         <p>Debes definir al menos un tipo de estrato antes de configurar las perforaciones.</p>
       </div>
