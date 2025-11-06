@@ -81,7 +81,7 @@
 .stratumCode {
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--titles-main)
+  color: var(--titles-main);
 }
 
 .removeButton {
@@ -195,7 +195,7 @@
   align-items: left;
   gap: 8px;
   padding: 8px 20px;
-  background: #3b82f6;
+  background: #3375e0a1;
   color: white;
   border-radius: var(--radius-base);
   cursor: pointer;
@@ -241,14 +241,8 @@
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   padding: 16px;
-  transition: all 0.2s ease;
 }
 
-.summaryCard:hover {
-  border-color: #3b82f6;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
 
 .summaryHeader {
   display: flex;
@@ -260,7 +254,7 @@
 .summaryCode {
   font-weight: 700;
   font-size: 1.125rem;
-  color: #3b82f6;
+  color: #3d3a46e3;
 }
 
 .summaryType {

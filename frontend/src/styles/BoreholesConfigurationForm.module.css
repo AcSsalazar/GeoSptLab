@@ -86,7 +86,7 @@
 }
 
 .tab.active {
-  background: #3b82f6;
+  background: var(--tabs-active);
   color: white;
   transform: translateY(2px);
 }
@@ -264,24 +264,6 @@
   cursor: not-allowed;
 }
 
-.fixButton {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  background: #f59e0b;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
-}
-
-.fixButton:hover {
-  background: #d97706;
-}
 
 .assignmentsList {
   display: flex;
@@ -425,7 +407,7 @@
 }
 
 .depthLabel, .stratumLabel, .descriptionLabel {
-  font-weight: 600;
+  font-weight: 500;
   color: #374151;
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -450,16 +432,27 @@
   align-items: center;
   justify-content: center;
   color: white;
-  font-weight: 600;
-  font-size: 0.75rem;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  text-shadow: 0px 4px 2px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.2);
   min-height: 40px;
+  border-radius:  0 0 8px 8px;
+  
+}
+
+
+
+.stratumTop {
+  
+  background-color: #059669;
+  width: 100%;
+  height: 8px;
+  border-radius: 8px 8px 0 0;
+  
 }
 
 .layerCode {
-  font-size: 0.875rem;
-  font-weight: 700;
+  font-size: var(--text-xs);
+  font-weight: 500;
 }
 
 .layerThickness {
@@ -495,7 +488,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: #06b6d4;
+  background: #1958b6;
   display: flex;
   align-items: center;
 }
