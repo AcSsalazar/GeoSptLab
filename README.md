@@ -2,7 +2,7 @@
 
 A professional web application for calculating geotechnical soil resistance parameters (φ′, c′, E, Su, τ) from Standard Penetration Test (SPT) results.
 
-![SPT Calculator Demo](https://github.com/user-attachments/assets/c88366e8-3191-433f-8186-21a83fbec1b0)
+![SPT Calculator Demo][Imgur](https://imgur.com/Jm14hmg))
 
 ## Features
 
