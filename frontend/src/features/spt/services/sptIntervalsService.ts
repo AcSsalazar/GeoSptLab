@@ -46,7 +46,7 @@ export const sptIntervalsService = {
    * GET /spt-intervals/{id}
    */
   async getById(id: number): Promise<SPTInterval> {
-    const response = await axios.get(`${API_BASE_URL}/spt-intervals/${id}`);
+    const response = await axios.get(`${API_BASE_URL}/spt-intervals/${id}` );
     return response.data;
   },
 

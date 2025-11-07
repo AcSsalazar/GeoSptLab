@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Plus, Trash2, Target,  Loader2, OctagonAlert } from "lucide-react";
+import { Plus, Trash2,  Loader2, OctagonAlert, Save, Target } from "lucide-react";
 import { useAppStore } from "@/store/appStore";
 import { useSPTIntervalsWorkflow } from "@/features/spt/hooks/useSPTIntervalsHooks";
 import styles from "@/styles/SPTIntervalsForm.module.css";
@@ -186,26 +186,22 @@ const SPTIntervalsForm: React.FC = () => {
 
   if (boreholes.length === 0) {
     return (
+      
       <div className={common.placeholderContainer}>
-        <Target size={48} className={common.placeholderIcon} />
+        <OctagonAlert size={48} className={common.placeholderIcon} />
         <h3>No hay perforaciones configuradas</h3>
         <p>
           Debes configurar al menos una perforación antes de ingresar ensayos
           SPT.
         </p>
       </div>
+      
     );
+    
+    
   }
 
-  if (boreholeStrata.length === 0) {
-    return (
-      <div className={common.placeholderContainer}>
-        <OctagonAlert size={48} className={common.placeholderIcon} />
-        <h3>No hay asignación de estratos</h3>
-        <p>Debes asignar estratos a las perforaciones primero.</p>
-      </div>
-    );
-  }
+
 
   return (
     /* Form Header */
@@ -278,7 +274,7 @@ const SPTIntervalsForm: React.FC = () => {
             </>
           ) : (
             <>
-              <Target size={16} />
+              <Save size={16} /> 
               Guardar Ensayos SPT
             </>
           )}
