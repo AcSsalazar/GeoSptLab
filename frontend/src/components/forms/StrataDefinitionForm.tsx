@@ -324,6 +324,7 @@ const StrataDefinitionForm: React.FC = () => {
                   <input
                     type="number"
                     step="any"
+                    placeholder="Ej. 17.5"
                     {...register(`strata.${index}.gamma_humid`, {
                       valueAsNumber: true,
                     })}
@@ -351,6 +352,7 @@ const StrataDefinitionForm: React.FC = () => {
                   <input
                     type="number"
                     step="any"
+                    placeholder="Ej. 18.5"
                     {...register(`strata.${index}.gamma_saturated`, {
                       valueAsNumber: true,
                     })}

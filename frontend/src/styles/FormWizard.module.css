@@ -199,10 +199,11 @@
   border-radius: var(--radius-lg);
   justify-content: space-between;
   align-items: center;
+  box-shadow:  1px 0px 2px 1px #41496224;
   background-color: #f9fbff;
   margin-top: var(--spacing-component);
   padding: var(--spacing-2);
-  max-width: 1200px;
+  max-width: 1280px;
 }
 
 .backButton {

@@ -27,7 +27,7 @@ const stratumAssignmentSchema = z.object({
 // Schema for individual borehole
 const boreholeSchema = z.object({
   borehole_name: z.string().min(1, "Nombre requerido").max(20, "Nombre muy largo"),
-  final_depth: z.number().min(1, "Profundidad > 0").max(100, "Profundidad máx 100m"),
+  final_depth: z.number("Campo obligatorio").min(1, "Profundidad > 0").max(100, "Profundidad máx 100m"),
   diameter_mm: z.number().min(50, "Diámetro mín 50mm").max(500, "Diámetro máx 500mm"),
   field_energy_percent: z.number().min(30, "Energía mín 30%").max(100, "Energía máx 100%"),
   water_table_depth: z.number().min(0, "Profundidad >= 0").optional(),
@@ -509,6 +509,7 @@ const BoreholesConfigurationForm: React.FC = () => {
                     </label>
                     <input
                       type="number"
+                      placeholder="Ej. 120"
                       {...register(`boreholes.${boreholeIndex}.diameter_mm`, { valueAsNumber: true })}
                       className={`${styles.input} ${errors.boreholes?.[boreholeIndex]?.diameter_mm ? styles.inputError : ''}`}
                     />
