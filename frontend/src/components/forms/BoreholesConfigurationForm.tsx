@@ -7,7 +7,7 @@ import { z } from 'zod'
 import { Plus, Trash2, OctagonAlert, CircleDot, Layers, Target, Loader2 } from 'lucide-react'
 import { useAppStore } from '@/store/appStore'
 import { useBoreholeWorkflow } from '@/features/boreholes/hooks/useBoreholeHooks'
-import styles from '@/styles/BoreholesConfigurationForm.module.css'
+import styles from '@/styles/forms/BoreholesConfigurationForm.module.css'
 import common from '@/styles/ui/Common.module.css'
 import { toast } from 'react-toastify'
 

@@ -7,7 +7,7 @@ import { z } from "zod";
 import { Plus, Trash2,  Loader2, OctagonAlert, Save, Target } from "lucide-react";
 import { useAppStore } from "@/store/appStore";
 import { useSPTIntervalsWorkflow } from "@/features/spt/hooks/useSPTIntervalsHooks";
-import styles from "@/styles/SPTIntervalsForm.module.css";
+import styles from "@/styles//forms/SPTIntervalsForm.module.css";
 import common from "@/styles/ui/Common.module.css";
 
 // ZOD SCHEMAS

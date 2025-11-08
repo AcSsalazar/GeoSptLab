@@ -1,10 +1,11 @@
 
 import React from 'react';
-import { Calculator, Download, RefreshCw, AlertCircle } from 'lucide-react';
+import { Calculator, OctagonAlert, Download, RefreshCw } from 'lucide-react';
 import { useAppStore } from '@/store/appStore';
 import { useCalculationsWorkflow } from '@/features/calculations/hooks/useCalculationsHooks';
 import StatisticalReport from './StatisticalReport';
 import styles from '@/styles/FinalReport.module.css';
+import common from '@/styles/ui/Common.module.css';
 
 const FinalReport: React.FC = () => {
   const project = useAppStore((state) => state.project);
@@ -16,8 +17,8 @@ const FinalReport: React.FC = () => {
 
   if (!project) {
     return (
-      <div className={styles.placeholder}>
-        <AlertCircle size={48} />
+      <div className={common.placeholder}>
+        <OctagonAlert size={48} className={common.placeholderIcon} />
         <h3>No hay proyecto activo</h3>
         <p>Debes crear un proyecto primero.</p>
       </div>
@@ -25,20 +26,20 @@ const FinalReport: React.FC = () => {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={common.container}>
       {/* Header */}
-      <div className={styles.header}>
-        <div className={styles.headerContent}>
-          <div className={styles.titleSection}>
-            <Calculator size={24} />
+      <div className={common.header}>
+        <div className={common.headerContent}>
+          <div className={common.titleSection}>
+            <Calculator size={24}className={common.titleIcon}/>
             <div>
               <h2>Resultados de Cálculo SPT</h2>
               <p>Parámetros geotécnicos calculados según normativa</p>
             </div>
           </div>
-          <div className={styles.projectInfo}>
-            <span className={styles.projectCode}>{project.project_code}</span>
-            <span className={styles.projectName}>{project.project_name}</span>
+          <div className={common.projectInfo}>
+            <span className={common.projectCode}>{common.project_code}</span>
+            <span className={common.projectName}>{common.project_name}</span>
           </div>
         </div>
       </div>
@@ -82,7 +83,7 @@ const FinalReport: React.FC = () => {
       {/* Error State */}
       {resultsError && (
         <div className={styles.errorState}>
-          <AlertCircle size={24} />
+          <OctagonAlert size={24} />
           <p>Error al cargar resultados: {resultsError.message}</p>
         </div>
       )}

@@ -139,11 +139,8 @@
 .loadingState,
 .errorState,
 .emptyState,
-.placeholder {
-  text-align: center;
-  padding: 4rem 2rem;
-  color: #718096;
-}
+
+
 
 .loadingState svg,
 .errorState svg,
