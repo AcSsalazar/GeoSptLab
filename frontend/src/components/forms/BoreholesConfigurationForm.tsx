@@ -70,7 +70,7 @@ const boreholeSchema = z.object({
       }
     }
     
-    console.log('✅ Strata assignments validation passed (Atento acá, pre log deleting )');
+   // console.log('✅ Strata assignments validation passed (Atento acá, pre log deleting )');
     return true;
   },
   {
@@ -429,26 +429,26 @@ const BoreholesConfigurationForm: React.FC = () => {
         </div>
       </div>
 
-      {/* Borehole Tabs - THIS IS THE KEY PART! */}
-      <div className={styles.tabContainer}>
-        <div className={styles.tabList}>
+      {/* Borehole Tabs */}
+      <div className={common.tabContainer}>
+        <div className={common.tabList}>
           {boreholeFields.map((field, index) => (
             <button
               type="button"
               key={field.id}
               onClick={() => handleTabChange(index)}
-              className={`${styles.tab} ${currentTab === index ? styles.active : ''} ${
-                errors.boreholes?.[index] ? styles.error : ''
+              className={`${common.tab} ${currentTab === index ? common.active : ''} ${
+                errors.boreholes?.[index] ? common.error : ''
               }`}
             >
               <CircleDot size={14} />
-              <span className={styles.tabLabel}>
+              <span className={common.tabLabel}>
                 {watch(`boreholes.${index}.borehole_name`) || `P${index + 1}`}
               </span>
-              <span className={styles.tabDepth}>
+              <span className={common.tabDepth}>
                 ({watch(`boreholes.${index}.final_depth`)}m)
               </span>
-              {errors.boreholes?.[index] && <span className={styles.errorIndicator}>!</span>}
+              {errors.boreholes?.[index] && <span className={common.errorIndicator}>!</span>}
             </button>
           ))}
         </div>
@@ -457,7 +457,7 @@ const BoreholesConfigurationForm: React.FC = () => {
         {boreholeFields.map((field, boreholeIndex) => (
           <div
             key={field.id}
-            className={`${styles.tabContent} ${currentTab === boreholeIndex ? styles.active : styles.hidden}`}
+            className={`${common.tabContent} ${currentTab === boreholeIndex ?common.active : common.hidden}`}
           >
             <div className={styles.boreholeForm}>
               {/* Basic Borehole Info */}

@@ -26,7 +26,7 @@ interface RegressionData {
 
 interface Props {
   stratumName: string;
-  stratumCode: number;
+  stratumCode: string;
   dataPoints: DataPoint[];
   regression?: RegressionData;
   color?: string;

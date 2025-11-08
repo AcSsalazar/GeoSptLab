@@ -70,9 +70,8 @@ type StrataDefinitionFormData = z.infer<typeof strataDefinitionFormSchema>;
 const StrataDefinitionForm: React.FC = () => {
   // === ARQUITECTURA ZUSTAND + REACT QUERY ===
   const project = useAppStore((state) => state.project);
-  const strata = useAppStore((state) => state.strata); // ✅ Load saved strata from store
-  const { submit, isLoading, submitLabel } = useStrataWorkflow(); // ✅ submitLabel para UI consistente
-
+  const strata = useAppStore((state) => state.strata);
+  const { submit, isLoading, submitLabel } = useStrataWorkflow();
   const {
     control,
     register,
@@ -148,7 +147,7 @@ const StrataDefinitionForm: React.FC = () => {
         })
       );
 
-      // ✅ USA REACT QUERY - POST al backend
+      //  REACT QUERY - POST al backend
       submit(strataCreateData);
       // Navigation automática en onSuccess del hook
     },
@@ -405,23 +404,19 @@ const StrataDefinitionForm: React.FC = () => {
         ))}
       </div>
 
-       {/* Add Stratum Button */}
-        <div className={styles.addStratumSection}>
-          <button
-            type="button"
-            onClick={addStratum}
-            className={styles.addStratumButton}
-          >
-            <Plus size={18} />
-            Agregar Otro Tipo de Estrato
-          </button>
-          <button className={styles.skeletonButton}></button>
-          <button className={styles.skeletonButton}></button>
-
-
-
-        </div>
-
+      {/* Add Stratum Button */}
+      <div className={styles.addStratumSection}>
+        <button
+          type="button"
+          onClick={addStratum}
+          className={styles.addStratumButton}
+        >
+          <Plus size={18} />
+          Agregar Otro Tipo de Estrato
+        </button>
+        <button className={styles.skeletonButton}></button>
+        <button className={styles.skeletonButton}></button>
+      </div>
       {/* Summary Section */}
       <div className={styles.summarySection}>
         <h3 className={styles.summaryTitle}>
@@ -455,8 +450,6 @@ const StrataDefinitionForm: React.FC = () => {
           ))}
         </div>
 
-
-
         {errors.strata && typeof errors.strata.message === "string" && (
           <div className={styles.globalError}>{errors.strata.message}</div>
         )}
@@ -466,58 +459,15 @@ const StrataDefinitionForm: React.FC = () => {
       <div className={styles.submitSection}>
         <button
           type="submit"
-          disabled={isLoading || !isValid  }
-          className={`${common.submitButton} ${isLoading ? common.loading : ''} `}>
+          disabled={isLoading || !isValid}
+          className={`${common.submitButton} ${
+            isLoading ? common.loading : ""
+          } `}
+        >
           {isLoading
-            ? "Guardando estratos..." : `${submitLabel} Estratos y Continuar`}
+            ? "Guardando estratos..."
+            : `${submitLabel} Estratos y Continuar`}
         </button>
-
-        {/* Debug info */}
-        {!isValid && (
-          <div
-            style={{
-              marginTop: "10px",
-              padding: "10px",
-              backgroundColor: "#fff3cd",
-              border: "1px solid #ffc107",
-              borderRadius: "4px",
-              fontSize: "12px",
-            }}
-          >
-            <strong>Formulario incompleto:</strong>
-            <ul style={{ margin: "5px 0", paddingLeft: "20px" }}>
-              {errors.strata &&
-                Array.isArray(errors.strata) &&
-                errors.strata.map((stratumError, idx) => {
-                  if (stratumError) {
-                    return (
-                      <li key={idx}>
-                        Estrato #{idx + 1}:{" "}
-                        {Object.keys(stratumError)
-                          .map(
-                            (field) =>
-                              `${field}: ${
-                                stratumError[field as keyof typeof stratumError]
-                                  ?.message || "error"
-                              }`
-                          )
-                          .join(", ")}
-                      </li>
-                    );
-                  }
-                  return null;
-                })}
-              {errors.strata &&
-                "message" in errors.strata &&
-                typeof errors.strata.message === "string" && (
-                  <li>Error general: {errors.strata.message}</li>
-                )}
-            </ul>
-            <p style={{ margin: "5px 0" }}>
-              Estratos: {fields.length} | Válido: {isValid ? "Sí" : "No"}
-            </p>
-          </div>
-        )}
       </div>
     </form>
   );

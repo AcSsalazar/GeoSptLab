@@ -20,7 +20,7 @@ const sptIntervalSchema = z
       .positive("Debe seleccionar un estrato"),
     depth_from: z.number().min(0, "Profundidad >= 0"),
     depth_to: z.number().min(0, "Profundidad >= 0"),
-    nspt_field: z.number().int().min(0, "N >= 0").max(200, "N máx 200"),
+    nspt_field: z.number().int().positive().min(2, "N >= 0").max(200, "N máx 200"),
     description: z.string().optional(),
   })
   .refine((data) => data.depth_to > data.depth_from, {
@@ -223,7 +223,8 @@ const SPTIntervalsForm: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className={styles.tabsContainer}>
+      <div className={common.tabContainer}>
+        <div className={common.tabList}>
         {boreholes.map((borehole, index) => {
           const intervalsCount =
             watch(`boreholes.${index}.intervals`)?.length || 0;
@@ -232,17 +233,18 @@ const SPTIntervalsForm: React.FC = () => {
               key={borehole.id}
               type="button"
               onClick={() => handleTabChange(index)}
-              className={`${styles.tab} ${
-                currentTab === index ? styles.activeTab : ""
+              className={`${common.tab} ${
+                currentTab === index ? common.active : ""
               }`}
             >
               {borehole.borehole_name}
               {intervalsCount > 0 && (
-                <span className={styles.tabBadge}>{intervalsCount}</span>
+                <span className={common.tabDepth}> Intervalos: {intervalsCount}</span>
               )}
             </button>
           );
         })}
+        </div>
       </div>
 
       {/* Tab Content */}
@@ -377,7 +379,7 @@ const TabContent: React.FC<TabContentProps> = ({
             type="button"
             onClick={addInterval}
             className={styles.addButton}
-            disabled={boreholeStratumOptions.length === 0}
+            //disabled={boreholeStratumOptions.length === 0}
           >
             <Plus size={16} />
             Agregar Ensayo

@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
-import { TrendingUp, AlertCircle } from 'lucide-react';
+import { TrendingUp, OctagonAlert } from 'lucide-react';
 import { useAppStore } from '@/store/appStore';
 import MohrCoulombChart from './MohrCoulombChart';
 import type {  ProjectResultsResponse} from '@/types/api';
 import type { CalculatedResult } from '@/types/project';
 import styles from '@/styles/StatisticalReport.module.css';
+import common from '@/styles/ui/Common.module.css';
 
 interface StratumStats {
   stratum_name: string;
@@ -37,7 +38,7 @@ const StatisticalReport: React.FC<{ resultsData: ProjectResultsResponse | undefi
     const stats: StratumStats[] = [];
     
     Object.entries(statisticalSummaryByStratum).forEach(([stratumCodeStr, summary]) => {
-      const stratumCode = parseInt(stratumCodeStr);
+      const stratumCode = (stratumCodeStr);
       const stratum = strata.find(s => s.stratum_code === stratumCode);
       
       if (stratum) {
@@ -62,8 +63,8 @@ const StatisticalReport: React.FC<{ resultsData: ProjectResultsResponse | undefi
 
   if (stratumStatistics.length === 0) {
     return (
-      <div className={styles.placeholder}>
-        <AlertCircle size={32} />
+      <div className={common.placeholder}>
+        <OctagonAlert size={32} />
         <p>No hay suficientes datos para análisis estadístico</p>
       </div>
     );

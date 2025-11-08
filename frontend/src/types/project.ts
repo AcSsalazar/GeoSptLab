@@ -144,7 +144,7 @@ export interface CalculatedResult {
 export interface BoreholeStratumCreate {
   borehole_id: number;
   stratum_definition_id: number;
-  stratum_code: string;  // ✅ Fixed: Should be string, not number
+  stratum_code: string; 
   initial_depth: number;
   final_depth: number;
 }
