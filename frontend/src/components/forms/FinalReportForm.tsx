@@ -1,15 +1,15 @@
-
-import React from 'react';
-import { Calculator, OctagonAlert, Download, RefreshCw } from 'lucide-react';
-import { useAppStore } from '@/store/appStore';
-import { useCalculationsWorkflow } from '@/features/calculations/hooks/useCalculationsHooks';
-import StatisticalReport from './StatisticalReport';
-import styles from '@/styles/FinalReport.module.css';
-import common from '@/styles/ui/Common.module.css';
-
+import React from "react";
+import { Calculator, OctagonAlert, Download, RefreshCw } from "lucide-react";
+import { useAppStore } from "@/store/appStore";
+import { useCalculationsWorkflow } from "@/features/calculations/hooks/useCalculationsHooks";
+import StatisticalReport from "../StatisticalReport";
+import styles from "@/styles/FinalReport.module.css";
+import common from "@/styles/ui/Common.module.css";
+import Alerts from "../layout/Alerts";
 const FinalReport: React.FC = () => {
   const project = useAppStore((state) => state.project);
-  const { calculate, isCalculating, results, isLoadingResults, resultsError } = useCalculationsWorkflow();
+  const { calculate, isCalculating, results, isLoadingResults, resultsError } =
+    useCalculationsWorkflow();
 
   const handleCalculate = () => {
     calculate({ recalculate_all: true });
@@ -17,21 +17,18 @@ const FinalReport: React.FC = () => {
 
   if (!project) {
     return (
-      <div className={common.placeholder}>
-        <OctagonAlert size={48} className={common.placeholderIcon} />
-        <h3>No hay proyecto activo</h3>
-        <p>Debes crear un proyecto primero.</p>
+      <div>
+        <Alerts />
       </div>
     );
   }
-
   return (
     <div className={common.container}>
       {/* Header */}
       <div className={common.header}>
         <div className={common.headerContent}>
           <div className={common.titleSection}>
-            <Calculator size={24}className={common.titleIcon}/>
+            <Calculator size={24} className={common.titleIcon} />
             <div>
               <h2>Resultados de Cálculo SPT</h2>
               <p>Parámetros geotécnicos calculados según normativa</p>
@@ -63,7 +60,7 @@ const FinalReport: React.FC = () => {
             </>
           )}
         </button>
-        
+
         {results && results.results && results.results.length > 0 && (
           <button className={styles.exportButton}>
             <Download size={16} />
@@ -92,30 +89,64 @@ const FinalReport: React.FC = () => {
       {results && results.results && results.results.length > 0 && (
         <div className={styles.resultsSection}>
           <h3>Parámetros Calculados ({results.results.length} intervalos)</h3>
-          
+
           <div className={styles.tableResponsive}>
             <table className={styles.resultsTable}>
               <thead>
                 <tr>
                   <th rowSpan={2}>ID</th>
                   <th rowSpan={2}>Intervalo</th>
-                  <th rowSpan={2}>σ&apos;<br/>(kPa)</th>
+                  <th rowSpan={2}>
+                    σ&apos;
+                    <br />
+                    (kPa)
+                  </th>
                   <th colSpan={4}>Factores de Corrección</th>
                   <th colSpan={4}>N Corregidos</th>
-                  <th rowSpan={2}>φ&apos;<br/>(°)</th>
-                  <th rowSpan={2}>E<br/>(kPa)</th>
-                  <th rowSpan={2}>τ<br/>(kPa)</th>
-                  <th rowSpan={2}>Su<br/>(kPa)</th>
+                  <th rowSpan={2}>
+                    φ&apos;
+                    <br />
+                    (°)
+                  </th>
+                  <th rowSpan={2}>
+                    E<br />
+                    (kPa)
+                  </th>
+                  <th rowSpan={2}>
+                    τ<br />
+                    (kPa)
+                  </th>
+                  <th rowSpan={2}>
+                    Su
+                    <br />
+                    (kPa)
+                  </th>
                 </tr>
                 <tr>
-                  <th>C<sub>b</sub></th>
-                  <th>C<sub>s</sub></th>
-                  <th>C<sub>r</sub></th>
-                  <th>C<sub>n</sub></th>
-                  <th>N<sub>45</sub></th>
-                  <th>N<sub>55</sub></th>
-                  <th>N<sub>60</sub></th>
-                  <th>N<sub>1,45</sub></th>
+                  <th>
+                    C<sub>b</sub>
+                  </th>
+                  <th>
+                    C<sub>s</sub>
+                  </th>
+                  <th>
+                    C<sub>r</sub>
+                  </th>
+                  <th>
+                    C<sub>n</sub>
+                  </th>
+                  <th>
+                    N<sub>45</sub>
+                  </th>
+                  <th>
+                    N<sub>55</sub>
+                  </th>
+                  <th>
+                    N<sub>60</sub>
+                  </th>
+                  <th>
+                    N<sub>1,45</sub>
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -123,19 +154,37 @@ const FinalReport: React.FC = () => {
                   <tr key={result.id}>
                     <td>{result.id}</td>
                     <td>{result.spt_interval_id}</td>
-                    <td className={styles.numeric}>{result.sigma_prime.toFixed(2)}</td>
-                    <td className={styles.numeric}>{result.cb_factor?.toFixed(3) || 'N/A'}</td>
-                    <td className={styles.numeric}>{result.cs_factor?.toFixed(3) || 'N/A'}</td>
-                    <td className={styles.numeric}>{result.cr_factor?.toFixed(3) || 'N/A'}</td>
-                    <td className={styles.numeric}>{result.cn_factor?.toFixed(3) || 'N/A'}</td>
+                    <td className={styles.numeric}>
+                      {result.sigma_prime.toFixed(2)}
+                    </td>
+                    <td className={styles.numeric}>
+                      {result.cb_factor?.toFixed(3) || "N/A"}
+                    </td>
+                    <td className={styles.numeric}>
+                      {result.cs_factor?.toFixed(3) || "N/A"}
+                    </td>
+                    <td className={styles.numeric}>
+                      {result.cr_factor?.toFixed(3) || "N/A"}
+                    </td>
+                    <td className={styles.numeric}>
+                      {result.cn_factor?.toFixed(3) || "N/A"}
+                    </td>
                     <td className={styles.numeric}>{result.n45}</td>
                     <td className={styles.numeric}>{result.n55}</td>
                     <td className={styles.numeric}>{result.n60}</td>
                     <td className={styles.numeric}>{result.n145}</td>
-                    <td className={`${styles.numeric} ${styles.highlight}`}>{result.phi_prime_eq.toFixed(2)}</td>
-                    <td className={`${styles.numeric} ${styles.highlight}`}>{result.elastic_modulus.toFixed(0)}</td>
-                    <td className={styles.numeric}>{result.tau_resistance.toFixed(2)}</td>
-                    <td className={styles.numeric}>{result.su_undrained.toFixed(2)}</td>
+                    <td className={`${styles.numeric} ${styles.highlight}`}>
+                      {result.phi_prime_eq.toFixed(2)}
+                    </td>
+                    <td className={`${styles.numeric} ${styles.highlight}`}>
+                      {result.elastic_modulus.toFixed(0)}
+                    </td>
+                    <td className={styles.numeric}>
+                      {result.tau_resistance.toFixed(2)}
+                    </td>
+                    <td className={styles.numeric}>
+                      {result.su_undrained.toFixed(2)}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -149,37 +198,57 @@ const FinalReport: React.FC = () => {
               <div className={styles.statCard}>
                 <span className={styles.statLabel}>N₆₀ Promedio</span>
                 <span className={styles.statValue}>
-                  {(results.results.reduce((sum, r) => sum + r.n60, 0) / results.results.length).toFixed(1)}
+                  {(
+                    results.results.reduce((sum, r) => sum + r.n60, 0) /
+                    results.results.length
+                  ).toFixed(1)}
                 </span>
               </div>
               <div className={styles.statCard}>
                 <span className={styles.statLabel}>φ&apos; Promedio</span>
                 <span className={styles.statValue}>
-                  {(results.results.reduce((sum, r) => sum + r.phi_prime_eq, 0) / results.results.length).toFixed(2)}°
+                  {(
+                    results.results.reduce(
+                      (sum, r) => sum + r.phi_prime_eq,
+                      0
+                    ) / results.results.length
+                  ).toFixed(2)}
+                  °
                 </span>
               </div>
               <div className={styles.statCard}>
                 <span className={styles.statLabel}>E Promedio</span>
                 <span className={styles.statValue}>
-                  {(results.results.reduce((sum, r) => sum + r.elastic_modulus, 0) / results.results.length).toFixed(0)} kPa
+                  {(
+                    results.results.reduce(
+                      (sum, r) => sum + r.elastic_modulus,
+                      0
+                    ) / results.results.length
+                  ).toFixed(0)}{" "}
+                  kPa
                 </span>
               </div>
             </div>
           </div>
-          
+
           {/* Statistical Analysis by Stratum */}
           <StatisticalReport resultsData={results} />
         </div>
       )}
 
       {/* Empty State */}
-      {!isLoadingResults && !resultsError && (!results || !results.results || results.results.length === 0) && (
-        <div className={styles.emptyState}>
-          <Calculator size={48} />
-          <h3>No hay resultados calculados</h3>
-          <p>Haz clic en &quot;Calcular Parámetros&quot; para generar los resultados.</p>
-        </div>
-      )}
+      {!isLoadingResults &&
+        !resultsError &&
+        (!results || !results.results || results.results.length === 0) && (
+          <div className={styles.emptyState}>
+            <Calculator size={48} />
+            <h3>No hay resultados calculados</h3>
+            <p>
+              Haz clic en &quot;Calcular Parámetros&quot; para generar los
+              resultados.
+            </p>
+          </div>
+        )}
     </div>
   );
 };

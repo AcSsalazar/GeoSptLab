@@ -20,7 +20,6 @@ interface FormWizardProps {
   onStepChange?: (stepIndex: number) => void;
   onStepNext?: (stepIndex: number) => Promise<void> | void;
   onStepBack?: (stepIndex: number) => Promise<void> | void;
-
 }
 
 const FormWizard: React.FC<FormWizardProps> = ({
@@ -81,7 +80,7 @@ const FormWizard: React.FC<FormWizardProps> = ({
     }
   };
 
- const handleBack = async () => {
+  const handleBack = async () => {
     if (currentStep > 0) {
       // Call onStepBack if provided (for API calls)
       if (onStepBack) {
@@ -104,11 +103,6 @@ const FormWizard: React.FC<FormWizardProps> = ({
       }
     }
   };
-
-
-
-
-
 
   const goToStep = (stepIndex: number) => {
     setCurrentStep(stepIndex);
@@ -177,17 +171,22 @@ const FormWizard: React.FC<FormWizardProps> = ({
 
       <div className={styles.navigation}>
         {!isFirstStep && (
-          <button 
+          <button
             onClick={handleBack}
             className={styles.backButton}
             aria-label="Atrás"
-          >  
-            <ArrowBigLeftDash width={47} height={35} color="#341c55c9" strokeWidth={1}/>
+          >
+            <ArrowBigLeftDash
+              width={47}
+              height={35}
+              color="#341c55c9"
+              strokeWidth={1}
+            />
           </button>
         )}
-        
-        <ResetButton/>
-        
+
+        <ResetButton />
+
         <button
           onClick={handleNext}
           disabled={currentStepData.isValid === false}
@@ -195,12 +194,16 @@ const FormWizard: React.FC<FormWizardProps> = ({
           aria-label={isLastStep ? "Finalizar" : "Siguiente"}
         >
           {isLastStep ? (
-            <Check width={47} height={35} color="#341c55c9" strokeWidth={1.5}/>
+            <Check width={47} height={35} color="#341c55c9" strokeWidth={1.5} />
           ) : (
-            <ArrowBigRightDash width={47} height={35} color="#341c55c9" strokeWidth={1}/>
+            <ArrowBigRightDash
+              width={47}
+              height={35}
+              color="#341c55c9"
+              strokeWidth={1}
+            />
           )}
         </button>
-
       </div>
     </div>
   );

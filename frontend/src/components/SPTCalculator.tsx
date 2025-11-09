@@ -5,7 +5,7 @@ import ProjectSetupForm from "./forms/ProjectSetupForm";
 import StrataDefinitionForm from "./forms/StrataDefinitionForm";
 import BoreholesConfigurationForm from "./forms/BoreholesConfigurationForm";
 import SPTIntervalsForm from "./forms/SPTIntervalsForm";
-import FinalReport from "./FinalReport";
+import FinalReport from "./forms/FinalReportForm";
 
 const SPTCalculator: React.FC = () => {
   const project = useAppStore((state) => state.project);
