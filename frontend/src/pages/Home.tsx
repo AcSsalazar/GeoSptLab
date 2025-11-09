@@ -13,7 +13,7 @@ function Home() {
         <div className={styles.contentWrapper}>
           <div className={styles.titlesSection}>
             <div className={styles.badge}>
-              <Link to="/calculator">Comenzar Ahora</Link>
+              <Link to="/calculator" className={styles.wrapperText}>Comenzar Ahora</Link>
             </div>
             <h3 className={styles.mainTitle}>
               <span className={styles.titleGradient}>GeoSptLab 0.1.1</span>

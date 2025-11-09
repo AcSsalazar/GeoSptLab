@@ -1,4 +1,4 @@
-import MarkdownViewer from "../components/MarkdownViewer"
+import MarkdownViewer from "@/components/MarkdownViewer";
 
 
 function TheoryDoc() {

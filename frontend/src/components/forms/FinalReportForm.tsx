@@ -5,7 +5,7 @@ import { useCalculationsWorkflow } from "@/features/calculations/hooks/useCalcul
 import StatisticalReport from "../StatisticalReport";
 import styles from "@/styles/FinalReport.module.css";
 import common from "@/styles/ui/Common.module.css";
-import Alerts from "../layout/Alerts";
+import Alerts from "@/components/layout/Alerts";
 const FinalReport: React.FC = () => {
   const project = useAppStore((state) => state.project);
   const { calculate, isCalculating, results, isLoadingResults, resultsError } =
