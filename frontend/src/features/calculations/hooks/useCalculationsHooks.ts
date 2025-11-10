@@ -3,10 +3,8 @@
  */
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { 
-  calculationsService, 
-  type CalculationRequest
-} from '../services/calculationsService';
+import { calculationsService} from '../services/calculationsService';
+import type { CalculationRequest } from '@/types/api';
 import { queryKeys } from '@/lib/queryClient';
 import { useAppStore } from '@/store/appStore';
 

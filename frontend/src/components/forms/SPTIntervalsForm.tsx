@@ -14,8 +14,9 @@ import {
 } from "lucide-react";
 import { useAppStore } from "@/store/appStore";
 import { useSPTIntervalsWorkflow } from "@/features/spt/hooks/useSPTIntervalsHooks";
-import styles from "@/styles/SPTIntervalsForm.module.css";
+import styles from "@/styles//forms/SPTIntervalsForm.module.css";
 import common from "@/styles/ui/Common.module.css";
+import Alerts from "@/components/layout/Alerts";
 
 // ZOD SCHEMAS
 
@@ -188,10 +189,8 @@ const SPTIntervalsForm: React.FC = () => {
 
   if (!project) {
     return (
-      <div className={common.placeholderContainer}>
-        <OctagonAlert size={48} className={common.placeholderIcon} />
-        <h3>No hay proyecto activo</h3>
-        <p>Debes crear un proyecto primero.</p>
+      <div>
+        <Alerts />
       </div>
     );
   }

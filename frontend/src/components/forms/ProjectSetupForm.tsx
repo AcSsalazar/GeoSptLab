@@ -6,9 +6,9 @@ import { z } from "zod";
 import { Settings } from "lucide-react";
 import { useProjectWorkflow } from "@/features/project/hooks/useProjectHooks";
 import { useAppStore } from "@/store/appStore";
-import type { ProjectCreate } from "../../types/project";
-import { FormulationType } from "../../types/project";
-import styles from "@/styles/ProjectSetupForm.module.css";
+import type { ProjectCreate } from "@/types/project";
+import { FormulationType } from "@/types/project";
+import styles from "@/styles/forms/ProjectSetupForm.module.css";
 import common from "@/styles/ui/Common.module.css";
 // Esquema de validacion usando Zod para los campos del formulario base.
 const projectSchema = z.object({

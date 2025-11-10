@@ -9,9 +9,9 @@ import { useAppStore } from "@/store/appStore";
 import { useStrataWorkflow } from "@/features/strata/hooks/useStrataHooks";
 import type { StratumCreate } from "@/types/project";
 import { BehaviorType } from "@/types/project";
-import styles from "@/styles/StrataDefinitionForm.module.css";
+import styles from "@/styles/forms/StrataDefinitionForm.module.css";
 import common from "@/styles/ui/Common.module.css";
-import { OctagonAlert } from "lucide-react";
+import Alerts from "@/components/layout/Alerts";
 
 // Zod schema for individual stratum definition
 const stratumDefinitionSchema = z
@@ -119,10 +119,8 @@ const StrataDefinitionForm: React.FC = () => {
 
   if (!project) {
     return (
-      <div className={common.placeholderContainer}>
-        <OctagonAlert size={48} className={common.placeholderIcon} />
-        <h3>No hay proyecto activo</h3>
-        <p>Debes crear un proyecto primero.</p>
+      <div>
+        <Alerts />
       </div>
     );
   }

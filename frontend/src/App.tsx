@@ -4,7 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Home from '@/pages/Home';
-import SPTCalculator from '@/pages/SPTCalculator';
+import SPTCalculator from '@/components/SPTCalculator';
 import Documentation from '@/pages/Documentation';
 import Manual from './pages/UsersManual';
 import TheoryDoc from './pages/Theory';

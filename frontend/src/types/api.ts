@@ -44,6 +44,6 @@ export interface StatisticalSummary {
 
 export interface ProjectResultsResponse {
   results: CalculatedResult[];
-  regression_by_stratum: Record<number, RegressionData>;
-  statistical_summary_by_stratum: Record<number, StatisticalSummary>;
+  regression_by_stratum: Record<string, RegressionData>;
+  statistical_summary_by_stratum: Record<string, StatisticalSummary>;
 }
