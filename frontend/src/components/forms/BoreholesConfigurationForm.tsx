@@ -735,7 +735,7 @@ const StrataAssignmentsList: React.FC<{
                   <label className={styles.label}>Desde (m)</label>
                   <input
                     type="number"
-                    step="0.1"
+                    step="any"
                     {...register(`boreholes.${boreholeIndex}.strata_assignments.${assignmentIndex}.depth_from`, { valueAsNumber: true })}
                     className={`${styles.input} ${
                       errors.boreholes?.[boreholeIndex]?.strata_assignments?.[assignmentIndex]?.depth_from ? 
@@ -748,7 +748,7 @@ const StrataAssignmentsList: React.FC<{
                   <label className={styles.label}>Hasta (m)</label>
                   <input
                     type="number"
-                    step="0.1"
+                    step="any"
                     {...register(`boreholes.${boreholeIndex}.strata_assignments.${assignmentIndex}.depth_to`, { valueAsNumber: true })}
                     className={`${styles.input} ${
                       errors.boreholes?.[boreholeIndex]?.strata_assignments?.[assignmentIndex]?.depth_to ? 

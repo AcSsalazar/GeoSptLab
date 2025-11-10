@@ -4,7 +4,14 @@ import React, { useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Plus, Trash2,  Loader2, OctagonAlert, Save, Target } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  Loader2,
+  OctagonAlert,
+  Save,
+  Target,
+} from "lucide-react";
 import { useAppStore } from "@/store/appStore";
 import { useSPTIntervalsWorkflow } from "@/features/spt/hooks/useSPTIntervalsHooks";
 import styles from "@/styles/SPTIntervalsForm.module.css";
@@ -20,7 +27,12 @@ const sptIntervalSchema = z
       .positive("Debe seleccionar un estrato"),
     depth_from: z.number().min(0, "Profundidad >= 0"),
     depth_to: z.number().min(0, "Profundidad >= 0"),
-    nspt_field: z.number().int().positive().min(2, "N >= 0").max(200, "N máx 200"),
+    nspt_field: z
+      .number()
+      .int()
+      .positive()
+      .min(2, "N >= 0")
+      .max(200, "N máx 200"),
     description: z.string().optional(),
   })
   .refine((data) => data.depth_to > data.depth_from, {
@@ -186,7 +198,6 @@ const SPTIntervalsForm: React.FC = () => {
 
   if (boreholes.length === 0) {
     return (
-      
       <div className={common.placeholderContainer}>
         <OctagonAlert size={48} className={common.placeholderIcon} />
         <h3>No hay perforaciones configuradas</h3>
@@ -195,13 +206,8 @@ const SPTIntervalsForm: React.FC = () => {
           SPT.
         </p>
       </div>
-      
     );
-    
-    
   }
-
-
 
   return (
     /* Form Header */
@@ -225,25 +231,28 @@ const SPTIntervalsForm: React.FC = () => {
       {/* Tabs */}
       <div className={common.tabContainer}>
         <div className={common.tabList}>
-        {boreholes.map((borehole, index) => {
-          const intervalsCount =
-            watch(`boreholes.${index}.intervals`)?.length || 0;
-          return (
-            <button
-              key={borehole.id}
-              type="button"
-              onClick={() => handleTabChange(index)}
-              className={`${common.tab} ${
-                currentTab === index ? common.active : ""
-              }`}
-            >
-              {borehole.borehole_name}
-              {intervalsCount > 0 && (
-                <span className={common.tabDepth}> Intervalos: {intervalsCount}</span>
-              )}
-            </button>
-          );
-        })}
+          {boreholes.map((borehole, index) => {
+            const intervalsCount =
+              watch(`boreholes.${index}.intervals`)?.length || 0;
+            return (
+              <button
+                key={borehole.id}
+                type="button"
+                onClick={() => handleTabChange(index)}
+                className={`${common.tab} ${
+                  currentTab === index ? common.active : ""
+                }`}
+              >
+                {borehole.borehole_name}
+                {intervalsCount > 0 && (
+                  <span className={common.tabDepth}>
+                    {" "}
+                    Intervalos: {intervalsCount}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -267,7 +276,9 @@ const SPTIntervalsForm: React.FC = () => {
         <button
           type="submit"
           disabled={!isValid || isSubmitting}
-          className={`${common.submitButton} ${isSubmitting ? common.loading : ''}`}
+          className={`${common.submitButton} ${
+            isSubmitting ? common.loading : ""
+          }`}
         >
           {isSubmitting ? (
             <>
@@ -276,7 +287,7 @@ const SPTIntervalsForm: React.FC = () => {
             </>
           ) : (
             <>
-              <Save size={16} /> 
+              <Save size={16} />
               Guardar Ensayos SPT
             </>
           )}
@@ -451,7 +462,7 @@ const TabContent: React.FC<TabContentProps> = ({
                         <label>Prof. Inicial (m)</label>
                         <input
                           type="number"
-                          step="0.1"
+                          step="any"
                           {...register(
                             `boreholes.${boreholeIndex}.intervals.${index}.depth_from`,
                             { valueAsNumber: true }
@@ -475,7 +486,7 @@ const TabContent: React.FC<TabContentProps> = ({
                         <label>Prof. Final (m)</label>
                         <input
                           type="number"
-                          step="0.1"
+                          step="any"
                           {...register(
                             `boreholes.${boreholeIndex}.intervals.${index}.depth_to`,
                             { valueAsNumber: true }
@@ -501,6 +512,7 @@ const TabContent: React.FC<TabContentProps> = ({
                       <label>N Campo (golpes/30cm)</label>
                       <input
                         type="number"
+                        step="any"
                         {...register(
                           `boreholes.${boreholeIndex}.intervals.${index}.nspt_field`,
                           { valueAsNumber: true }

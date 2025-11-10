@@ -9,7 +9,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { TrendingUp, Sliders, RotateCcw } from 'lucide-react';
+import { Sliders, RotateCcw, OctagonAlert } from 'lucide-react';
 import styles from '@/styles/MohrCoulombChart.module.css';
 
 interface DataPoint {
@@ -118,7 +118,7 @@ const MohrCoulombChart: React.FC<Props> = ({
   if (!calculatedRegression || dataPoints.length < 2) {
     return (
       <div className={styles.placeholder}>
-        <TrendingUp size={32} />
+        <OctagonAlert size={32} />
         <p>Datos insuficientes para generar gráfico de regresión</p>
         <span>Se requieren al menos 2 puntos de datos</span>
       </div>
@@ -130,7 +130,7 @@ const MohrCoulombChart: React.FC<Props> = ({
       {/* Header */}
       <div className={styles.header}>
         <div className={styles.titleSection}>
-          <TrendingUp size={20} />
+          <OctagonAlert size={20} />
           <div>
             <h4>{stratumName}</h4>
             <span className={styles.subtitle}>Envolvente de Falla Mohr-Coulomb</span>
