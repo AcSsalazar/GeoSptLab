@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { TrendingUp, OctagonAlert } from 'lucide-react';
+import { OctagonAlert } from 'lucide-react';
 import { useAppStore } from '@/store/appStore';
 import MohrCoulombChart from './MohrCoulombChart';
 import type {  ProjectResultsResponse} from '@/types/api';
@@ -73,8 +73,7 @@ const StatisticalReport: React.FC<{ resultsData: ProjectResultsResponse | undefi
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <TrendingUp size={20} />
-        <h3>Análisis Estadístico por Estrato</h3>
+        <h3>Parámetros por estrato</h3>
       </div>
 
       <div className={styles.tableWrapper}>
@@ -147,7 +146,7 @@ const StatisticalReport: React.FC<{ resultsData: ProjectResultsResponse | undefi
 
       {/* Mohr-Coulomb Charts for each stratum */}
       <div className={styles.chartsSection}>
-        <h3 className={styles.chartsTitle}>📊 Envolventes de Falla Mohr-Coulomb por Estrato</h3>
+        <h3 className={styles.chartsTitle}>Envolventes de Falla Mohr-Coulomb por Estrato</h3>
         {stratumStatistics.map((stat, idx) => {
           // Get regression data from backend for this stratum
           const results = resultsData?.results || [];

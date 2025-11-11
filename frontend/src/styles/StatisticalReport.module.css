@@ -154,10 +154,6 @@
   gap: 12px;
 }
 
-.chartsTitle::before {
-  content: '📊';
-  font-size: 1.75rem;
-}
 
 /* Responsive adjustments */
 @media (max-width: 1024px) {

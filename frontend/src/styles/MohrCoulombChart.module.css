@@ -42,7 +42,7 @@
 }
 
 .stratumBadge {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--titles-main);
   color: white;
   padding: 8px 16px;
   border-radius: 20px;
@@ -227,7 +227,7 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--titles-main);
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s ease;
@@ -241,7 +241,7 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--titles-main);
   cursor: pointer;
   border: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);

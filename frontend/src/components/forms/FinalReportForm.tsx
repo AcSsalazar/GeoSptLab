@@ -195,7 +195,7 @@ const FinalReport: React.FC = () => {
 
           {/* Summary Statistics */}
           <div className={styles.summaryStats}>
-            <h4>Resumen Estadístico</h4>
+            <h4>Promedios Clave</h4>
             <div className={styles.statsGrid}>
               <div className={styles.statCard}>
                 <span className={styles.statLabel}>N₆₀ Promedio</span>
