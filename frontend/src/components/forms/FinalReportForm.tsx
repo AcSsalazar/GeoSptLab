@@ -23,20 +23,22 @@ const FinalReport: React.FC = () => {
     );
   }
   return (
-    <div className={common.container}>
+    <div className={common.formContainer}>
       {/* Header */}
-      <div className={common.header}>
+      <div className={common.formHeader}>
         <div className={common.headerContent}>
           <div className={common.titleSection}>
             <Calculator size={24} className={common.titleIcon} />
             <div>
-              <h2>Resultados de Cálculo SPT</h2>
-              <p>Parámetros geotécnicos calculados según normativa</p>
+              <h2 className={common.formTitle}>Resultados de Cálculo SPT</h2>
+              <p className={common.formSubtitle}>
+                Parámetros geotécnicos calculados según normativa
+              </p>
             </div>
           </div>
           <div className={common.projectInfo}>
-            <span className={common.projectCode}>{common.project_code}</span>
-            <span className={common.projectName}>{common.project_name}</span>
+            <span className={common.projectCode}>{project.project_code}</span>
+            <span className={common.projectName}>{project.project_name}</span>
           </div>
         </div>
       </div>
@@ -158,26 +160,26 @@ const FinalReport: React.FC = () => {
                       {result.sigma_prime.toFixed(2)}
                     </td>
                     <td className={styles.numeric}>
-                      {result.cb_factor?.toFixed(3) || "N/A"}
+                      {result.cb_factor?.toFixed(2) || "N/A"}
                     </td>
                     <td className={styles.numeric}>
-                      {result.cs_factor?.toFixed(3) || "N/A"}
+                      {result.cs_factor?.toFixed(2) || "N/A"}
                     </td>
                     <td className={styles.numeric}>
-                      {result.cr_factor?.toFixed(3) || "N/A"}
+                      {result.cr_factor?.toFixed(2) || "N/A"}
                     </td>
                     <td className={styles.numeric}>
-                      {result.cn_factor?.toFixed(3) || "N/A"}
+                      {result.cn_factor?.toFixed(2) || "N/A"}
                     </td>
-                    <td className={styles.numeric}>{result.n45}</td>
-                    <td className={styles.numeric}>{result.n55}</td>
-                    <td className={styles.numeric}>{result.n60}</td>
-                    <td className={styles.numeric}>{result.n145}</td>
+                    <td className={styles.numeric}>{result.n45.toFixed(2)}</td>
+                    <td className={styles.numeric}>{result.n55.toFixed(2)}</td>
+                    <td className={styles.numeric}>{result.n60.toFixed(2)}</td>
+                    <td className={styles.numeric}>{result.n145.toFixed(2)}</td>
                     <td className={`${styles.numeric} ${styles.highlight}`}>
                       {result.phi_prime_eq.toFixed(2)}
                     </td>
                     <td className={`${styles.numeric} ${styles.highlight}`}>
-                      {result.elastic_modulus.toFixed(0)}
+                      {result.elastic_modulus.toFixed(2)}
                     </td>
                     <td className={styles.numeric}>
                       {result.tau_resistance.toFixed(2)}
@@ -224,7 +226,7 @@ const FinalReport: React.FC = () => {
                       (sum, r) => sum + r.elastic_modulus,
                       0
                     ) / results.results.length
-                  ).toFixed(0)}{" "}
+                  ).toFixed(2)}{" "}
                   kPa
                 </span>
               </div>

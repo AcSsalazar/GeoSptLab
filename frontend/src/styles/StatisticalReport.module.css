@@ -1,12 +1,4 @@
-/* Statistical Report Styles */
 
-.container {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 24px;
-}
 
 .header {
   display: flex;
@@ -40,7 +32,7 @@
 }
 
 .statsTable thead {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #414562b0;
   color: white;
 }
 
@@ -53,11 +45,11 @@
 }
 
 .statsTable thead tr:first-child th {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #414562b0;
 }
 
 .statsTable thead tr:last-child th {
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  background:#414562b0;
   font-size: 0.75rem;
 }
 

@@ -1,80 +1,4 @@
-/* FinalReport Styles */
 
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
-  animation: fadeIn 0.3s ease-in;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Header */
-.header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 2rem;
-  border-radius: 12px;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.headerContent {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.titleSection {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.titleSection h2 {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-.titleSection p {
-  margin: 0.25rem 0 0 0;
-  opacity: 0.9;
-  font-size: 0.9rem;
-}
-
-.projectInfo {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.projectCode {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.projectName {
-  font-weight: 500;
-  font-size: 0.95rem;
-}
-
-/* Action Buttons */
 .actions {
   display: flex;
   gap: 1rem;
@@ -139,9 +63,6 @@
 .loadingState,
 .errorState,
 .emptyState,
-
-
-
 .loadingState svg,
 .errorState svg,
 .emptyState svg,
@@ -250,28 +171,23 @@
 }
 
 .statCard {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--titles-main);
   color: white;
-  padding: 1.5rem;
+  padding: 0.5rem;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  transition: transform 0.2s;
 }
 
-.statCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
-}
 
 .statLabel {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   opacity: 0.9;
 }
 
 .statValue {
-  font-size: 1.75rem;
+  font-size: var(--text-lg);
   font-weight: 700;
 }
 
