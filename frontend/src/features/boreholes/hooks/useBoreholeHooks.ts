@@ -28,7 +28,6 @@ export function useCreateBoreholes() {
   const queryClient = useQueryClient();
   const setBoreholes = useAppStore((state) => state.setBoreholes);
   const markStepCompleted = useAppStore((state) => state.markStepCompleted);
-  const goToNextStep = useAppStore((state) => state.goToNextStep);
   const project = useAppStore((state) => state.project);
 
   return useMutation({
@@ -38,7 +37,8 @@ export function useCreateBoreholes() {
     onSuccess: (boreholes: Borehole[]) => {
       setBoreholes(boreholes);
       markStepCompleted(2);
-      goToNextStep();
+      // DON'T navigate yet - wait for boreholeStrata to be saved
+      // goToNextStep() Here was the issue;
       toast.success("Perforaciones guardadas con exito {•‿•}");
       if (project?.id) {
         queryClient.invalidateQueries({

@@ -396,7 +396,7 @@ const TabContent: React.FC<TabContentProps> = ({
             disabled={boreholeStratumOptions.length === 0}
           >
             <Plus size={16} />
-            Agregar Ensayo
+            Agregar Intervalo
           </button>
         </div>
 
