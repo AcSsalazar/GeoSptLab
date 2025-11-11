@@ -4,6 +4,7 @@ import { sptIntervalsService}  from '../services/sptIntervalsService';
 import type { SPTIntervalCreate, SPTInterval } from '@/types/project';
 import { queryKeys } from '@/lib/queryClient';
 import { useAppStore } from '@/store/appStore';
+import { toast } from 'react-toastify';
 
 // ===========================================
 export function useSPTIntervalsByProject(projectId: number | undefined) {
@@ -36,6 +37,7 @@ export function useCreateSPTIntervals() {
       setIntervals(intervals);
       markStepCompleted(3);
       goToNextStep();
+      toast.success('Intervalos creados {•‿•}');
       
       if (project?.id) {
         queryClient.invalidateQueries({ 

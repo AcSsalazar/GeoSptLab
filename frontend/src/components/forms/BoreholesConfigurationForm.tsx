@@ -4,15 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  Plus,
-  Trash2,
-  OctagonAlert,
-  CircleDot,
-  Layers,
-  Target,
-  Loader2,
-} from "lucide-react";
+import {Plus,Trash2,OctagonAlert,CircleDot,Layers,Target,Loader2,} from "lucide-react";
 import { useAppStore } from "@/store/appStore";
 import { useBoreholeWorkflow } from "@/features/boreholes/hooks/useBoreholeHooks";
 import styles from "@/styles/forms/BoreholesConfigurationForm.module.css";
@@ -791,7 +783,7 @@ const BoreholesConfigurationForm: React.FC = () => {
               fontSize: "12px",
             }}
           >
-            <strong>⚠️ Formulario incompleto:</strong>
+            <strong>⚠️ Formulario incompleto (Revise todas las pestañas):</strong>
             <ul style={{ margin: "5px 0", paddingLeft: "20px" }}>
               {errors.boreholes &&
                 Array.isArray(errors.boreholes) &&
@@ -1076,7 +1068,7 @@ const BoreholeProfilePreview: React.FC<{
                     style={{
                       top: `${
                         (boreholeData.waterTable / boreholeData.finalDepth) *
-                        200
+                        100
                       }px`,
                       left: 0,
                       right: 0,

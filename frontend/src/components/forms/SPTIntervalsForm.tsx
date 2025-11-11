@@ -13,12 +13,10 @@ import {
   Target,
 } from "lucide-react";
 import { useAppStore } from "@/store/appStore";
-import { useSPTIntervalsWorkflow } from "@/features/spt/hooks/useSPTIntervalsHooks";
+import { useSPTIntervalsWorkflow } from "@/features/intervals/hooks/useSPTIntervalsHooks";
 import styles from "@/styles//forms/SPTIntervalsForm.module.css";
 import common from "@/styles/ui/Common.module.css";
 import Alerts from "@/components/layout/Alerts";
-
-// ZOD SCHEMAS
 
 const sptIntervalSchema = z
   .object({
@@ -26,8 +24,8 @@ const sptIntervalSchema = z
       .number()
       .int()
       .positive("Debe seleccionar un estrato"),
-    depth_from: z.number().min(0, "Profundidad >= 0"),
-    depth_to: z.number().min(0, "Profundidad >= 0"),
+    depth_from: z.number("Campo Obligatoirio").min(0, "Profundidad >= 0"),
+    depth_to: z.number("Campo Obligatoirio").min(0, "Profundidad >= 0"),
     nspt_field: z
       .number()
       .int()
@@ -44,7 +42,9 @@ const sptIntervalSchema = z
 const boreholeWithIntervalsSchema = z.object({
   borehole_id: z.number().int().positive(),
   borehole_name: z.string(),
-  intervals: z.array(sptIntervalSchema),
+  intervals: z
+    .array(sptIntervalSchema)
+    .min(1, "Debe agregar al menos un ensayo SPT"),
 });
 
 const sptIntervalsFormSchema = z.object({
@@ -76,12 +76,9 @@ const SPTIntervalsForm: React.FC = () => {
   const { submit, isLoading: isSubmitting } = useSPTIntervalsWorkflow();
   const [currentTab, setCurrentTab] = useState(draftIntervalsTab);
 
-  // HELPER FUNCTION: BUILD FORM DATA
-
   const buildFormDataFromSavedIntervals = (): SPTIntervalsFormData => {
     return {
       boreholes: boreholes.map((borehole) => {
-        // Filtrar intervalos que pertenecen a esta perforación
         const intervalsForBorehole = existingIntervals
           .filter((interval) => interval.borehole_id === borehole.id)
           .map((interval) => ({
@@ -137,20 +134,19 @@ const SPTIntervalsForm: React.FC = () => {
   }, [saveDraft]);
 
   // TAB MANAGEMENT
-
   const handleTabChange = (newTab: number) => {
     saveDraft(); // Save current tab data
     setCurrentTab(newTab);
     setDraftIntervalsTab(newTab);
   };
-  // STRATUM OPTIONS FOR CURRENT TAB
 
-  const getCurrentBoreholeStratumOptions = (): BoreholeStratumInfo[] => {
-    const currentBorehole = boreholes[currentTab];
-    if (!currentBorehole) return [];
-
+  // CAMBIO 3: Función que acepta boreholeId para calcular estratos por perforación específica
+  // Antes usaba currentTab (índice) lo que causaba que todos los tabs recibieran los mismos datos
+  const getBoreholeStratumOptions = (
+    boreholeId: number
+  ): BoreholeStratumInfo[] => {
     return boreholeStrata
-      .filter((bs) => bs.borehole_id === currentBorehole.id)
+      .filter((bs) => bs.borehole_id === boreholeId)
       .map((bs) => {
         const stratum = strata.find((s) => s.id === bs.stratum_definition_id);
         return {
@@ -163,8 +159,6 @@ const SPTIntervalsForm: React.FC = () => {
       })
       .sort((a, b) => a.initial_depth - b.initial_depth);
   };
-
-  const boreholeStratumOptions = getCurrentBoreholeStratumOptions();
 
   // FORM SUBMIT
   const onSubmit = (data: SPTIntervalsFormData) => {
@@ -233,6 +227,7 @@ const SPTIntervalsForm: React.FC = () => {
           {boreholes.map((borehole, index) => {
             const intervalsCount =
               watch(`boreholes.${index}.intervals`)?.length || 0;
+            const hasError = errors.boreholes?.[index]?.intervals !== undefined;
             return (
               <button
                 key={borehole.id}
@@ -240,7 +235,7 @@ const SPTIntervalsForm: React.FC = () => {
                 onClick={() => handleTabChange(index)}
                 className={`${common.tab} ${
                   currentTab === index ? common.active : ""
-                }`}
+                } ${hasError ? common.error : ""}`}
               >
                 {borehole.borehole_name}
                 {intervalsCount > 0 && (
@@ -249,6 +244,7 @@ const SPTIntervalsForm: React.FC = () => {
                     Intervalos: {intervalsCount}
                   </span>
                 )}
+                {hasError && <span className={common.errorIndicator}>⚠</span>}
               </button>
             );
           })}
@@ -266,7 +262,7 @@ const SPTIntervalsForm: React.FC = () => {
           register={register}
           watch={watch}
           errors={errors}
-          boreholeStratumOptions={boreholeStratumOptions}
+          boreholeStratumOptions={getBoreholeStratumOptions(borehole.id)}
         />
       ))}
 
@@ -277,7 +273,7 @@ const SPTIntervalsForm: React.FC = () => {
           disabled={!isValid || isSubmitting}
           className={`${common.submitButton} ${
             isSubmitting ? common.loading : ""
-          }`}
+          } ${!isValid ? common.disabled : ""}`}
         >
           {isSubmitting ? (
             <>
@@ -286,11 +282,18 @@ const SPTIntervalsForm: React.FC = () => {
             </>
           ) : (
             <>
-              <Save size={16} />
-              Guardar Ensayos SPT
+              <Save size={16} /> Guardar Ensayos SPT
             </>
           )}
         </button>
+        {!isValid && (
+          <p
+            className={common.formHint}
+            style={{ color: "var(--color-error)", marginTop: "0.5rem" }}
+          >
+            Debe agregar al menos un ensayo SPT válido en cada perforación
+          </p>
+        )}
       </div>
     </form>
   );
@@ -334,12 +337,13 @@ const TabContent: React.FC<TabContentProps> = ({
     const firstStratum = boreholeStratumOptions[0];
     const midpoint =
       (firstStratum.initial_depth + firstStratum.final_depth) / 2;
-
+    // CAMBIO 4: nspt_field cambiado de 0 a 10 (valor válido según schema min: 2)
+    // CAMBIO 5: depth_to usa Math.min para no exceder final_depth del estrato
     append({
       borehole_stratum_id: firstStratum.id,
       depth_from: midpoint,
-      depth_to: midpoint + 1.45,
-      nspt_field: 0,
+      depth_to: Math.min(midpoint + 1.45, firstStratum.final_depth),
+      nspt_field: 10,
       description: "",
     });
   };
@@ -389,7 +393,7 @@ const TabContent: React.FC<TabContentProps> = ({
             type="button"
             onClick={addInterval}
             className={styles.addButton}
-            //disabled={boreholeStratumOptions.length === 0}
+            disabled={boreholeStratumOptions.length === 0}
           >
             <Plus size={16} />
             Agregar Ensayo
