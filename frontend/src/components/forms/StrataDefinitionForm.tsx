@@ -18,7 +18,7 @@ const stratumDefinitionSchema = z
   .object({
     stratum_code: z.string(),
 
-    name: z.string().min(1, "Nombre requerido").max(100, "Nombre muy largo"),
+    name: z.string("Nombre requerido").min(1,"Nombre requerido").max(100, "Nombre muy largo"),
     description: z
       .string()
       .min(1, "Descripción requerida")

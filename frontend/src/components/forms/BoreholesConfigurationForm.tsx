@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {Plus,Trash2,OctagonAlert,CircleDot,Layers,Target,Loader2,} from "lucide-react";
+import {Plus,Trash2,OctagonAlert,CircleDot,Layers,Target,Loader2} from "lucide-react";
 import { useAppStore } from "@/store/appStore";
 import { useBoreholeWorkflow } from "@/features/boreholes/hooks/useBoreholeHooks";
 import styles from "@/styles/forms/BoreholesConfigurationForm.module.css";
@@ -19,10 +19,13 @@ const stratumAssignmentSchema = z
     depth_from: z.number().min(0, "Profundidad inicial >= 0"),
     depth_to: z.number().min(0, "Profundidad final >= 0"),
   })
+  
   .refine((data) => data.depth_to > data.depth_from, {
     message: "Profundidad final debe ser mayor que inicial",
     path: ["depth_to"],
+  
   });
+
 
 // Schema for individual borehole
 const boreholeSchema = z
@@ -34,9 +37,9 @@ const boreholeSchema = z
     final_depth: z
       .number("Campo obligatorio")
       .min(1, "Profundidad > 0")
-      .max(100, "Profundidad máx 100m"),
+      .max(60, "Profundidad máx 60m"),
     diameter_mm: z
-      .number()
+      .number("Campo obligatorio")
       .min(50, "Diámetro mín 50mm")
       .max(500, "Diámetro máx 500mm"),
     field_energy_percent: z
@@ -47,6 +50,18 @@ const boreholeSchema = z
     strata_assignments: z
       .array(stratumAssignmentSchema)
       .min(1, "Al menos un estrato requerido"),
+  })
+  .superRefine((data, ctx) => {
+    // Validar que cada estrato no exceda la profundidad final de la perforación
+    data.strata_assignments.forEach((stratum, index) => {
+      if (stratum.depth_to > data.final_depth) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `No puede superar ${data.final_depth}m (profundidad final)`,
+          path: ["strata_assignments", index, "depth_to"],
+        });
+      }
+    });
   })
   .refine(
     (data) => {
@@ -217,7 +232,7 @@ const BoreholesConfigurationForm: React.FC = () => {
           { length: project?.number_of_boreholes || 1 },
           (_, index) => ({
             borehole_name: `P${index + 1}`,
-            final_depth: 0,
+            final_depth: 1,
             diameter_mm: "",
             field_energy_percent: 45,
             water_table_depth: "",
@@ -908,8 +923,15 @@ const StrataAssignmentsList: React.FC<{
                   <label className={styles.label}>Desde (m)</label>
                   <input
                     type="number"
-                    step="any"
-                    {...register(`boreholes.${boreholeIndex}.strata_assignments.${assignmentIndex}.depth_from`, { valueAsNumber: true })}
+                    step="0.1"
+                    {...register(`boreholes.${boreholeIndex}.strata_assignments.${assignmentIndex}.depth_from`, { 
+                      valueAsNumber: true,
+                      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                        const max = watch(`boreholes.${boreholeIndex}.final_depth`);
+                        const val = parseFloat(e.target.value);
+                        if (!isNaN(val) && max && val > max) e.target.value = max.toString();
+                      }
+                    })}
                     className={`${styles.input} ${
                       errors.boreholes?.[boreholeIndex]?.strata_assignments?.[
                         assignmentIndex
@@ -924,8 +946,15 @@ const StrataAssignmentsList: React.FC<{
                   <label className={styles.label}>Hasta (m)</label>
                   <input
                     type="number"
-                    step="any"
-                    {...register(`boreholes.${boreholeIndex}.strata_assignments.${assignmentIndex}.depth_to`, { valueAsNumber: true })}
+                    step="0.1"
+                    {...register(`boreholes.${boreholeIndex}.strata_assignments.${assignmentIndex}.depth_to`, { 
+                      valueAsNumber: true,
+                      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                        const max = watch(`boreholes.${boreholeIndex}.final_depth`);
+                        const val = parseFloat(e.target.value);
+                        if (!isNaN(val) && max && val > max) e.target.value = max.toString();
+                      }
+                    })}
                     className={`${styles.input} ${
                       errors.boreholes?.[boreholeIndex]?.strata_assignments?.[
                         assignmentIndex
@@ -1036,24 +1065,32 @@ const BoreholeProfilePreview: React.FC<{
             <div className={styles.stratumTop}></div>
             <div style={{ position: "relative" }}>
               {boreholeData.assignments.map((assignment, index) => {
+                // Limitar depth_to y depth_from al máximo permitido (final_depth)
+                const safeDepthFrom = Math.min(assignment.depth_from, boreholeData.finalDepth);
+                const safeDepthTo = Math.min(assignment.depth_to, boreholeData.finalDepth);
+                
                 const layerHeight =
-                  ((assignment.depth_to - assignment.depth_from) /
+                  ((safeDepthTo - safeDepthFrom) /
                     boreholeData.finalDepth) *
                   100;
+                
+                // Limitar altura mínima y máxima para evitar renderizados extremos
+                const clampedHeight = Math.max(0, Math.min(layerHeight, 500));
+                
                 return (
                   <div
                     key={index}
                     className={styles.stratumLayer}
                     style={{
                       backgroundColor: getStratumColor(assignment.stratum_code),
-                      height: `${layerHeight}px`,
+                      height: `${clampedHeight}px`,
                     }}
                   >
                     <span className={styles.layerCode}>
                       {assignment.stratum_code}
                     </span>
                     <span className={styles.layerThickness}>
-                      {(assignment.depth_to - assignment.depth_from).toFixed(1)}
+                      {(safeDepthTo - safeDepthFrom).toFixed(1)}
                       m
                     </span>
                   </div>
@@ -1062,19 +1099,20 @@ const BoreholeProfilePreview: React.FC<{
 
               {/* Water Table Line - positioned inside stratum column */}
               {boreholeData.waterTable !== undefined &&
-                boreholeData.waterTable !== null && (
+                boreholeData.waterTable !== null &&
+                boreholeData.waterTable <= boreholeData.finalDepth && (
                   <div
                     className={styles.waterTable}
                     style={{
-                      top: `${
-                        (boreholeData.waterTable / boreholeData.finalDepth) *
-                        100
-                      }px`,
+                      top: `${Math.min(
+                        (boreholeData.waterTable / boreholeData.finalDepth) * 100,
+                        500
+                      )}px`,
                       left: 0,
                       right: 0,
                     }}
                   >
-                    <span>N.F. {boreholeData.waterTable}m</span>
+                    <span>N.F. {boreholeData.waterTable.toFixed(1)}m</span>
                   </div>
                 )}
             </div>

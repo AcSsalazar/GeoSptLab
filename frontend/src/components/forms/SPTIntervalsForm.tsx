@@ -25,6 +25,7 @@ const sptIntervalSchema = z
       .int()
       .positive("Debe seleccionar un estrato"),
     depth_from: z.number("Campo Obligatoirio").min(0, "Profundidad >= 0"),
+    
     depth_to: z.number("Campo Obligatoirio").min(0, "Profundidad >= 0"),
     nspt_field: z
       .number()
@@ -34,6 +35,9 @@ const sptIntervalSchema = z
       .max(200, "N máx 200"),
     description: z.string().optional(),
   })
+  
+
+  
   .refine((data) => data.depth_to > data.depth_from, {
     message: "Profundidad final debe ser mayor que inicial",
     path: ["depth_to"],
@@ -167,7 +171,7 @@ const SPTIntervalsForm: React.FC = () => {
       return;
     }
 
-    console.log("📤 Submitting form data:", data);
+    console.log("Submitting form data:", data);
 
     // Transform nested structure to flat array for API
     const flatIntervals = data.boreholes.flatMap((borehole) =>

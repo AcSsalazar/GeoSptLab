@@ -207,19 +207,23 @@
 }
 
 .backButton {
-  background: radial-gradient(circle, #d0db25d1 0%, rgb(255 255 255) 66%);
+  background: #efefefde;
   border: solid 1px #8d9cb5;
-  padding: var(--spacing-3);
-  border-radius: 70px;
+  border-radius: 8px;
+  padding-right: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: var(--spacing-2);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  color: #341c55c9;
 }
 
 .backButton:hover {
-  background: radial-gradient(circle, #5d50d1 0%, #f5f9f7 50%, rgb(255 255 255) 100%);
+  background: linear-gradient(70deg, #9999ea8a 6%, rgb(237 236 210 / 34%) 38%);
   border-color: #6b8499;
   transform: translateX(-4px);
   box-shadow: 0 3px 12px rgba(107, 132, 153, 0.18);
@@ -231,19 +235,23 @@
 }
 
 .nextButton {
-  background: radial-gradient(circle, #d0db25d1 0%, rgb(255 255 255) 66%);
+  background: #efefefde;
   border: solid 1px #8d9cb5;
-  padding: var(--spacing-3);
-  border-radius: 70px;
+  border-radius: 12px;
+  padding-left: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: var(--spacing-2);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  color: #341c55c9;
 }
 
 .nextButton:hover:not(:disabled) {
-  background: radial-gradient(circle, #62cc31  0%, #f5f9f7 50%, rgb(255 255 255) 100%);
+  background: linear-gradient(290deg, #9999ea8a 6%, rgb(237 236 210 / 34%) 38%);
   border-color: #6b8499;
   transform: translateX(4px);
   box-shadow: 0 3px 12px rgba(107, 132, 153, 0.18);

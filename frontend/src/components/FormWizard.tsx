@@ -177,11 +177,12 @@ const FormWizard: React.FC<FormWizardProps> = ({
             aria-label="Atrás"
           >
             <ArrowBigLeftDash
-              width={47}
-              height={35}
+              width={24}
+              height={24}
               color="#341c55c9"
               strokeWidth={1}
             />
+            <span>Atrás</span>
           </button>
         )}
 
@@ -194,14 +195,20 @@ const FormWizard: React.FC<FormWizardProps> = ({
           aria-label={isLastStep ? "Finalizar" : "Siguiente"}
         >
           {isLastStep ? (
-            <Check width={47} height={35} color="#341c55c9" strokeWidth={1.5} />
+            <>
+              <Check width={24} height={24} color="#341c55c9" strokeWidth={1.5} />
+              <span>Finalizar</span>
+            </>
           ) : (
-            <ArrowBigRightDash
-              width={47}
-              height={35}
-              color="#341c55c9"
-              strokeWidth={1}
-            />
+            <>
+              <span>Siguiente</span>
+              <ArrowBigRightDash
+                width={24}
+                height={24}
+                color="#341c55c9"
+                strokeWidth={1}
+              />
+            </>
           )}
         </button>
       </div>
