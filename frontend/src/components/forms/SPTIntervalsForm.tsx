@@ -34,7 +34,10 @@ const sptIntervalSchema = z
       .min(2, "N >= 0")
       .max(200, "N máx 200"),
     description: z.string().optional(),
+    
   })
+  
+
   
 
   
@@ -51,11 +54,12 @@ const boreholeWithIntervalsSchema = z.object({
     .min(1, "Debe agregar al menos un ensayo SPT"),
 });
 
-const sptIntervalsFormSchema = z.object({
+// Base schema without validation - will add .superRefine() inside component
+const baseSptIntervalsFormSchema = z.object({
   boreholes: z.array(boreholeWithIntervalsSchema),
 });
 
-type SPTIntervalsFormData = z.infer<typeof sptIntervalsFormSchema>;
+type SPTIntervalsFormData = z.infer<typeof baseSptIntervalsFormSchema>;
 
 interface BoreholeStratumInfo {
   id: number;
@@ -69,6 +73,32 @@ const SPTIntervalsForm: React.FC = () => {
   const project = useAppStore((state) => state.project);
   const boreholes = useAppStore((state) => state.boreholes);
   const boreholeStrata = useAppStore((state) => state.boreholeStrata);
+  
+  // .superRefine() with access to boreholeStrata
+  const sptIntervalsFormSchema = baseSptIntervalsFormSchema.superRefine((data, ctx) => {
+    // Validate: depth_from y depth_to must be within stratum bounds
+    data.boreholes.forEach((borehole, boreholeIndex) => {
+      borehole.intervals.forEach((interval, intervalIndex) => {
+        // Find the stratum for this interval
+        const stratum = boreholeStrata.find(
+          (bs) => bs.id === interval.borehole_stratum_id
+        );
+        
+        if (stratum) {
+          if (
+            interval.depth_from < stratum.initial_depth ||
+            interval.depth_to > stratum.final_depth
+          ) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `El intervalo debe estar dentro de los límites del estrato (${stratum.initial_depth}m - ${stratum.final_depth}m)`,
+              path: ["boreholes", boreholeIndex, "intervals", intervalIndex, "depth_from"],
+            });
+          }
+        }
+      });
+    });
+  });
   const strata = useAppStore((state) => state.strata);
   const existingIntervals = useAppStore((state) => state.intervals);
   const draftIntervals = useAppStore((state) => state.draftIntervals);
@@ -108,6 +138,8 @@ const SPTIntervalsForm: React.FC = () => {
     register,
     watch,
     getValues,
+    setValue,
+    trigger,
     formState: { errors, isValid },
     handleSubmit,
   } = useForm<SPTIntervalsFormData>({
@@ -265,6 +297,8 @@ const SPTIntervalsForm: React.FC = () => {
           control={control}
           register={register}
           watch={watch}
+          setValue={setValue}
+          trigger={trigger}
           errors={errors}
           boreholeStratumOptions={getBoreholeStratumOptions(borehole.id)}
         />
@@ -314,6 +348,8 @@ interface TabContentProps {
   control: ReturnType<typeof useForm<SPTIntervalsFormData>>["control"];
   register: ReturnType<typeof useForm<SPTIntervalsFormData>>["register"];
   watch: ReturnType<typeof useForm<SPTIntervalsFormData>>["watch"];
+  setValue: ReturnType<typeof useForm<SPTIntervalsFormData>>["setValue"];
+  trigger: ReturnType<typeof useForm<SPTIntervalsFormData>>["trigger"];
   errors: ReturnType<
     typeof useForm<SPTIntervalsFormData>
   >["formState"]["errors"];
@@ -327,6 +363,7 @@ const TabContent: React.FC<TabContentProps> = ({
   control,
   register,
   watch,
+  trigger,
   errors,
   boreholeStratumOptions,
 }) => {
@@ -434,6 +471,20 @@ const TabContent: React.FC<TabContentProps> = ({
                     </button>
                   </div>
 
+                  {/* Warning if stratum info available */}
+                  {stratumInfo && (
+                    <div style={{
+                      padding: '0.75rem',
+                      backgroundColor: '#e3f2fd',
+                      borderLeft: '3px solid #2196f3',
+                      marginBottom: '1rem',
+                      fontSize: '0.9em',
+                      color: '#1565c0'
+                    }}>
+                      ℹ️ Este intervalo debe estar entre <strong>{stratumInfo.initial_depth}m</strong> y <strong>{stratumInfo.final_depth}m</strong>
+                    </div>
+                  )}
+
                   <div className={styles.intervalForm}>
                     {/* Stratum Selection */}
                     <div className={styles.formGroup}>
@@ -441,7 +492,13 @@ const TabContent: React.FC<TabContentProps> = ({
                       <select
                         {...register(
                           `boreholes.${boreholeIndex}.intervals.${index}.borehole_stratum_id`,
-                          { valueAsNumber: true }
+                          { 
+                            valueAsNumber: true,
+                            onChange: () => {
+                              // Revalidar cuando cambie el estrato
+                              trigger(`boreholes.${boreholeIndex}.intervals.${index}`);
+                            }
+                          }
                         )}
                         className={styles.input}
                       >
@@ -466,17 +523,32 @@ const TabContent: React.FC<TabContentProps> = ({
                     {/* Depth Range */}
                     <div className={styles.formRow}>
                       <div className={styles.formGroup}>
-                        <label>Prof. Inicial (m)</label>
+                        <label>
+                          Prof. Inicial (m)
+                          {stratumInfo && (
+                            <span style={{ fontSize: '0.85em', color: '#666', marginLeft: '0.5rem' }}>
+                              (Rango: {stratumInfo.initial_depth} - {stratumInfo.final_depth}m)
+                            </span>
+                          )}
+                        </label>
                         <input
                           type="number"
-                          step="any"
+                          step="0.01"
                           {...register(
                             `boreholes.${boreholeIndex}.intervals.${index}.depth_from`,
-                            { valueAsNumber: true }
+                            { 
+                              valueAsNumber: true,
+                              onChange: () => {
+                                // Revalidar este intervalo específico
+                                trigger(`boreholes.${boreholeIndex}.intervals.${index}`);
+                              }
+                            }
                           )}
-                          className={styles.input}
-                          min={stratumInfo?.initial_depth}
-                          max={stratumInfo?.final_depth}
+                          className={`${styles.input} ${
+                            errors.boreholes?.[boreholeIndex]?.intervals?.[index]?.depth_from
+                              ? styles.inputError
+                              : ''
+                          }`}
                         />
                         {errors.boreholes?.[boreholeIndex]?.intervals?.[index]
                           ?.depth_from && (
@@ -490,17 +562,32 @@ const TabContent: React.FC<TabContentProps> = ({
                       </div>
 
                       <div className={styles.formGroup}>
-                        <label>Prof. Final (m)</label>
+                        <label>
+                          Prof. Final (m)
+                          {stratumInfo && (
+                            <span style={{ fontSize: '0.85em', color: '#666', marginLeft: '0.5rem' }}>
+                              (Rango: {stratumInfo.initial_depth} - {stratumInfo.final_depth}m)
+                            </span>
+                          )}
+                        </label>
                         <input
                           type="number"
-                          step="any"
+                          step="0.01"
                           {...register(
                             `boreholes.${boreholeIndex}.intervals.${index}.depth_to`,
-                            { valueAsNumber: true }
+                            { 
+                              valueAsNumber: true,
+                              onChange: () => {
+                                // Revalidar este intervalo específico
+                                trigger(`boreholes.${boreholeIndex}.intervals.${index}`);
+                              }
+                            }
                           )}
-                          className={styles.input}
-                          min={stratumInfo?.initial_depth}
-                          max={stratumInfo?.final_depth}
+                          className={`${styles.input} ${
+                            errors.boreholes?.[boreholeIndex]?.intervals?.[index]?.depth_to
+                              ? styles.inputError
+                              : ''
+                          }`}
                         />
                         {errors.boreholes?.[boreholeIndex]?.intervals?.[index]
                           ?.depth_to && (

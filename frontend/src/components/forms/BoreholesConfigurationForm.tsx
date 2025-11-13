@@ -287,7 +287,7 @@ const BoreholesConfigurationForm: React.FC = () => {
 
   const onSubmit = handleSubmit(
     (data: BoreholesConfigFormData) => {
-      console.log("✅ Form validation passed, submitting...", data);
+      console.log("Form validation passed, submitting...", data);
 
       if (!project?.id) {
         toast.error("No hay proyecto activo");
@@ -311,8 +311,8 @@ const BoreholesConfigurationForm: React.FC = () => {
         assignments: borehole.strata_assignments,
       }));
 
-      console.log("📤 Submitting boreholes:", boreholesData); // Revisar estructura de estos datos
-      console.log("📤 Submitting strata assignments:", strataAssignmentsMap);
+      console.log("Submitting boreholes:", boreholesData); // Revisar estructura de estos datos
+      console.log("Submitting strata assignments:", strataAssignmentsMap);
 
       // Submit to API
       submitBoreholes({
@@ -321,7 +321,7 @@ const BoreholesConfigurationForm: React.FC = () => {
       });
     },
     (errors) => {
-      console.error("❌ Form validation failed:", errors);
+      console.error("Form validation failed:", errors);
       // Show which fields have errors
       if (errors.boreholes && Array.isArray(errors.boreholes)) {
         errors.boreholes.forEach((boreholeError, idx) => {
@@ -354,7 +354,7 @@ const BoreholesConfigurationForm: React.FC = () => {
     );
 
     if (!availableStratum) {
-      toast.error("❌ No available stratum to add");
+      toast.error("No available stratum to add");
       return;
     }
 
@@ -366,7 +366,7 @@ const BoreholesConfigurationForm: React.FC = () => {
         correctedAssignments.length === 1 &&
         correctedAssignments[0].depth_from !== 0
       ) {
-        console.log("🔧 Correcting first assignment to start at 0");
+        console.log("Correcting first assignment to start at 0");
         correctedAssignments[0] = {
           ...correctedAssignments[0],
           depth_from: 0,
@@ -410,7 +410,7 @@ const BoreholesConfigurationForm: React.FC = () => {
       ]);
       trigger(`boreholes.${boreholeIndex}.strata_assignments`);
     } else {
-      toast.error("❌ Cannot add assignment: last depth exceeds final depth");
+      toast.error("Cannot add assignment: last depth exceeds final depth");
     }
   };
 
@@ -798,7 +798,7 @@ const BoreholesConfigurationForm: React.FC = () => {
               fontSize: "12px",
             }}
           >
-            <strong>⚠️ Formulario incompleto (Revise todas las pestañas):</strong>
+            <strong>⚠️ Formulario incompleto <span> <p style={{color:"red"}}></p></span></strong>
             <ul style={{ margin: "5px 0", paddingLeft: "20px" }}>
               {errors.boreholes &&
                 Array.isArray(errors.boreholes) &&
@@ -1023,7 +1023,7 @@ const BoreholeProfilePreview: React.FC<{
     const colors = [
       "#541F05",
       "#5C390D",
-      "#847769",
+      "#4d4843ff",
       "#6D6D6D",
       "#2b3647ff",
       "#2e3136ff",
@@ -1112,7 +1112,7 @@ const BoreholeProfilePreview: React.FC<{
                       right: 0,
                     }}
                   >
-                    <span>N.F. {boreholeData.waterTable.toFixed(1)}m</span>
+                    <span>N.F. {boreholeData.waterTable}m</span>
                   </div>
                 )}
             </div>

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Libertinus+Math&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
 :root {
   --space-0: 0;
   --space-1: 0.5rem; /* 8px */
@@ -44,6 +46,7 @@
 
   /* ===== TYPOGRAPHY ===== */
   --font-family-primary: "Lexend Deca", system-ui, sans-serif;
+  --font-family-secondary: 'Libertinus Math', 'Open Sans', system-ui, sans-serif;
 
   /* Type Scale - Perfect Fourth (1.333) */
   --text-xs: 0.75rem; /* 12px */

@@ -1,8 +1,8 @@
             
 .resetButton {
   position: relative;
-  padding: var(--space-1);
-  font-size: var(--text-m );
+  padding: 4px;
+  font-size: var(--text-base);
   font-weight: 400;
   color: #fffefe;
   background: #837e7d96;

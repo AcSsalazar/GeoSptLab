@@ -10,7 +10,7 @@ function Home() {
         <div className={styles.bgDecoration1}></div>
         <div className={styles.bgDecoration2}></div>
 
-        <div className={styles.contentWrapper}>
+        <div >
           <div className={styles.titlesSection}>
             <div className={styles.badge}>
               <Link to="/calculator" className={styles.wrapperText}>Comenzar Ahora</Link>
@@ -31,13 +31,13 @@ function Home() {
               <p>Procesa y analiza datos de ensayos de penetración estándar con precisión profesional mediante un proceso modular y facil de usar.</p>
             </div>
 
-            <div className={`${styles.bgCards} ${styles.card2} ${styles.borderFancy2}`}>
+            <div className={`${styles.bgCards} ${styles.card2} `}>
               <img src={img || "/placeholder.svg"} alt="Fondo" />
               <h3>Reportes Automáticos</h3>
               <p>Esta aplicación genera, guarda, y descarga reportes técnicos detallados siguiendo estándares de la industria.</p>
             </div>
 
-            <div className={`${styles.bgCards} ${styles.card3} ${styles.borderFancy3}`}>
+            <div className={`${styles.bgCards} ${styles.card3}`}>
               <img src={img || "/placeholder.svg"} alt="Fondo" />
               <h3>Visualización</h3>
               <p>Gráficos y visualizaciones precisas e interactivas para mejor comprensión y manejo de los parámetros.</p>

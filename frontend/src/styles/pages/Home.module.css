@@ -110,12 +110,6 @@
   margin: 0 auto;
 }
 
-.titlesSection h2 {
-  color: #2f4a79;
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-}
-
 .bgCards h3 {
   color: #2f4a79;
   margin-bottom: 0.5rem;
@@ -199,10 +193,6 @@
 @media (max-width: 480px) {
   .badge {
     padding: 0.35rem 1rem;
-  }
-
-  .badge span {
-    font-size: 0.7rem;
   }
 
   .bgCards img {
