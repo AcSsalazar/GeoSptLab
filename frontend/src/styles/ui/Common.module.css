@@ -218,3 +218,28 @@
   display: none;
 }
 
+@media (max-width: 768px) {
+  .headerContent {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .titleSection {
+    gap: 12px;
+  }
+
+  .projectInfo {
+    align-items: flex-start;
+    flex-direction: row;
+  }
+
+  .tabList {
+    flex-wrap: wrap;
+  }
+
+  .tab {
+    min-width: 100px;
+  }
+}
+
