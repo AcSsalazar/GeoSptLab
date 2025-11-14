@@ -69,4 +69,14 @@ export const boreholeStrataService = {
     const assignments = await this.getByBorehole(boreholeId);
     await Promise.all(assignments.map(a => this.delete(a.id)));
   },
+
+  /**
+   * Obtener todas las asignaciones de múltiples boreholes
+   * Helper para cargar todos los strata de un proyecto
+   */
+  async getByBoreholes(boreholeIds: number[]): Promise<BoreholeStratum[]> {
+    const promises = boreholeIds.map(id => this.getByBorehole(id));
+    const results = await Promise.all(promises);
+    return results.flat(); // Flatten array of arrays
+  },
 };

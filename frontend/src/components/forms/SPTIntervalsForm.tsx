@@ -73,6 +73,7 @@ const SPTIntervalsForm: React.FC = () => {
   const project = useAppStore((state) => state.project);
   const boreholes = useAppStore((state) => state.boreholes);
   const boreholeStrata = useAppStore((state) => state.boreholeStrata);
+  const setBoreholeStrata = useAppStore((state) => state.setBoreholeStrata);
   
   // .superRefine() with access to boreholeStrata
   const sptIntervalsFormSchema = baseSptIntervalsFormSchema.superRefine((data, ctx) => {
@@ -115,6 +116,18 @@ const SPTIntervalsForm: React.FC = () => {
       boreholes: boreholes.map((borehole) => {
         const intervalsForBorehole = existingIntervals
           .filter((interval) => interval.borehole_id === borehole.id)
+          .filter((interval) => {
+            // VALIDACIÓN: Solo incluir intervalos con borehole_stratum_id válido
+            const isValid = boreholeStrata.some(
+              (bs) => bs.id === interval.borehole_stratum_id && bs.borehole_id === borehole.id
+            );
+            if (!isValid) {
+              console.warn(
+                `⚠️ Skipping interval with invalid stratum ${interval.borehole_stratum_id} for borehole ${borehole.id}`
+              );
+            }
+            return isValid;
+          })
           .map((interval) => ({
             borehole_stratum_id: interval.borehole_stratum_id,
             depth_from: interval.depth_from,
@@ -132,6 +145,29 @@ const SPTIntervalsForm: React.FC = () => {
     };
   };
 
+  // Función para validar y limpiar draftIntervals
+  const getValidatedDefaultValues = (): SPTIntervalsFormData => {
+    const baseData = draftIntervals || buildFormDataFromSavedIntervals();
+    
+    // Limpiar intervalos con borehole_stratum_id inválidos
+    return {
+      boreholes: baseData.boreholes.map((borehole) => ({
+        ...borehole,
+        intervals: borehole.intervals.filter((interval) => {
+          const isValid = boreholeStrata.some(
+            (bs) => bs.id === interval.borehole_stratum_id && bs.borehole_id === borehole.borehole_id
+          );
+          if (!isValid) {
+            console.warn(
+              `⚠️ Removing draft interval with invalid stratum ${interval.borehole_stratum_id} for borehole ${borehole.borehole_id}`
+            );
+          }
+          return isValid;
+        }),
+      })),
+    };
+  };
+
   // FORM SETUP
   const {
     control,
@@ -144,7 +180,7 @@ const SPTIntervalsForm: React.FC = () => {
     handleSubmit,
   } = useForm<SPTIntervalsFormData>({
     resolver: zodResolver(sptIntervalsFormSchema),
-    defaultValues: draftIntervals || buildFormDataFromSavedIntervals(),
+    defaultValues: getValidatedDefaultValues(),
     mode: "onChange",
   });
 
@@ -168,6 +204,27 @@ const SPTIntervalsForm: React.FC = () => {
       saveDraft();
     };
   }, [saveDraft]);
+
+  // 🔄 CARGAR BOREHOLE STRATA SI ESTÁ VACÍO
+  useEffect(() => {
+    const loadBoreholeStrata = async () => {
+      // Solo cargar si boreholeStrata está vacío pero tenemos boreholes
+      if (boreholeStrata.length === 0 && boreholes.length > 0) {
+        console.log("📥 Loading boreholeStrata for intervals form...");
+        try {
+          const { boreholeStrataService } = await import('@/features/boreholes/services/boreholeStrataService');
+          const boreholeIds = boreholes.map(b => b.id);
+          const strata = await boreholeStrataService.getByBoreholes(boreholeIds);
+          setBoreholeStrata(strata);
+          console.log(`✅ Loaded ${strata.length} boreholeStrata`);
+        } catch (error) {
+          console.error("❌ Error loading boreholeStrata:", error);
+        }
+      }
+    };
+
+    loadBoreholeStrata();
+  }, [boreholes, boreholeStrata.length, setBoreholeStrata]);
 
   // TAB MANAGEMENT
   const handleTabChange = (newTab: number) => {
@@ -206,15 +263,51 @@ const SPTIntervalsForm: React.FC = () => {
     console.log("Submitting form data:", data);
 
     // Transform nested structure to flat array for API
+    // VALIDACIÓN: Verificar que cada borehole_stratum_id pertenece al borehole correcto
     const flatIntervals = data.boreholes.flatMap((borehole) =>
-      borehole.intervals.map((interval) => ({
-        ...interval,
-        borehole_id: borehole.borehole_id,
-      }))
+      borehole.intervals.map((interval) => {
+        // Verificar que el stratum pertenece al borehole
+        const stratumBelongsToBorehole = boreholeStrata.some(
+          (bs) => bs.id === interval.borehole_stratum_id && bs.borehole_id === borehole.borehole_id
+        );
+
+        if (!stratumBelongsToBorehole) {
+          console.error(
+            `❌ ERROR: Stratum ${interval.borehole_stratum_id} no pertenece a borehole ${borehole.borehole_id}`,
+            {
+              interval,
+              borehole,
+              availableStrata: boreholeStrata.filter(bs => bs.borehole_id === borehole.borehole_id)
+            }
+          );
+        }
+
+        return {
+          ...interval,
+          borehole_id: borehole.borehole_id,
+        };
+      })
     );
 
-    console.log("📤 Flat intervals for API:", flatIntervals);
-    submit(flatIntervals);
+    // Filtrar solo los intervalos válidos
+    const validIntervals = flatIntervals.filter((interval) => {
+      const isValid = boreholeStrata.some(
+        (bs) => bs.id === interval.borehole_stratum_id && bs.borehole_id === interval.borehole_id
+      );
+      if (!isValid) {
+        console.warn(`⚠️ Skipping invalid interval with stratum ${interval.borehole_stratum_id}`);
+      }
+      return isValid;
+    });
+
+    console.log("📤 Valid intervals for API:", validIntervals);
+    
+    if (validIntervals.length === 0) {
+      console.error("❌ No hay intervalos válidos para enviar");
+      return;
+    }
+
+    submit(validIntervals);
   };
 
   if (!project) {
