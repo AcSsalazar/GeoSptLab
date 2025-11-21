@@ -88,27 +88,31 @@ const boreholeSchema = z
       );
 
       // CRITICAL: Check that assignments start at 0
-      if (assignments[0].depth_from !== 0) {
+/*       if (assignments[0].depth_from !== 0) {
         return false;
-      }
+      } */
 
       // CRITICAL: Check that assignments end at final depth
-      if (assignments[assignments.length - 1].depth_to !== data.final_depth) {
+      // Round to 2 decimals to avoid floating point precision issues
+      const lastDepth = Math.round(assignments[assignments.length - 1].depth_to * 100) / 100;
+      const finalDepth = Math.round(data.final_depth * 100) / 100;
+      
+      if (lastDepth !== finalDepth) {
         console.error(
-          `❌ Last stratum must end at ${data.final_depth}, but ends at ${
-            assignments[assignments.length - 1].depth_to
-          }`
+          `❌ Last stratum must end at ${finalDepth}, but ends at ${lastDepth}`
         );
         return false;
       }
 
       // Check for gaps or overlaps
+      // Round to 2 decimals to avoid floating point precision issues
       for (let i = 0; i < assignments.length - 1; i++) {
-        if (assignments[i].depth_to !== assignments[i + 1].depth_from) {
+        const currentEnd = Math.round(assignments[i].depth_to * 100) / 100;
+        const nextStart = Math.round(assignments[i + 1].depth_from * 100) / 100;
+        
+        if (currentEnd !== nextStart) {
           console.error(
-            `❌ Gap/overlap between stratum ${i} and ${i + 1}: ${
-              assignments[i].depth_to
-            } !== ${assignments[i + 1].depth_from}`
+            `❌ Gap/overlap between stratum ${i} and ${i + 1}: ${currentEnd} !== ${nextStart}`
           );
           return false;
         }
@@ -592,7 +596,7 @@ const BoreholesConfigurationForm: React.FC = () => {
                     </label>
                     <input
                       type="number"
-                      step="any"
+                      step="0.01"
                       {...register(`boreholes.${boreholeIndex}.final_depth`, {
                         valueAsNumber: true,
                         onChange: (e) =>
@@ -923,7 +927,7 @@ const StrataAssignmentsList: React.FC<{
                   <label className={styles.label}>Desde (m)</label>
                   <input
                     type="number"
-                    step="0.1"
+                    step="0.01"
                     {...register(`boreholes.${boreholeIndex}.strata_assignments.${assignmentIndex}.depth_from`, { 
                       valueAsNumber: true,
                       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -946,7 +950,7 @@ const StrataAssignmentsList: React.FC<{
                   <label className={styles.label}>Hasta (m)</label>
                   <input
                     type="number"
-                    step="0.1"
+                    step="0.01"
                     {...register(`boreholes.${boreholeIndex}.strata_assignments.${assignmentIndex}.depth_to`, { 
                       valueAsNumber: true,
                       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
