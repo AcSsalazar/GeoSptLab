@@ -1,6 +1,4 @@
-/**
- * 📊 SPT INTERVALS SERVICE - Datos de ensayos SPT
- * 
+/*
  * ENDPOINTS:
  * - POST /spt-intervals/            → Crear intervalo
  * - GET  /spt-intervals/project/{id} → Por proyecto

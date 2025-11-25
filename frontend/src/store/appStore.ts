@@ -1,14 +1,9 @@
-/**
- * 🗄️ ZUSTAND STORE - Estado Global Simplificado
- * 
- * VENTAJAS vs Context API:
- * Menos código (50% menos que Context)
- * Mejor performance (solo re-renderiza lo necesario)
+/*
+ * ZUSTAND STORE - Estado Global Simplificado
  * DevTools integrado (debugging fácil)
  * Persist automático (guarda en localStorage)
  * No necesita Provider (acceso directo)
-
- */
+*/
 
 import { create } from 'zustand';
 import { devtools, persist, createJSONStorage } from 'zustand/middleware';
@@ -24,19 +19,7 @@ import type {
   SPTIntervalCreate,
 } from '@/types/project';
 
-// ===========================================
-// TIPOS
-// ===========================================
 
-/**
- * Estado completo de la aplicación
- * 
- * ORGANIZACIÓN:
- * 1. Datos del servidor (con IDs)
- * 2. Datos de formularios (antes de guardar)
- * 3. Estado UI (loading, errors, etc.)
- * 4. Navegación (currentStep, completed)
- */
 interface AppState {
   // === DATOS DEL SERVIDOR ===
   project: Project | null;
@@ -172,33 +155,6 @@ const initialState: AppState = {
   completedSteps: new Set<number>(),
 };
 
-// ===========================================
-// STORE
-// ===========================================
-
-/**
- * Store principal de la aplicación
- * 
- * USO EN COMPONENTES:
- * ```tsx
- * import { useAppStore } from '@/features/shared/store/appStore';
- * 
- * function MyComponent() {
- *   // Selectores específicos (mejor performance)
- *   const project = useAppStore(state => state.project);
- *   const setProject = useAppStore(state => state.setProject);
- *   
- *   // O todo el estado (menos performante)
- *   const { project, setProject } = useAppStore();
- *   
- *   return <div>{project?.project_name}</div>;
- * }
- * ```
- * 
- * MIDDLEWARE:
- * 1. devtools → Redux DevTools para debugging
- * 2. persist → Guarda en localStorage automáticamente
- */
 export const useAppStore = create<AppStore>()(
   devtools(
     persist(

@@ -1,6 +1,4 @@
-/**
- * 🧮 CALCULATIONS SERVICE - Cálculos de parámetros SPT
- * 
+/*
  * ENDPOINTS:
  * - POST /calculations/project/{id}/calculate → Calcular parámetros
  * - GET  /calculations/project/{id}/results   → Ver resultados
@@ -18,10 +16,7 @@ import type {
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
 
 export const calculationsService = {
-  /**
-   * Calcular parámetros SPT para un proyecto
-   * POST /calculations/project/{projectId}/calculate
-   */
+
   async calculateProject(
     projectId: number, 
     options: CalculationRequest = {}

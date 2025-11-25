@@ -151,6 +151,7 @@ const FinalReport: React.FC = () => {
                   </th>
                 </tr>
               </thead>
+              <thead>Parametros para Perforacion </thead>
               <tbody>
                 {results.results.map((result) => (
                   <tr key={result.id}>
