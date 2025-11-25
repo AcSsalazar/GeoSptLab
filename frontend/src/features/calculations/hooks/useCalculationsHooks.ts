@@ -1,16 +1,10 @@
-/**
- * Custom Hooks para Calculations con React Query
- */
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { calculationsService} from '../services/calculationsService';
 import type { CalculationRequest } from '@/types/api';
 import { queryKeys } from '@/lib/queryClient';
 import { useAppStore } from '@/store/appStore';
-
-// ===========================================
-// QUERIES (GET)
-// ===========================================
+import { toast } from 'react-toastify';
 
 /**
  * Hook para obtener resultados calculados de un proyecto
@@ -24,22 +18,6 @@ export function useProjectResults(projectId: number | undefined) {
   });
 }
 
-// ===========================================
-// MUTATIONS (POST/DELETE)
-// ===========================================
-
-/**
- * Hook para calcular parámetros SPT de un proyecto
- * 
- * USO:
- * ```tsx
- * const calculate = useCalculateProject();
- * 
- * const handleCalculate = () => {
- *   calculate.mutate({ recalculate_all: true });
- * };
- * ```
- */
 export function useCalculateProject() {
   const queryClient = useQueryClient();
   const project = useAppStore((state) => state.project);
@@ -65,6 +43,8 @@ export function useCalculateProject() {
       
       // Navegar al paso de resultados
       goToNextStep();
+
+      toast.success('Cálculo completado con éxito');
       
       // Invalidar cache de resultados
       if (project?.id) {

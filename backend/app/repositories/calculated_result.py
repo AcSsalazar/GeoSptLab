@@ -3,7 +3,6 @@ Repository for Calculated Result CRUD operations.
 """
 from typing import List, Optional
 from sqlalchemy.orm import Session, selectinload
-
 from app.models.calculated_result import CalculatedResult
 from app.schemas.calculated_result import CalculatedResultCreate, CalculatedResultUpdate
 

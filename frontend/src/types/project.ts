@@ -121,6 +121,20 @@ export interface SPTIntervalCreate {
   nspt_field: number;
 }
 
+export interface StratumStats {
+  stratum_name: string;
+  stratum_code: string;
+  count: number;
+  phi_mean: number;
+  phi_std: number;
+  phi_lower: number;
+  phi_upper: number;
+  modulus_mean: number;
+  modulus_std: number;
+  modulus_lower: number;
+  modulus_upper: number;
+}
+
 export interface CalculatedResult {
   id: number;
   spt_interval_id: number;

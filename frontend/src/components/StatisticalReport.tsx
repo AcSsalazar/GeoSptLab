@@ -2,24 +2,12 @@ import React, { useMemo } from 'react';
 import { OctagonAlert } from 'lucide-react';
 import { useAppStore } from '@/store/appStore';
 import MohrCoulombChart from './MohrCoulombChart';
-import type {  ProjectResultsResponse} from '@/types/api';
-import type { CalculatedResult } from '@/types/project';
+import type {  ProjectResultsResponse } from '@/types/api';
+import type { CalculatedResult, StratumStats } from '@/types/project';
 import styles from '@/styles/StatisticalReport.module.css';
 import common from '@/styles/ui/Common.module.css';
 
-interface StratumStats {
-  stratum_name: string;
-  stratum_code: string;
-  count: number;
-  phi_mean: number;
-  phi_std: number;
-  phi_lower: number;
-  phi_upper: number;
-  modulus_mean: number;
-  modulus_std: number;
-  modulus_lower: number;
-  modulus_upper: number;
-}
+
 
 const StatisticalReport: React.FC<{ resultsData: ProjectResultsResponse | undefined }> = ({ resultsData }) => {
   const strata = useAppStore((state) => state.strata);

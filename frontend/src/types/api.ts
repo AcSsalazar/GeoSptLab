@@ -15,6 +15,7 @@ export interface CalculationRequest {
 
 export interface CalculationResponse {
   project_id: number;
+  
   calculated_intervals: number;
   updated_intervals: number;
   message: string;

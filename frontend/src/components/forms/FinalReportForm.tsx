@@ -6,6 +6,7 @@ import StatisticalReport from "../StatisticalReport";
 import styles from "@/styles/FinalReport.module.css";
 import common from "@/styles/ui/Common.module.css";
 import Alerts from "@/components/layout/Alerts";
+
 const FinalReport: React.FC = () => {
   const project = useAppStore((state) => state.project);
   const { calculate, isCalculating, results, isLoadingResults, resultsError } =
@@ -90,7 +91,7 @@ const FinalReport: React.FC = () => {
       {/* Results Table */}
       {results && results.results && results.results.length > 0 && (
         <div className={styles.resultsSection}>
-          <h3>Parámetros Calculados ({results.results.length} intervalos)</h3>
+          <h3>Parámetros calculados para los ({results.results.length} intervalos)</h3>
 
           <div className={styles.tableResponsive}>
             <table className={styles.resultsTable}>
@@ -157,6 +158,7 @@ const FinalReport: React.FC = () => {
                   <tr key={result.id}>
                     <td>{result.id}</td>
                     <td>{result.spt_interval_id}</td>
+                    <td></td>
                     <td className={styles.numeric}>
                       {result.sigma_prime.toFixed(2)}
                     </td>
