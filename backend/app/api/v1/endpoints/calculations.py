@@ -115,6 +115,10 @@ def calculate_spt_parameters_for_project(
             # Create or update calculated result
             result_data = CalculatedResultCreate(
                 spt_interval_id=interval.id,
+                project_id=interval.borehole.project_id,
+                borehole_id=interval.borehole.id,
+                borehole_name=interval.borehole.borehole_name,
+                stratum_code=interval.borehole_stratum.stratum_definition.stratum_code,
                 **results
             )
             
@@ -185,6 +189,10 @@ def get_project_results(
         result_dict = {
             "id": result.id,
             "spt_interval_id": result.spt_interval_id,
+            "project_id": result.project_id,
+            "borehole_id": result.borehole_id,
+            "borehole_name": result.borehole_name,
+            "stratum_code": result.stratum_code,
             "sigma_prime": result.sigma_prime,
             "tau_resistance": result.tau_resistance,
             "phi_prime_eq": result.phi_prime_eq,
@@ -201,12 +209,13 @@ def get_project_results(
         }
         results_dicts.append(result_dict)
         
-        # Get stratum code for this result - use the interval's relationship
-        interval = result.spt_interval
-        if interval and interval.borehole_stratum:
-            borehole_stratum = interval.borehole_stratum
-            if borehole_stratum.stratum_definition:
-                stratum_mapping[result.id] = borehole_stratum.stratum_definition.stratum_code
+        # Get stratum code for this result - use the denormalized field
+        if result.stratum_code:
+            stratum_mapping[result.id] = result.stratum_code
+        # Fallback for legacy data if needed
+        elif result.spt_interval and result.spt_interval.borehole_stratum:
+             if result.spt_interval.borehole_stratum.stratum_definition:
+                stratum_mapping[result.id] = result.spt_interval.borehole_stratum.stratum_definition.stratum_code
     
     # Calculate regression analysis by stratum
     regression_by_stratum = {}
@@ -306,6 +315,10 @@ def calculate_single_interval(
         # Create or update calculated result
         result_data = CalculatedResultCreate(
             spt_interval_id=interval.id,
+            project_id=interval.borehole.project_id,
+            borehole_id=interval.borehole.id,
+            borehole_name=interval.borehole.borehole_name,
+            stratum_code=interval.borehole_stratum.stratum_definition.stratum_code,
             **results
         )
         

@@ -137,6 +137,10 @@ export interface StratumStats {
 
 export interface CalculatedResult {
   id: number;
+  project_id: number;
+  borehole_id: number;
+  borehole_name: string;
+  stratum_code: string;
   spt_interval_id: number;
   sigma_prime: number;
   cb_factor: number;

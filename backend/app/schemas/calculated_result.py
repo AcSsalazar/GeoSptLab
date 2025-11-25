@@ -8,6 +8,11 @@ from decimal import Decimal
 
 class CalculatedResultBase(BaseModel):
     """Base schema for Calculated Result."""
+    spt_interval_id: int
+    project_id: int 
+    borehole_id: int 
+    borehole_name: str 
+    stratum_code: str 
     sigma_prime: Decimal = Field(..., ge=0, description="Effective stress in kN/m²")
     cb_factor: Decimal = Field(..., gt=0, description="Borehole diameter correction factor")
     cs_factor: Decimal = Field(..., gt=0, description="Sampling method correction factor")
@@ -26,6 +31,7 @@ class CalculatedResultBase(BaseModel):
 class CalculatedResultCreate(CalculatedResultBase):
     """Schema for creating a new Calculated Result."""
     spt_interval_id: int = Field(..., gt=0, description="SPT Interval ID")
+    
 
 
 class CalculatedResultUpdate(BaseModel):

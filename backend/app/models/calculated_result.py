@@ -1,7 +1,7 @@
 """
 Calculated Result model.
 """
-from sqlalchemy import Column, Integer, Float, ForeignKey, Numeric
+from sqlalchemy import Column, Integer, ForeignKey, Numeric, String
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
@@ -10,10 +10,16 @@ class CalculatedResult(Base):
     Calculated Result model storing computed SPT parameters.
     """
     __tablename__ = "calculated_results"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     spt_interval_id = Column(Integer, ForeignKey("spt_intervals.id"), nullable=False, unique=True)
     
+    # Nuevas tablas para mejorar la visualizacion de los datos del proyecto
+    project_id=Column(Integer, ForeignKey("project.id"), nullable=True)
+    borehole_id=Column(Integer, ForeignKey("boreholes.id" ), nullable=True)
+    borehole_name=Column(String, nullable=True, index=True)
+    stratum_code =Column(String, nullable=True, index=True)
+     
     # Stress calculations
     sigma_prime = Column(Numeric(10, 4), nullable=False)  # kN/m², effective stress
     
@@ -37,3 +43,5 @@ class CalculatedResult(Base):
     
     # Relationships
     spt_interval = relationship("SPTInterval", back_populates="calculated_result")
+    project = relationship("Project")
+    borehole = relationship("Borehole")

@@ -16,6 +16,29 @@ const FinalReport: React.FC = () => {
     calculate({ recalculate_all: true });
   };
 
+  // Group results by borehole
+  const groupedResults = React.useMemo(() => {
+    if (!results?.results) return {};
+
+    // Sort results by borehole_name and then by depth (assuming id correlates with depth or we might need depth)
+    // For now, we'll trust the order or just group
+    const sorted = [...results.results].sort((a, b) => {
+      if (a.borehole_name !== b.borehole_name) {
+        return a.borehole_name.localeCompare(b.borehole_name);
+      }
+      return a.id - b.id; // Fallback to ID sorting
+    });
+
+    return sorted.reduce((acc, result) => {
+      const borehole = result.borehole_name || `Perforación ${result.borehole_id}`;
+      if (!acc[borehole]) {
+        acc[borehole] = [];
+      }
+      acc[borehole].push(result);
+      return acc;
+    }, {} as Record<string, typeof results.results>);
+  }, [results]);
+
   if (!project) {
     return (
       <div>
@@ -91,7 +114,7 @@ const FinalReport: React.FC = () => {
       {/* Results Table */}
       {results && results.results && results.results.length > 0 && (
         <div className={styles.resultsSection}>
-          <h3>Parámetros calculados para los ({results.results.length} intervalos)</h3>
+          <h3>Parámetros calculados ({results.results.length} intervalos)</h3>
 
           <div className={styles.tableResponsive}>
             <table className={styles.resultsTable}>
@@ -99,6 +122,7 @@ const FinalReport: React.FC = () => {
                 <tr>
                   <th rowSpan={2}>ID</th>
                   <th rowSpan={2}>Intervalo</th>
+                  <th rowSpan={2}>Estrato</th>
                   <th rowSpan={2}>
                     σ&apos;
                     <br />
@@ -152,45 +176,53 @@ const FinalReport: React.FC = () => {
                   </th>
                 </tr>
               </thead>
-              <thead>Parametros para Perforacion </thead>
               <tbody>
-                {results.results.map((result) => (
-                  <tr key={result.id}>
-                    <td>{result.id}</td>
-                    <td>{result.spt_interval_id}</td>
-                    <td></td>
-                    <td className={styles.numeric}>
-                      {result.sigma_prime.toFixed(2)}
-                    </td>
-                    <td className={styles.numeric}>
-                      {result.cb_factor?.toFixed(2) || "N/A"}
-                    </td>
-                    <td className={styles.numeric}>
-                      {result.cs_factor?.toFixed(2) || "N/A"}
-                    </td>
-                    <td className={styles.numeric}>
-                      {result.cr_factor?.toFixed(2) || "N/A"}
-                    </td>
-                    <td className={styles.numeric}>
-                      {result.cn_factor?.toFixed(2) || "N/A"}
-                    </td>
-                    <td className={styles.numeric}>{result.n45.toFixed(2)}</td>
-                    <td className={styles.numeric}>{result.n55.toFixed(2)}</td>
-                    <td className={styles.numeric}>{result.n60.toFixed(2)}</td>
-                    <td className={styles.numeric}>{result.n145.toFixed(2)}</td>
-                    <td className={`${styles.numeric} ${styles.highlight}`}>
-                      {result.phi_prime_eq.toFixed(2)}
-                    </td>
-                    <td className={`${styles.numeric} ${styles.highlight}`}>
-                      {result.elastic_modulus.toFixed(2)}
-                    </td>
-                    <td className={styles.numeric}>
-                      {result.tau_resistance.toFixed(2)}
-                    </td>
-                    <td className={styles.numeric}>
-                      {result.su_undrained.toFixed(2)}
-                    </td>
-                  </tr>
+                {Object.entries(groupedResults).map(([boreholeName, groupResults]) => (
+                  <React.Fragment key={boreholeName}>
+                    <tr className={styles.groupHeaderRow}>
+                      <td colSpan={16} style={{ backgroundColor: '#f0f9ff', fontWeight: 'bold', textAlign: 'left', paddingLeft: '1rem' }}>
+                        {boreholeName}
+                      </td>
+                    </tr>
+                    {groupResults.map((result) => (
+                      <tr key={result.id}>
+                        <td>{result.id}</td>
+                        <td>{result.spt_interval_id}</td>
+                        <td>{result.stratum_code || "-"}</td>
+                        <td className={styles.numeric}>
+                          {result.sigma_prime.toFixed(2)}
+                        </td>
+                        <td className={styles.numeric}>
+                          {result.cb_factor?.toFixed(2) || "N/A"}
+                        </td>
+                        <td className={styles.numeric}>
+                          {result.cs_factor?.toFixed(2) || "N/A"}
+                        </td>
+                        <td className={styles.numeric}>
+                          {result.cr_factor?.toFixed(2) || "N/A"}
+                        </td>
+                        <td className={styles.numeric}>
+                          {result.cn_factor?.toFixed(2) || "N/A"}
+                        </td>
+                        <td className={styles.numeric}>{result.n45.toFixed(2)}</td>
+                        <td className={styles.numeric}>{result.n55.toFixed(2)}</td>
+                        <td className={styles.numeric}>{result.n60.toFixed(2)}</td>
+                        <td className={styles.numeric}>{result.n145.toFixed(2)}</td>
+                        <td className={`${styles.numeric} ${styles.highlight}`}>
+                          {result.phi_prime_eq.toFixed(2)}
+                        </td>
+                        <td className={`${styles.numeric} ${styles.highlight}`}>
+                          {result.elastic_modulus.toFixed(2)}
+                        </td>
+                        <td className={styles.numeric}>
+                          {result.tau_resistance.toFixed(2)}
+                        </td>
+                        <td className={styles.numeric}>
+                          {result.su_undrained.toFixed(2)}
+                        </td>
+                      </tr>
+                    ))}
+                  </React.Fragment>
                 ))}
               </tbody>
             </table>

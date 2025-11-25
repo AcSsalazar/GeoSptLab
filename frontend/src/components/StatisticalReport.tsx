@@ -149,6 +149,7 @@ const StatisticalReport: React.FC<{ resultsData: ProjectResultsResponse | undefi
           // Note: Backend already filtered and calculated, but we need actual points for visualization
           // For now, we'll use all results and let the backend grouping handle it
           const dataPoints = results
+            .filter((r) => r.stratum_code === stat.stratum_code)
             .map((r: CalculatedResult) => ({
               sigma_prime: r.sigma_prime,
               tau: r.tau_resistance,
