@@ -193,16 +193,16 @@ const FinalReport: React.FC = () => {
                           {result.sigma_prime.toFixed(2)}
                         </td>
                         <td className={styles.numeric}>
-                          {result.cb_factor?.toFixed(2) || "N/A"}
+                          {result.cb_factor ? result.cb_factor.toFixed(2) : "N/A"}
                         </td>
                         <td className={styles.numeric}>
-                          {result.cs_factor?.toFixed(2) || "N/A"}
+                          {result.cs_factor ? result.cs_factor.toFixed(2) : "N/A"}
                         </td>
                         <td className={styles.numeric}>
-                          {result.cr_factor?.toFixed(2) || "N/A"}
+                          {result.cr_factor ? result.cr_factor.toFixed(2) : "N/A"}
                         </td>
                         <td className={styles.numeric}>
-                          {result.cn_factor?.toFixed(2) || "N/A"}
+                          {result.cn_factor ? result.cn_factor.toFixed(2) : "N/A"}
                         </td>
                         <td className={styles.numeric}>{result.n45.toFixed(2)}</td>
                         <td className={styles.numeric}>{result.n55.toFixed(2)}</td>
@@ -212,13 +212,13 @@ const FinalReport: React.FC = () => {
                           {result.phi_prime_eq.toFixed(2)}
                         </td>
                         <td className={`${styles.numeric} ${styles.highlight}`}>
-                          {result.elastic_modulus.toFixed(2)}
+                          {result.elastic_modulus ? result.elastic_modulus.toFixed(2) : "N/A"}
                         </td>
                         <td className={styles.numeric}>
-                          {result.tau_resistance.toFixed(2)}
+                          {result.tau_resistance ? result.tau_resistance.toFixed(2) : "N/A"}
                         </td>
                         <td className={styles.numeric}>
-                          {result.su_undrained.toFixed(2)}
+                          {result.su_undrained ? result.su_undrained.toFixed(2) : "N/A"}
                         </td>
                       </tr>
                     ))}
@@ -258,7 +258,7 @@ const FinalReport: React.FC = () => {
                 <span className={styles.statValue}>
                   {(
                     results.results.reduce(
-                      (sum, r) => sum + r.elastic_modulus,
+                      (sum, r) => sum + (r.elastic_modulus ? r.elastic_modulus : 0),
                       0
                     ) / results.results.length
                   ).toFixed(2)}{" "}
