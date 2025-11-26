@@ -25,13 +25,14 @@ def create_application():
         lifespan=lifespan
     )
 
-    # Set up CORS middleware
+    # Set up CORS middleware - uses settings for production flexibility
+    # Set ALLOWED_ORIGINS environment variable for production domains
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5173", "http://127.0.0.1:5174"],
+        allow_origins=settings.cors_origins,
         allow_credentials=True,
-        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allow_headers=["*"],
+        allow_methods=settings.allowed_methods,
+        allow_headers=settings.allowed_headers,
     )
 
     # Add explicit OPTIONS handler for preflight requests

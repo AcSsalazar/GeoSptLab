@@ -8,11 +8,17 @@ from typing import Generator
 
 from .config import settings
 
-# Create SQLAlchemy engine
+# Handle SQLite vs PostgreSQL connection arguments
+connect_args = {}
+if settings.database_url.startswith("sqlite"):
+    connect_args["check_same_thread"] = False
+
+# Create SQLAlchemy engine using the property that handles postgres:// URL
 engine = create_engine(
-    settings.database_url,
+    settings.get_database_url,
     pool_pre_ping=True,
     echo=settings.debug,  # Log SQL queries in debug mode
+    connect_args=connect_args,
 )
 
 # Create SessionLocal class
