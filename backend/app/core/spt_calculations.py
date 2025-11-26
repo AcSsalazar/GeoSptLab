@@ -504,36 +504,45 @@ def calculate_statistical_summary_by_stratum(
         if n == 0:
             continue
         
-        # Extraer valores de φ' y E
-        phi_values = [r["phi_prime_eq"] for r in stratum_results]
-        modulus_values = [r["elastic_modulus"] for r in stratum_results]
+        # Extraer valores de φ' y E - Convert Decimal to float for statistics
+        phi_values = [float(r["phi_prime_eq"]) for r in stratum_results if r.get("phi_prime_eq") is not None]
+        modulus_values = [float(r["elastic_modulus"]) for r in stratum_results if r.get("elastic_modulus") is not None]
+        
+        n_phi = len(phi_values)
+        n_mod = len(modulus_values)
         
         # Calcular media
-        phi_mean = sum(phi_values) / n
-        modulus_mean = sum(modulus_values) / n
+        phi_mean = sum(phi_values) / n_phi if n_phi > 0 else 0.0
+        modulus_mean = sum(modulus_values) / n_mod if n_mod > 0 else 0.0
         
-        if n > 1:
-            # Calcular desviación estándar
-            phi_variance = sum((x - phi_mean) ** 2 for x in phi_values) / (n - 1)
+        # Estadísticas para Phi
+        if n_phi > 1:
+            phi_variance = sum((x - phi_mean) ** 2 for x in phi_values) / (n_phi - 1)
             phi_std = math.sqrt(phi_variance)
             
-            modulus_variance = sum((x - modulus_mean) ** 2 for x in modulus_values) / (n - 1)
-            modulus_std = math.sqrt(modulus_variance)
-            
-            # Intervalo de confianza 95% (±1.96 * std / sqrt(n))
-            t_value = 1.96  # Para muestras grandes; usar distribución t para pequeñas
-            phi_margin = t_value * phi_std / math.sqrt(n)
-            modulus_margin = t_value * modulus_std / math.sqrt(n)
+            # Intervalo de confianza 95%
+            t_value = 1.96
+            phi_margin = t_value * phi_std / math.sqrt(n_phi)
             
             phi_lower = phi_mean - phi_margin
             phi_upper = phi_mean + phi_margin
-            modulus_lower = modulus_mean - modulus_margin
-            modulus_upper = modulus_mean + modulus_margin
         else:
-            # Solo un dato - no hay intervalo de confianza
             phi_std = 0.0
             phi_lower = phi_mean
             phi_upper = phi_mean
+
+        # Estadísticas para Módulo Elástico
+        if n_mod > 1:
+            modulus_variance = sum((x - modulus_mean) ** 2 for x in modulus_values) / (n_mod - 1)
+            modulus_std = math.sqrt(modulus_variance)
+            
+            # Intervalo de confianza 95%
+            t_value = 1.96
+            modulus_margin = t_value * modulus_std / math.sqrt(n_mod)
+            
+            modulus_lower = modulus_mean - modulus_margin
+            modulus_upper = modulus_mean + modulus_margin
+        else:
             modulus_std = 0.0
             modulus_lower = modulus_mean
             modulus_upper = modulus_mean
