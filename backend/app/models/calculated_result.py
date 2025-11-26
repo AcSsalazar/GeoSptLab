@@ -15,7 +15,7 @@ class CalculatedResult(Base):
     spt_interval_id = Column(Integer, ForeignKey("spt_intervals.id"), nullable=False, unique=True)
     
     # Nuevas tablas para mejorar la visualizacion de los datos del proyecto
-    project_id=Column(Integer, ForeignKey("project.id"), nullable=True)
+    project_id=Column(Integer, ForeignKey("projects.id"), nullable=True)
     borehole_id=Column(Integer, ForeignKey("boreholes.id" ), nullable=True)
     borehole_name=Column(String, nullable=True, index=True)
     stratum_code =Column(String, nullable=True, index=True)
