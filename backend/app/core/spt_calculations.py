@@ -504,13 +504,18 @@ def calculate_statistical_summary_by_stratum(
         if n == 0:
             continue
         
-        # Extraer valores de φ' y E
-        phi_values = [r["phi_prime_eq"] for r in stratum_results]
-        modulus_values = [r["elastic_modulus"] for r in stratum_results]
+        # Extraer valores de φ' y E (convertir a float para cálculos estadísticos)
+        phi_values = [float(r["phi_prime_eq"]) for r in stratum_results if r["phi_prime_eq"] is not None]
+        modulus_values = [float(r["elastic_modulus"]) for r in stratum_results if r["elastic_modulus"] is not None]
+        
+        if not phi_values:
+            continue
+            
+        n = len(phi_values)
         
         # Calcular media
         phi_mean = sum(phi_values) / n
-        modulus_mean = sum(modulus_values) / n
+        modulus_mean = sum(modulus_values) / n if modulus_values else 0.0
         
         if n > 1:
             # Calcular desviación estándar

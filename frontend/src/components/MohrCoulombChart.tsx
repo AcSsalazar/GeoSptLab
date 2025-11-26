@@ -32,6 +32,10 @@ interface Props {
   color?: string;
 }
 
+// Helper component to render an empty shape for line-only scatters
+// This avoids passing invalid props like 'tooltipPayload' to the DOM element
+const EmptyShape = () => <g />;
+
 const MohrCoulombChart: React.FC<Props> = ({
   stratumName,
   stratumCode,
@@ -200,7 +204,7 @@ const MohrCoulombChart: React.FC<Props> = ({
 
               {/* Data points scatter */}
               <Scatter
-                name="Datos SPT"
+                name={"Datos SPT"}
                 data={dataPoints.map((p) => ({ x: p.sigma_prime, y: p.tau }))}
                 fill={color}
                 shape="circle"
@@ -213,17 +217,17 @@ const MohrCoulombChart: React.FC<Props> = ({
                 data={regressionLineData}
                 fill="none"
                 line={{ stroke: '#000', strokeWidth: 2, strokeDasharray: '5 5' }}
-                shape={<></>}
+                shape={<EmptyShape />}
               />
 
               {/* Adjusted line (if user modified parameters) */}
               {showAdjusted && (
                 <Scatter
-                  name="Parámetros Ajustados"
+                  name={"Parámetros Ajustados"}
                   data={adjustedLineData}
                   fill="none"
                   line={{ stroke: '#10b981', strokeWidth: 3 }}
-                  shape={<></>}
+                  shape={<EmptyShape />}
                 />
               )}
             </ScatterChart>
