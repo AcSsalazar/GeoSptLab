@@ -151,7 +151,7 @@ const SPTIntervalsForm: React.FC = () => {
     
     // Limpiar intervalos con borehole_stratum_id inválidos
     return {
-      boreholes: baseData.boreholes.map((borehole) => ({
+      boreholes: (baseData as SPTIntervalsFormData).boreholes.map((borehole) => ({
         ...borehole,
         intervals: borehole.intervals.filter((interval) => {
           const isValid = boreholeStrata.some(
