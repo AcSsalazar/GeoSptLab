@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { SignedIn, SignedOut, UserButton, SignInButton, SignOutButton, useUser } from '@clerk/clerk-react';
+// import { SignedIn, SignedOut, UserButton, SignInButton, SignOutButton, useUser } from '@clerk/clerk-react';
 /* import logoImg from '@/assets/images/logoconsul.png'; */
 import styles from '@/styles/ui/Header.module.css';
 const Header: React.FC = () => {
-  const { user } = useUser();
+  // const { user } = useUser();
 
   return (
     <header className={styles.header}>
@@ -43,7 +43,7 @@ const Header: React.FC = () => {
         </nav>
 
         {/* Auth Section */}
-        <div className={styles.authSection}>
+        {/* <div className={styles.authSection}>
           <SignedOut>
             <SignInButton mode="modal">
               <button className={styles.loginButton}>
@@ -73,7 +73,7 @@ const Header: React.FC = () => {
               </button>
             </SignOutButton>
           </SignedIn>
-        </div>
+        </div> */}
       </div>
     </header>
   );
