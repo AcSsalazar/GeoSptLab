@@ -1,6 +1,7 @@
 # SPT Parameters Calculator
 
-A professional web application for calculating geotechnical soil resistance parameters (φ′, c′, E, Su, τ) from Standard Penetration Test (SPT) results.
+A web-based tool for geotechnical engineers that uses SPT results to estimate key soil resistance parameters — effective friction angle (φ′), effective cohesion (c′), Young’s modulus (E), undrained shear strength (Su) and shear stress (τ). The app offers interactive plots, step-by-step calculations, data quality checks, and comprehensive exportable reports (CSV, PDF).
+
 
 ![SPT Calculator Demo](https://i.imgur.com/Jm14hmg.png)
 
@@ -78,17 +79,6 @@ A professional web application for calculating geotechnical soil resistance para
    ```bash
    docker-compose up postgres pgadmin -d
    ```
-
-2. **Update Backend Configuration**
-   ```bash
-   # Edit backend/.env
-   DATABASE_URL=postgresql://spt_user:spt_password@localhost:5432/spt_calculator
-   ```
-
-3. **Access pgAdmin**
-   - URL: http://localhost:5050
-   - Email: admin@sptcalculator.com
-   - Password: admin123
 
 ## Application Workflow
 
@@ -169,38 +159,28 @@ A professional web application for calculating geotechnical soil resistance para
 - **JRB**: `φ′ (°) = 15 + √(9.375 × N145)`
 
 ### Additional Parameters
-- Elastic modulus: `E = 500 × N60` (granular soils)
-- Undrained shear strength: `Su = 6 × N60` (cohesive soils)
-- Shear resistance: `τ = c′ + σ′ × tan(φ′)`
+- E
+- U
+- S
 
 ## Data Validation
 
 ### Input Ranges
-- **Nspt**: ≥ 0 (integer)
-- **Unit weights**: 10-40 kN/m³
-- **Energy percentage**: 0-200%
-- **Depths**: Consistent ordering (from < to)
-- **Correction factors**: > 0
+- 
+- 
+- 
+- 
 
 ### Business Rules
-- Project codes must be unique
-- Strata must cover all depths without gaps
-- SPT intervals cannot overlap within same borehole
-- Water table depth validation
+- Project 
+- Strata 
+- SPT 
+- 
 
 ## Example Usage
 
 ### Create a New Project
-```bash
-curl -X POST "http://localhost:8000/api/v1/projects/" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "project_code": "CP-00630",
-    "number_of_boreholes": 3,
-    "number_of_strata": 3,
-    "formulation": "kishida",
-    "field_energy_percent": 45.0
-  }'
+```
 ```
 
 ### Calculate SPT Parameters
@@ -217,59 +197,30 @@ curl -X POST "http://localhost:8000/api/v1/calculations/calculate" \
 
 ### Project Structure
 ```
-├── backend/          # FastAPI backend
-│   ├── app/
-│   │   ├── api/      # API endpoints
-│   │   ├── core/     # Configuration and calculations
-│   │   ├── models/   # Database models
-│   │   ├── schemas/  # Pydantic schemas
-│   │   └── repositories/ # Data access layer
-│   └── init_db.py    # Database initialization
-├── frontend/         # React frontend
-│   ├── src/
-│   │   ├── components/ # React components
-│   │   ├── services/   # API services
-│   │   └── types/      # TypeScript types
-└── docker-compose.yml # PostgreSQL setup
+
 ```
 
 ### Running Tests
-```bash
-# Backend tests
-cd backend
-python -m pytest
-
-# Frontend tests
-cd frontend
-npm run test
+```
 ```
 
 ### Building for Production
 ```bash
-# Backend
-cd backend
-pip install -r requirements.txt
 
-# Frontend
-cd frontend
-npm run build
 ```
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Submit a pull request
+1. F
+2. C
+3. M
+4. A
+5. S
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Support
 
-For questions or issues:
+For API endpoints and usage, please refer to the documentation:
 - Check the API documentation at `/docs`
 - Review the example data in the repository
 - Open an issue on GitHub
