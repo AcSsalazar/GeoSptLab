@@ -25,14 +25,19 @@ def create_application():
         lifespan=lifespan
     )
 
-    # Set up CORS middleware
+    # Set up CORS middleware - use settings for production flexibility
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5173", "http://127.0.0.1:5174"],
+        allow_origins=settings.allowed_origins,
         allow_credentials=True,
-        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allow_headers=["*"],
+        allow_methods=settings.allowed_methods,
+        allow_headers=settings.allowed_headers,
     )
+    
+    # Health check endpoint for Render
+    @app.get("/health")
+    async def health_check():
+        return {"status": "healthy", "version": settings.app_version}
 
     # Add explicit OPTIONS handler for preflight requests
     @app.options("/{path:path}")

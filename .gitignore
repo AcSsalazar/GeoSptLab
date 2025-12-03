@@ -35,9 +35,11 @@ MANIFEST
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Alembic (not using during development)
-alembic/
-alembic.ini
+# Alembic - Keep migrations in version control!
+# Only ignore the local database file and pycache
+alembic/__pycache__/
+alembic/versions/__pycache__/
+# DO NOT ignore alembic/ folder or alembic.ini - they are needed for production!
 
 # Unit test / coverage reports
 htmlcov/

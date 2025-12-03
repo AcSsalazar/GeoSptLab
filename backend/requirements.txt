@@ -9,7 +9,6 @@ python-multipart==0.0.6
 greenlet==3.2.4
 sqlalchemy==2.0.23
 alembic==1.12.1
-psycopg2==2.9.10
 psycopg2-binary==2.9.10
 
 # Validation and serialization

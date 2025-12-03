@@ -17,7 +17,15 @@ class Settings(BaseSettings):
     api_v1_str: str = "/api/v1"
     
     # Database settings
-    database_url: str = "sqlite:///./spt_calculator.db"
+    database_url: str = "postgresql://localhost:5432/spt_calculator"
+    
+    @property
+    def database_url_fixed(self) -> str:
+        """Fix Render's postgres:// URL to postgresql:// for SQLAlchemy."""
+        url = self.database_url
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql://", 1)
+        return url
     
     # Security settings
     secret_key: str = "your-secret-key-change-this-in-production"

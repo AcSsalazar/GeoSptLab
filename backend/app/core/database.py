@@ -8,9 +8,9 @@ from typing import Generator
 
 from .config import settings
 
-# Create SQLAlchemy engine
+# Create SQLAlchemy engine (use database_url_fixed to handle Render's postgres:// format)
 engine = create_engine(
-    settings.database_url,
+    settings.database_url_fixed,
     pool_pre_ping=True,
     echo=settings.debug,  # Log SQL queries in debug mode
 )
