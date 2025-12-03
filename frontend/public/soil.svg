@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" id="soil" x="0" y="0" version="1.1" viewBox="0 0 64 64">
+  <path fill="#999" d="M0 16v32l32 16 32-16V16z"></path>
+  <path fill="#BAA794" d="M0 16v24l32 16 32-16V16z"></path>
+  <path fill="#825012" d="M0 16v16l32 16 32-16V16z"></path>
+  <path fill="#762C07" d="M0 16v8l32 16 32-16v-8z"></path>
+  <path d="M0 16v2l32 16 32-16v-2z" opacity=".3"></path>
+  <path d="M64 16v32L32 64V32z" opacity=".29"></path>
+  <g fill="#9C3">
+    <path d="M32 0l32 16-32 16L0 16z"></path>
+    <path d="M32 0l32 16-32 16L0 16z"></path>
+    <g>
+      <path d="M32 0l32 16-32 16L0 16z"></path>
+      <path d="M32 0l32 16-32 16L0 16z"></path>
+    </g>
+  </g>
+  <path d="M0 16l32 16v32L0 48z" opacity=".11"></path>
+</svg>
