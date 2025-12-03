@@ -1,14 +1,14 @@
 # GeoSptLab Deployment Guide
 
-This guide provides step-by-step instructions for deploying the GeoSptLab application with Frontend on **Vercel** and Backend on **Heroku**.
+This guide provides step-by-step instructions for deploying the GeoSptLab application with Frontend on **Vercel** and Backend on **Render**.
 
 ---
 
 ## Table of Contents
 1. [Prerequisites](#prerequisites)
 2. [Frontend Deployment (Vercel)](#frontend-deployment-vercel)
-3. [Backend Deployment (Heroku)](#backend-deployment-heroku)
-4. [Database Setup (Heroku Postgres)](#database-setup-heroku-postgres)
+3. [Backend Deployment (Render)](#backend-deployment-render)
+4. [Database Setup (Render PostgreSQL)](#database-setup-render-postgresql)
 5. [Domain Configuration (name.com)](#domain-configuration-namecom)
 6. [Environment Variables Reference](#environment-variables-reference)
 7. [Files to Modify (with line numbers)](#files-to-modify-with-line-numbers)
@@ -18,7 +18,7 @@ This guide provides step-by-step instructions for deploying the GeoSptLab applic
 ## Prerequisites
 
 Before starting, ensure you have:
-- [ ] Heroku account with free hosting
+- [ ] Render account (free tier available at https://render.com)
 - [ ] Vercel account (free tier available)
 - [ ] Access to name.com for domain management
 - [ ] Clerk account for authentication (https://clerk.com)
@@ -55,8 +55,8 @@ Create `frontend/.env.example` for documentation:
 # Create the file
 cat > frontend/.env.example << 'EOF'
 # API Configuration
-VITE_API_URL=https://your-heroku-app.herokuapp.com/api/v1
-VITE_API_BASE_URL=https://your-heroku-app.herokuapp.com/api/v1
+VITE_API_URL=https://your-render-app.onrender.com/api/v1
+VITE_API_BASE_URL=https://your-render-app.onrender.com/api/v1
 
 # Clerk Authentication
 VITE_CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_publishable_key
@@ -102,8 +102,8 @@ EOF
 4. Add Environment Variables in Vercel Dashboard:
    | Variable | Value |
    |----------|-------|
-   | `VITE_API_URL` | `https://your-heroku-app.herokuapp.com/api/v1` |
-   | `VITE_API_BASE_URL` | `https://your-heroku-app.herokuapp.com/api/v1` |
+   | `VITE_API_URL` | `https://your-render-app.onrender.com/api/v1` |
+   | `VITE_API_BASE_URL` | `https://your-render-app.onrender.com/api/v1` |
    | `VITE_CLERK_PUBLISHABLE_KEY` | Your Clerk publishable key |
 
 5. Click **Deploy**
@@ -134,10 +134,10 @@ vercel
 ```bash
 # Set production environment variables
 vercel env add VITE_API_URL production
-# Enter: https://your-heroku-app.herokuapp.com/api/v1
+# Enter: https://your-render-app.onrender.com/api/v1
 
 vercel env add VITE_API_BASE_URL production
-# Enter: https://your-heroku-app.herokuapp.com/api/v1
+# Enter: https://your-render-app.onrender.com/api/v1
 
 vercel env add VITE_CLERK_PUBLISHABLE_KEY production
 # Enter: pk_live_your_production_key
@@ -148,32 +148,51 @@ vercel --prod
 
 ---
 
-## Backend Deployment (Heroku)
+## Backend Deployment (Render)
 
-### Step 1: Create Heroku Configuration Files
+### Step 1: Create Render Configuration File (Optional)
 
-**Create `backend/Procfile`:**
+**Create `render.yaml` in the project root:**
 
 ```bash
-cat > backend/Procfile << 'EOF'
-web: uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
-release: python init_db.py
+cat > render.yaml << 'EOF'
+services:
+  - type: web
+    name: geosptlab-backend
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    rootDir: backend
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: DATABASE_URL
+        fromDatabase:
+          name: geosptlab-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
+
+databases:
+  - name: geosptlab-db
+    plan: free
+    databaseName: geosptlab
+    user: geosptlab
 EOF
 ```
 
-**Create `backend/runtime.txt`:**
-
-```bash
-cat > backend/runtime.txt << 'EOF'
-python-3.11.9
-EOF
-```
+> **Note:** The `render.yaml` file is optional. You can also configure everything through the Render dashboard.
 
 ### Step 2: Modify Backend Code for Production
 
 #### File: `backend/app/core/config.py`
 
-**Lines 19-20 - Change the database_url property to handle Heroku's postgres:// format:**
+**Lines 19-20 - Change the database_url property to handle postgres:// format:**
 
 Replace:
 ```python
@@ -188,7 +207,7 @@ With:
     
     @property
     def get_database_url(self) -> str:
-        """Get database URL with postgres:// to postgresql:// conversion for Heroku."""
+        """Get database URL with postgres:// to postgresql:// conversion."""
         url = self.database_url
         if url.startswith("postgres://"):
             url = url.replace("postgres://", "postgresql://", 1)
@@ -256,76 +275,157 @@ With:
 
 > **Note:** The `cors_origins` property parses the comma-separated `ALLOWED_ORIGINS` env var into a list.
 
-### Step 3: Deploy to Heroku
+### Step 3: Deploy to Render
+
+**Option A: Via Render Dashboard (Recommended)**
+
+1. **Create a PostgreSQL Database:**
+   - Go to https://dashboard.render.com
+   - Click **New +** → **PostgreSQL**
+   - Name: `geosptlab-db`
+   - Database: `geosptlab`
+   - User: `geosptlab`
+   - Region: Choose closest to your users
+   - Plan: **Free**
+   - Click **Create Database**
+   - Copy the **Internal Database URL** (starts with `postgres://`)
+
+2. **Create a Web Service:**
+   - Click **New +** → **Web Service**
+   - Connect your GitHub repository
+   - Name: `geosptlab-backend`
+   - Region: Same as database
+   - Branch: `main`
+   - Root Directory: `backend`
+   - Runtime: **Python 3**
+   - Build Command: `pip install -r requirements.txt`
+   - Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+   - Plan: **Free**
+
+3. **Add Environment Variables:**
+   - Click **Environment** tab
+   - Add the following variables:
+
+   | Variable | Value |
+   |----------|-------|
+   | `DATABASE_URL` | Paste the Internal Database URL from step 1 |
+   | `SECRET_KEY` | Generate with `python -c "import secrets; print(secrets.token_hex(32))"` |
+   | `DEBUG` | `False` |
+   | `ALLOWED_ORIGINS` | `https://your-frontend.vercel.app,https://yourdomain.com` |
+   | `PYTHON_VERSION` | `3.11.9` |
+
+4. **Deploy:**
+   - Click **Create Web Service**
+   - Render will automatically build and deploy
+   - Monitor logs in the **Logs** tab
+
+**Option B: Via render.yaml (Infrastructure as Code)**
+
+1. Add `render.yaml` to your repository root (created in Step 1)
+2. Push to GitHub
+3. Go to https://dashboard.render.com
+4. Click **New +** → **Blueprint**
+5. Connect your repository
+6. Render will automatically create both the database and web service
+7. Update environment variables as needed
+
+### Step 4: Initialize Database on Render
+
+**Option A: Via Render Shell**
 
 ```bash
-# Login to Heroku
-heroku login
-
-# Create Heroku app (if not already created)
-heroku create your-app-name
-
-# Navigate to backend directory
-cd backend
-
-# Set Heroku remote (if using existing app)
-heroku git:remote -a your-app-name
-
-# Add Heroku Postgres addon
-heroku addons:create heroku-postgresql:essential-0
-
-# Set environment variables
-heroku config:set SECRET_KEY=$(python -c "import secrets; print(secrets.token_hex(32))")
-heroku config:set DEBUG=False
-heroku config:set ALLOWED_ORIGINS="https://your-frontend.vercel.app,https://yourdomain.com"
-
-# Deploy
-git subtree push --prefix backend heroku main
-
-# Or if deploying entire repo with backend subfolder:
-# Create a separate branch for Heroku
-git subtree split --prefix backend -b heroku-deploy
-git push heroku heroku-deploy:main --force
+# In Render Dashboard, go to your web service
+# Click "Shell" tab
+# Run:
+python init_db.py
 ```
 
-### Step 4: Initialize Database on Heroku
+**Option B: Add to Start Command**
+
+Update the Start Command to:
+```bash
+python init_db.py && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+```
+
+> **Note:** This will run `init_db.py` on every deploy.
+
+### Step 5: Verify Deployment
 
 ```bash
-# Run database initialization
-heroku run python init_db.py
+# Check health endpoint
+curl https://your-app-name.onrender.com/api/v1/health
 
-# Check logs
-heroku logs --tail
+# View logs in Render dashboard
+# Go to your web service → Logs tab
 ```
 
 ---
 
-## Database Setup (Heroku Postgres)
+## Database Setup (Render PostgreSQL)
 
-### Automatic Setup (Recommended)
+### Database Creation
 
-The `release` command in Procfile runs `python init_db.py` automatically on each deploy.
+Render PostgreSQL is created in Step 3 of the backend deployment.
 
-### Manual Setup
+### Database Connection
+
+Render provides several connection strings:
+
+1. **Internal Database URL** - Use this in your `DATABASE_URL` environment variable
+   - Format: `postgres://user:password@hostname/database`
+   - Used by your backend to connect to the database
+
+2. **External Database URL** - For connecting from your local machine
+   - Format: `postgresql://user:password@hostname:port/database`
+
+### Verify Database Connection
+
+**Via Render Dashboard:**
+1. Go to your PostgreSQL database in Render
+2. Click **Connect** → **External Connection**
+3. Use the provided connection string with `psql`:
 
 ```bash
-# Connect to Heroku Postgres
-heroku pg:psql
+psql postgresql://user:password@hostname:port/database
+```
 
-# Check tables were created
+**Check tables:**
+```sql
+# List all tables
 \dt
+
+# Check a specific table
+\d projects
 
 # Exit
 \q
 ```
 
-### Database URL
+### Database Management
 
-Heroku automatically sets `DATABASE_URL`. No action needed, but you can verify:
-
+**Via Render Shell:**
 ```bash
-heroku config:get DATABASE_URL
+# In your web service dashboard
+# Click "Shell" tab
+# Run Python commands:
+python
+>>> from app.core.database import engine
+>>> from sqlalchemy import inspect
+>>> inspector = inspect(engine)
+>>> print(inspector.get_table_names())
+>>> exit()
 ```
+
+### Backup and Restore
+
+Render Free tier includes:
+- Daily automatic backups (retained for 7 days)
+- Manual backups on demand
+
+To create a manual backup:
+1. Go to your database in Render
+2. Click **Backups** tab
+3. Click **Create Backup**
 
 ---
 
@@ -344,17 +444,21 @@ heroku config:get DATABASE_URL
    | A | @ | 76.76.21.21 | 300 |
    | CNAME | www | cname.vercel-dns.com | 300 |
 
-### For Backend API (Heroku)
+### For Backend API (Render)
 
-1. **In Heroku Dashboard:**
-   - Go to Settings → Domains
-   - Add domain: `api.yourdomain.com`
+1. **In Render Dashboard:**
+   - Go to your web service → Settings → Custom Domains
+   - Click **Add Custom Domain**
+   - Enter: `api.yourdomain.com`
+   - Render will provide DNS records to add
 
 2. **In name.com DNS Settings:**
    
    | Type | Host | Value | TTL |
    |------|------|-------|-----|
-   | CNAME | api | your-app-name.herokuapp.com | 300 |
+   | CNAME | api | your-app-name.onrender.com | 300 |
+
+> **Note:** SSL certificates are automatically provisioned by Render once DNS propagates.
 
 ### Configure Clerk for Production Domain
 
@@ -377,14 +481,15 @@ heroku config:get DATABASE_URL
 | `VITE_API_BASE_URL` | Yes | `https://api.yourdomain.com/api/v1` | Backend API URL (same as above) |
 | `VITE_CLERK_PUBLISHABLE_KEY` | Yes | `pk_live_xxx` | Clerk auth key |
 
-### Backend (Heroku)
+### Backend (Render)
 
 | Variable | Required | Example | Description |
 |----------|----------|---------|-------------|
-| `DATABASE_URL` | Auto | Set by Heroku | PostgreSQL connection string |
+| `DATABASE_URL` | Yes | `postgres://user:pass@host/db` | PostgreSQL connection string (from Render database) |
 | `SECRET_KEY` | Yes | `abc123...` (64 chars) | App secret key |
 | `DEBUG` | Yes | `False` | Disable debug mode |
 | `ALLOWED_ORIGINS` | Yes | `https://yourdomain.com,https://www.yourdomain.com` | CORS origins |
+| `PYTHON_VERSION` | Optional | `3.11.9` | Python version to use |
 
 ---
 
@@ -396,8 +501,7 @@ heroku config:get DATABASE_URL
 |------|---------|
 | `frontend/.env.example` | Document required env vars |
 | `frontend/vercel.json` | Vercel SPA routing config |
-| `backend/Procfile` | Heroku process definition |
-| `backend/runtime.txt` | Python version for Heroku |
+| `render.yaml` (Optional) | Render infrastructure as code |
 
 ### Files to MODIFY:
 
@@ -432,20 +536,19 @@ heroku config:get DATABASE_URL
 - [ ] Add environment variables
 - [ ] Deploy
 
-### Backend (Heroku) - ~20 minutes
-- [ ] Create `backend/Procfile`
-- [ ] Create `backend/runtime.txt`
+### Backend (Render) - ~20 minutes
 - [ ] Modify `backend/app/core/config.py` (lines 19-20)
 - [ ] Modify `backend/app/core/database.py` (lines 12-16)
 - [ ] Modify `backend/app/main.py` (line 31)
-- [ ] Create Heroku app
-- [ ] Add Heroku Postgres addon
+- [ ] Create Render PostgreSQL database
+- [ ] Create Render Web Service
+- [ ] Configure build and start commands
 - [ ] Set environment variables
-- [ ] Deploy
+- [ ] Deploy and initialize database
 
 ### DNS (name.com) - ~30 minutes
 - [ ] Add frontend domain in Vercel
-- [ ] Add API subdomain in Heroku
+- [ ] Add API subdomain in Render
 - [ ] Configure DNS records
 - [ ] Wait for propagation (up to 48 hours)
 
@@ -475,27 +578,29 @@ pnpm run build
 ### Backend Issues
 
 **Database connection fails:**
-```bash
-heroku logs --tail
-heroku config:get DATABASE_URL
-```
+- Check logs in Render Dashboard → Your Web Service → Logs tab
+- Verify `DATABASE_URL` is set correctly in Environment Variables
+- Ensure database and web service are in the same region (recommended)
 
 **Verify database URL format:**
-- Heroku provides `postgres://...`
+- Render provides `postgres://...`
 - SQLAlchemy needs `postgresql://...`
 - The code change handles this automatically
 
 **Check if tables exist:**
 ```bash
-heroku pg:psql
+# Via Render Dashboard:
+# Go to your database → Connect → External Connection
+# Copy the connection string and use:
+psql <connection-string>
 \dt
 ```
 
 ### CORS Errors
 
-1. Verify `ALLOWED_ORIGINS` in Heroku includes your frontend URL
+1. Verify `ALLOWED_ORIGINS` in Render includes your frontend URL
 2. Include both `https://yourdomain.com` and `https://www.yourdomain.com`
-3. Redeploy backend after changing config
+3. Redeploy backend after changing environment variables (automatic in Render)
 
 ---
 
@@ -508,15 +613,19 @@ pnpm install
 pnpm run build          # Build locally (optional)
 vercel                  # Deploy to Vercel
 
-# === BACKEND ===
-cd backend
-heroku login
-heroku create your-app-name
-heroku addons:create heroku-postgresql:essential-0
-heroku config:set SECRET_KEY=$(python -c "import secrets; print(secrets.token_hex(32))")
-heroku config:set DEBUG=False
-heroku config:set ALLOWED_ORIGINS="https://your-frontend.vercel.app"
-git subtree push --prefix backend heroku main
-heroku run python init_db.py
-heroku logs --tail
+# === BACKEND (Render) ===
+# Via Dashboard (Recommended):
+# 1. Create PostgreSQL database at https://dashboard.render.com
+# 2. Create Web Service, connect GitHub repo
+# 3. Set root directory to 'backend'
+# 4. Build command: pip install -r requirements.txt
+# 5. Start command: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+# 6. Add environment variables (DATABASE_URL, SECRET_KEY, DEBUG, ALLOWED_ORIGINS)
+# 7. Deploy
+
+# Generate SECRET_KEY:
+python -c "import secrets; print(secrets.token_hex(32))"
+
+# Initialize database (via Render Shell):
+python init_db.py
 ```

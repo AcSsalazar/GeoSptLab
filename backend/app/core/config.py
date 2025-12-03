@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     def get_database_url(self) -> str:
         """
         Get database URL with postgres:// to postgresql:// conversion.
-        Heroku uses postgres:// but SQLAlchemy 1.4+ requires postgresql://
+        Some providers use postgres:// but SQLAlchemy 1.4+ requires postgresql://
         """
         url = self.database_url
         if url.startswith("postgres://"):

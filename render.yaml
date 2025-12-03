@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: geosptlab-backend
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: DATABASE_URL
+        fromDatabase:
+          name: geosptlab-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
+      - key: ALLOWED_ORIGINS
+        sync: false
+        # Set this to your production frontend URL after deployment
+        # Example: https://your-frontend.vercel.app,https://yourdomain.com
+
+databases:
+  - name: geosptlab-db
+    plan: free
+    databaseName: geosptlab
+    user: geosptlab
+    region: oregon
