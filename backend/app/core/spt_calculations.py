@@ -505,8 +505,8 @@ def calculate_statistical_summary_by_stratum(
             continue
         
         # Extraer valores de φ' y E
-        phi_values = [r["phi_prime_eq"] for r in stratum_results]
-        modulus_values = [r["elastic_modulus"] for r in stratum_results]
+        phi_values = [float(r["phi_prime_eq"]) for r in stratum_results]
+        modulus_values = [float(r["elastic_modulus"]) for r in stratum_results]
         
         # Calcular media
         phi_mean = sum(phi_values) / n

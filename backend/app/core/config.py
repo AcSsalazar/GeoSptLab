@@ -3,7 +3,8 @@ Core configuration settings for the FastAPI application.
 """
 from typing import List
 from pydantic_settings import BaseSettings
-
+from pydantic import field_validator
+import json
 
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
@@ -36,9 +37,20 @@ class Settings(BaseSettings):
     email_port: int = 25
     
     # CORS settings
-    allowed_origins: List[str] = ["*"]
+    allowed_origins: List[str] | str = ["*"]
     allowed_methods: List[str] = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     allowed_headers: List[str] = ["*"]
+
+    @field_validator("allowed_origins", mode="before")
+    @classmethod
+    def parse_origins(cls, v):
+        """Parse ALLOWED_ORIGINS from string or list."""
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except json.JSONDecodeError:
+                return [origin.strip() for origin in v.split(",")]
+        return v
     
     model_config = {
         "env_file": ".env",
